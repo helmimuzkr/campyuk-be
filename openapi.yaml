@@ -177,11 +177,6 @@ paths:
               schema:
                 type: object
               example:
-                data:
-                  name: "griffin"
-                  fullname: "griffinhenry"
-                  email: "grf@gmail.com"
-                  user_image: "https://ijs2nfub0s2u0831.png"
                 message: "success update profile"
         400:
           $ref: '#/components/responses/400'
@@ -204,6 +199,132 @@ paths:
                 type: object
                 example:
                   message: "success delete profile"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+  /items:
+    post:
+      tags:
+        - items
+      summary: "by host"
+      description: add items by host
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                camp_id: 
+                  type: integer
+                size:
+                  type: string
+                stock:
+                  type: string
+                price:
+                  type: integer
+                image:
+                  type: string
+              example: 
+                camp_id: 1
+                size: s
+                stock: 5
+                price: 5
+                image: "https://kd0iw02j10je01.jpg"
+      responses:
+        201: 
+          description: "success insert data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success add new item"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+  /items/{id}:
+    put:
+      tags:
+        - items
+      summary: "by host"
+      description: edit items by host
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: item_id
+          required: true
+          in: path
+          schema:
+            type: string
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                size:
+                  type: string
+                stock:
+                  type: string
+                price:
+                  type: integer
+                image:
+                  type: string
+            example:
+              size: m
+              stock: 10
+              price: 10
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+            example:
+              image: "https://ndusigyin1.jpg"
+      responses:
+        200:
+          description: update success
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: "success update items"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+    
+    delete:
+      tags:
+        - items
+      summary: by host
+      description: delete data from items
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: deleted item success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: "success delete item"
         400:
           $ref: '#/components/responses/400'
         500:
