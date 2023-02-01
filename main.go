@@ -1,7 +1,7 @@
 package main
 
 import (
-	"e-commerce-api/config"
+	"campkuy-api/config"
 
 	"log"
 
