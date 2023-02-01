@@ -1009,7 +1009,7 @@ paths:
     /bookings/payment:
         get:
             tags:
-              - bookings
+                - bookings
             summary: by user
             description: get payment method
             security:
@@ -1022,18 +1022,27 @@ paths:
                             schema:
                                 type: object
                                 properties:
+                                    data:
+                                        type: object
+                                        properties:
+                                            total_price:
+                                                type: integer
+                                            bank:
+                                                type: string
+                                            va_number:
+                                                type: string
                                     message:
                                         type: string
                             example:
                                 data:
                                     total_price: 10000
                                     bank: bca
-                                    va_number: 09231767841
+                                    va_number: "9231767841"
+                                message: success bank transfer transaction is created
                 400:
                     $ref: "#/components/responses/400"
                 500:
                     $ref: "#/components/responses/500"
-
 
     /bookings/{id}:
         get:
