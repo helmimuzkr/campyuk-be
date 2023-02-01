@@ -6,7 +6,7 @@ servers:
 info:
   version: "1.0.0"
   title: Campyuk App Project
-  description: The API for the EatBacon IOT project
+  description: This API for the campyuk app project
 tags:
   - name: auth
   - name: users
@@ -133,7 +133,7 @@ paths:
       tags:
         - users
       summary: update profile
-      description: Update user profile
+      description: update user profile
       security:
         - JWTAuth: []
       requestBody:
@@ -316,6 +316,14 @@ paths:
       description: delete data from items
       security:
         - JWTAuth: []
+      parameters:
+        - name: id
+          description: item_id
+          required: true
+          in: path
+          schema:
+            type: string
+            example: 1
       responses:
         200:
           description: deleted item success
@@ -325,6 +333,219 @@ paths:
                 type: object
                 example:
                   message: "success delete item"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+  /bookings:
+    post:
+      tags:
+        - bookings
+      summary: by user
+      description: add booking for user
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                camp_id:
+                  type: integer
+                item_id:  
+                  type: integer
+                quantity:
+                  type: integer
+                check_in:  
+                  type: string
+                check_out:  
+                  type: string
+                guest:
+                  type: integer
+            example:
+              camp_id: 1
+              item_id: 1
+              quantity: 2
+              check_in: 01-02-2023
+              check_out: 02-02-2023
+              guest: 2
+      responses:
+        201: 
+          description: "success insert data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                data:
+                  payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
+                  create_at: 01-02-2023 15:50:50
+                  status: pending
+                  total_price: 100
+                message: "success booking"
+
+    get:
+      tags:
+        - bookings
+      summary: by user & host
+      description: get booking data for user
+      security:
+        - JWTAuth: []
+      responses:
+        200: 
+          description: "success show booking"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                data: [{
+                  id: 1,
+                  ticket: ACT/34799/XVII-MMDKJF,
+                  camp_title: tanakita,
+                  camp_image: "https://app.s9dh712hunsd1.jpg",
+                  camp_location: sukabumi,
+                  check_in: "01-02-2023",
+                  check_out: "02-02-2023",
+                  status: "pending",
+                  create_at: "01-02-2023 15:50:50",
+                  total_price: 100
+                  },
+                  {
+                  id: 2,
+                  ticket: ABC/27883/XVII-KKDTC,
+                  camp_title: tanakita,
+                  camp_image: "https://app.nd8nd871y2ss.jpg",
+                  camp_location: sukabumi,
+                  check_in: "01-02-2023",
+                  check_out: "03-02-2023",
+                  status: "pending",
+                  create_at: "01-02-2023 15:50:50",
+                  total_price: 200
+                  }]
+                message: "show all transaction success"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+  /bookings/{id}:
+    get:
+      tags:
+        - bookings
+      summary: "by user & host"
+      description: get detail booking
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: booking_id
+          required: true
+          in: path
+          schema:
+            type: string
+            example: 1
+      responses:
+        200: 
+          description: "success show booking"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                data:
+                  id: 1
+                  ticket: ACT/34799/XVII-MMDKJF
+                  camp_title: tanakita
+                  camp_image: "https://app.s9dh712hunsd1.jpg"
+                  camp_location: sukabumi
+                  check_in: "01-02-2023"
+                  check_out: "02-02-2023"
+                  guest: 2
+                  camp_cost: 50
+                  items: {
+                    item_id: 1,
+                    size: m,
+                    quantity: 2,
+                    item_cost: 20
+                  }
+                  total_price: 100
+                  create_at: "01-02-2023 15:50:50"
+                  payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
+                  status: "pending"
+                message: "success show detail booking"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+  /bookings/{id}/accept:
+    put:
+      tags:
+        - bookings
+      summary: "by host"
+      description: update status booking
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: booking_id
+          required: true
+          in: path
+          schema:
+            type: string
+            example: 1
+      responses:
+        200:
+          description: update success
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: "success accept booking"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+      
+  /bookings/{id}/cancel:
+    put:
+      tags:
+        - bookings
+      summary: "by user & host"
+      description: update status booking
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: booking_id
+          required: true
+          in: path
+          schema:
+            type: string
+            example: 1
+      responses:
+        200:
+          description: update success
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: "success cancel booking"
         400:
           $ref: '#/components/responses/400'
         500:
