@@ -94,8 +94,8 @@ paths:
                                     fullname: "griffinhenry"
                                     email: "grf@gmail.com"
                                     role: "user"
-                                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
                                 message: "success login"
+                                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
                 400:
                     $ref: "#/components/responses/400"
                 500:
@@ -149,8 +149,6 @@ paths:
                                 email:
                                     type: string
                                     format: email
-                                user_image:
-                                    type: string
                                 password:
                                     type: string
                                     format: password
@@ -319,56 +317,56 @@ paths:
                                     total_record: 8
                                     total_pages: 1
                                 data:
-                                    - camp_id: 1
+                                    - id: 1
                                       host_name: john
                                       title: Tanakita Camp
                                       price: 100000
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - camp_id: 2
+                                    - id: 2
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - camp_id: 3
+                                    - id: 3
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - camp_id: 4
+                                    - id: 4
                                       host_name: john
                                       title: Tanakita Camp
                                       price: 100000
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - camp_id: 5
+                                    - id: 5
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - camp_id: 6
+                                    - id: 6
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - camp_id: 7
+                                    - id: 7
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - camp_id: 8
+                                    - id: 8
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
@@ -414,7 +412,7 @@ paths:
                                     data:
                                         type: object
                                         properties:
-                                            camp_id:
+                                            id:
                                                 type: integer
                                             verification_status:
                                                 type: string
@@ -448,7 +446,7 @@ paths:
                                         type: string
                             example:
                                 data:
-                                    camp_id: 1
+                                    id: 1
                                     verification_status: ACCEPTED
                                     host_name: john
                                     title: Tanakita Camp
@@ -464,17 +462,17 @@ paths:
                                         - https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fdisplay.ub.ac.id%2Fwp-content%2Fuploads%2F2021%2F05%2F055886600_1526867328-20180520-Refleksi-20-Tahun-Reformasi-dalam-Jepretan-Kamera-AFP-1-1024x591.png&f=1&nofb=1&ipt=0255ab3e0e0ec03987a0d34de8ce3fa8a130a0262b5af32372607cb2846334ae&ipo=images
                                         - https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
                                     items:
-                                        - item_name: tenda
+                                        - item_id: 1
                                           size: s
                                           stock: 10
                                           rent_price: 100000
                                           item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
-                                        - item_name: tenda
+                                        - item_id: 2
                                           size: m
                                           stock: 1
                                           rent_price: 200000
                                           item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
-                                        - item_name: tenda
+                                        - item_id: 3
                                           size: l
                                           stock: 3
                                           rent_price: 300000
@@ -986,7 +984,7 @@ paths:
                                             check_in: "01-02-2023",
                                             check_out: "02-02-2023",
                                             status: "pending",
-                                            create_at: "01-02-2023 15:50:50",
+                                            booking_date: "01-02-2023",
                                             total_price: 100,
                                         },
                                         {
@@ -998,7 +996,7 @@ paths:
                                             check_in: "01-02-2023",
                                             check_out: "03-02-2023",
                                             status: "pending",
-                                            create_at: "01-02-2023 15:50:50",
+                                            booking_date: "01-02-2023",
                                             total_price: 200,
                                         },
                                     ]
@@ -1007,6 +1005,35 @@ paths:
                     $ref: "#/components/responses/400"
                 500:
                     $ref: "#/components/responses/500"
+
+    /bookings/payment:
+        get:
+            tags:
+              - bookings
+            summary: by user
+            description: get payment method
+            security:
+                - JWTAuth: []
+            responses:
+                200:
+                    description: "success show booking"
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                data:
+                                    total_price: 10000
+                                    bank: bca
+                                    va_number: 09231767841
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+
 
     /bookings/{id}:
         get:
