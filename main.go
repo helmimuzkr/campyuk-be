@@ -1,7 +1,7 @@
 package main
 
 import (
-	"campkuy-api/config"
+	"campyuk-api/config"
 
 	"log"
 

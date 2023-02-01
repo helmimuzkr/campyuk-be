@@ -1,4 +1,4 @@
-module campkuy-api
+module campyuk-api
 
 go 1.19
 
