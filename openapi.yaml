@@ -229,12 +229,20 @@ paths:
                   type: integer
                 image:
                   type: string
-              example: 
+            example: 
                 camp_id: 1
                 size: s
                 stock: 5
                 price: 5
-                image: "https://kd0iw02j10je01.jpg"
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+            example:
+              image: "https://dhywgdyhdy98127d.jpg"
       responses:
         201: 
           description: "success insert data"
