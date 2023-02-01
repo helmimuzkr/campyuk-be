@@ -4,9 +4,15 @@ servers:
     - description: SwaggerHub API Auto Mocking
       url: https://virtserver.swaggerhub.com/GRIFFINHENRY07_1/campyuk/1.0.0
 info:
+<<<<<<< HEAD
     version: "1.0.0"
     title: Campyuk App Project
     description: The API for the EatBacon IOT project
+=======
+  version: "1.0.0"
+  title: Campyuk App Project
+  description: The API for the EatBacon IOT project
+>>>>>>> b387ff9 (fix: openapi)
 tags:
     - name: auth
     - name: users
@@ -14,6 +20,7 @@ tags:
     - name: items
     - name: bookings
 paths:
+<<<<<<< HEAD
     /register:
         post:
             tags:
@@ -59,6 +66,53 @@ paths:
                     $ref: "#/components/responses/400"
                 500:
                     $ref: "#/components/responses/500"
+=======
+  /register:
+    post:
+      tags:
+        - auth
+      description: feature for user registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                fullname:  
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                role:  
+                  type: string
+            example:
+              username: "griffin"
+              fullname: "griffinhenry"
+              email: "grf@gmail.com"
+              password: "g123"
+              role: "user"
+      responses:
+        201: 
+          description: "success insert data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success create account"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+>>>>>>> b387ff9 (fix: openapi)
 
     /login:
         post:
@@ -1167,6 +1221,7 @@ components:
         responseObjectArr:
             type: object
             properties:
+<<<<<<< HEAD
                 data:
                     type: array
                     items:
@@ -1196,3 +1251,9 @@ components:
                                 type: string
                     example:
                         message: "internal server error"
+=======
+              message:
+                type: string
+          example:
+            message: "internal server error"
+>>>>>>> b387ff9 (fix: openapi)
