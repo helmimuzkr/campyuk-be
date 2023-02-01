@@ -14,4 +14,245 @@ tags:
   - name: items
   - name: bookings
 paths:
-  
+  /register:
+    post:
+      tags:
+        - auth
+      description: feature for user registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                fullname:  
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                role:  
+                  type: string
+            example:
+              username: "griffin"
+              fullname: "griffinhenry"
+              email: "grf@gmail.com"
+              password: "g123"
+              role: "user"
+      responses:
+        201: 
+          description: "success insert data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success create account"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+  /login:
+    post:
+      tags:
+        - auth
+      description: feature for verifying who a user is
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: 
+                  type: string
+                password:
+                  type: string
+                  format: password
+              example: 
+                username: "grf@gmail.com"
+                password: "g123"
+      responses:
+        200:
+          description: "success login"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data: 
+                  id: 1
+                  username: "griffin"
+                  fullname: "griffinhenry"
+                  email: "grf@gmail.com"
+                  role: "user"
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
+                message: "success login"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+    
+  /users:
+    get:
+      tags: 
+        - users
+      summary: get data user
+      description: getting data user
+      security: 
+        - JWTAuth: []
+      responses:
+        200:
+          description: success show profile
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 2
+                    username: "griffin"
+                    fullname: "griffinhenry"
+                    email: "grf@gmail.com"
+                    user_image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+                  message: "success show profile"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+    put:
+      tags:
+        - users
+      summary: update profile
+      description: Update user profile
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                fullname:  
+                  type: string
+                email:
+                  type: string
+                  format: email
+                user_image:  
+                  type: string
+                password:
+                  type: string
+                  format: password
+            example: 
+              name: "griffin"
+              fullname: "griffinhenry"
+              email: "grf@gmail.com"
+              password: "123"
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+            example:
+              user_image: "https://ijs2nfub0s2u0831.png"
+      responses:
+        200:
+          description: update success
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                data:
+                  name: "griffin"
+                  fullname: "griffinhenry"
+                  email: "grf@gmail.com"
+                  user_image: "https://ijs2nfub0s2u0831.png"
+                message: "success update profile"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+    delete:
+      tags:
+        - users
+      summary: delete data user
+      description: delete data from user
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: deleted user success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: "success delete profile"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "user token"
+  schemas:
+    responseObject:
+      type: object
+      properties:
+        data:
+          type: object
+        message:
+          type: string
+    responseObjectArr:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        message:
+          type: string
+  responses:
+    400:
+      description: "error from user"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          example:
+            message: "bad request"
+    500:
+      description: "error from server"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          example:
+            message: "internal server error"
