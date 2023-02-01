@@ -14,598 +14,194 @@ tags:
     - name: items
     - name: bookings
 paths:
-  /register:
-    post:
-      tags:
-        - auth
-      description: feature for user registration
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                fullname:  
-                  type: string
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                  format: password
-                role:  
-                  type: string
-            example:
-              username: "griffin"
-              fullname: "griffinhenry"
-              email: "grf@gmail.com"
-              password: "g123"
-              role: "user"
-      responses:
-        201: 
-          description: "success insert data"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-              example:
-                message: "success create account"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
+    /register:
+        post:
+            tags:
+                - auth
+            description: feature for user registration
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                username:
+                                    type: string
+                                fullname:
+                                    type: string
+                                email:
+                                    type: string
+                                    format: email
+                                password:
+                                    type: string
+                                    format: password
+                                role:
+                                    type: string
+                        example:
+                            username: "griffin"
+                            fullname: "griffinhenry"
+                            email: "grf@gmail.com"
+                            password: "g123"
+                            role: "user"
+            responses:
+                201:
+                    description: "success insert data"
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                message: "success create account"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
 
-  /login:
-    post:
-      tags:
-        - auth
-      description: feature for verifying who a user is
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username: 
-                  type: string
-                password:
-                  type: string
-                  format: password
-              example: 
-                username: "grf@gmail.com"
-                password: "g123"
-      responses:
-        200:
-          description: "success login"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseObject'
-              example:
-                data: 
-                  id: 1
-                  username: "griffin"
-                  fullname: "griffinhenry"
-                  email: "grf@gmail.com"
-                  role: "user"
-                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
-                message: "success login"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-    
-  /users:
-    get:
-      tags: 
-        - users
-      summary: get data user
-      description: getting data user
-      security: 
-        - JWTAuth: []
-      responses:
-        200:
-          description: success show profile
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  data:
-                    id: 2
-                    username: "griffin"
-                    fullname: "griffinhenry"
-                    email: "grf@gmail.com"
-                    user_image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
-                  message: "success show profile"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
+    /login:
+        post:
+            tags:
+                - auth
+            description: feature for verifying who a user is
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                username:
+                                    type: string
+                                password:
+                                    type: string
+                                    format: password
+                            example:
+                                username: "grf@gmail.com"
+                                password: "g123"
+            responses:
+                200:
+                    description: "success login"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/responseObject"
+                            example:
+                                data:
+                                    id: 1
+                                    username: "griffin"
+                                    fullname: "griffinhenry"
+                                    email: "grf@gmail.com"
+                                    role: "user"
+                                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
+                                message: "success login"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
 
-    put:
-      tags:
-        - users
-      summary: update profile
-      description: update user profile
-      security:
-        - JWTAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                fullname:  
-                  type: string
-                email:
-                  type: string
-                  format: email
-                user_image:  
-                  type: string
-                password:
-                  type: string
-                  format: password
-            example: 
-              name: "griffin"
-              fullname: "griffinhenry"
-              email: "grf@gmail.com"
-              password: "123"
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-            example:
-              user_image: "https://ijs2nfub0s2u0831.png"
-      responses:
-        200:
-          description: update success
-          content:
-            application/json:
-              schema:
-                type: object
-              example:
-                message: "success update profile"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
+    /users:
+        get:
+            tags:
+                - users
+            summary: get data user
+            description: getting data user
+            security:
+                - JWTAuth: []
+            responses:
+                200:
+                    description: success show profile
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                example:
+                                    data:
+                                        id: 2
+                                        username: "griffin"
+                                        fullname: "griffinhenry"
+                                        email: "grf@gmail.com"
+                                        user_image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+                                    message: "success show profile"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+        put:
+            tags:
+                - users
+            summary: update profile
+            description: update user profile
+            security:
+                - JWTAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                username:
+                                    type: string
+                                fullname:
+                                    type: string
+                                email:
+                                    type: string
+                                    format: email
+                                user_image:
+                                    type: string
+                                password:
+                                    type: string
+                                    format: password
+                        example:
+                            name: "griffin"
+                            fullname: "griffinhenry"
+                            email: "grf@gmail.com"
+                            password: "123"
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                file:
+                                    type: string
+                                    format: binary
+                        example:
+                            user_image: "https://ijs2nfub0s2u0831.png"
+            responses:
+                200:
+                    description: update success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                            example:
+                                message: "success update profile"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+        delete:
+            tags:
+                - users
+            summary: delete data user
+            description: delete data from user
+            security:
+                - JWTAuth: []
+            responses:
+                200:
+                    description: deleted user success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                example:
+                                    message: "success delete profile"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
 
-    delete:
-      tags:
-        - users
-      summary: delete data user
-      description: delete data from user
-      security:
-        - JWTAuth: []
-      responses:
-        200:
-          description: deleted user success
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: "success delete profile"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-
-  /items:
-    post:
-      tags:
-        - items
-      summary: "by host"
-      description: add items by host
-      security:
-        - JWTAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                camp_id: 
-                  type: integer
-                size:
-                  type: string
-                stock:
-                  type: string
-                price:
-                  type: integer
-                image:
-                  type: string
-            example: 
-                camp_id: 1
-                size: s
-                stock: 5
-                price: 5
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-            example:
-              image: "https://dhywgdyhdy98127d.jpg"
-      responses:
-        201: 
-          description: "success insert data"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-              example:
-                message: "success add new item"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-
-  /items/{id}:
-    put:
-      tags:
-        - items
-      summary: "by host"
-      description: edit items by host
-      security:
-        - JWTAuth: []
-      parameters:
-        - name: id
-          description: item_id
-          required: true
-          in: path
-          schema:
-            type: string
-            example: 1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                size:
-                  type: string
-                stock:
-                  type: string
-                price:
-                  type: integer
-                image:
-                  type: string
-            example:
-              size: m
-              stock: 10
-              price: 10
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-            example:
-              image: "https://ndusigyin1.jpg"
-      responses:
-        200:
-          description: update success
-          content:
-            application/json:
-              schema:
-                type: object
-              example:
-                message: "success update items"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-    
-    delete:
-      tags:
-        - items
-      summary: by host
-      description: delete data from items
-      security:
-        - JWTAuth: []
-      parameters:
-        - name: id
-          description: item_id
-          required: true
-          in: path
-          schema:
-            type: string
-            example: 1
-      responses:
-        200:
-          description: deleted item success
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: "success delete item"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-
-  /bookings:
-    post:
-      tags:
-        - bookings
-      summary: by user
-      description: add booking for user
-      security:
-        - JWTAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                camp_id:
-                  type: integer
-                item_id:  
-                  type: integer
-                quantity:
-                  type: integer
-                check_in:  
-                  type: string
-                check_out:  
-                  type: string
-                guest:
-                  type: integer
-            example:
-              camp_id: 1
-              item_id: 1
-              quantity: 2
-              check_in: 01-02-2023
-              check_out: 02-02-2023
-              guest: 2
-      responses:
-        201: 
-          description: "success insert data"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-              example:
-                data:
-                  payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
-                  create_at: 01-02-2023 15:50:50
-                  status: pending
-                  total_price: 100
-                message: "success booking"
-
-    get:
-      tags:
-        - bookings
-      summary: by user & host
-      description: get booking data for user
-      security:
-        - JWTAuth: []
-      responses:
-        200: 
-          description: "success show booking"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-              example:
-                data: [{
-                  id: 1,
-                  ticket: ACT/34799/XVII-MMDKJF,
-                  camp_title: tanakita,
-                  camp_image: "https://app.s9dh712hunsd1.jpg",
-                  camp_location: sukabumi,
-                  check_in: "01-02-2023",
-                  check_out: "02-02-2023",
-                  status: "pending",
-                  create_at: "01-02-2023 15:50:50",
-                  total_price: 100
-                  },
-                  {
-                  id: 2,
-                  ticket: ABC/27883/XVII-KKDTC,
-                  camp_title: tanakita,
-                  camp_image: "https://app.nd8nd871y2ss.jpg",
-                  camp_location: sukabumi,
-                  check_in: "01-02-2023",
-                  check_out: "03-02-2023",
-                  status: "pending",
-                  create_at: "01-02-2023 15:50:50",
-                  total_price: 200
-                  }]
-                message: "show all transaction success"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-
-  /bookings/{id}:
-    get:
-      tags:
-        - bookings
-      summary: "by user & host"
-      description: get detail booking
-      security:
-        - JWTAuth: []
-      parameters:
-        - name: id
-          description: booking_id
-          required: true
-          in: path
-          schema:
-            type: string
-            example: 1
-      responses:
-        200: 
-          description: "success show booking"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-              example:
-                data:
-                  id: 1
-                  ticket: ACT/34799/XVII-MMDKJF
-                  camp_title: tanakita
-                  camp_image: "https://app.s9dh712hunsd1.jpg"
-                  camp_location: sukabumi
-                  check_in: "01-02-2023"
-                  check_out: "02-02-2023"
-                  guest: 2
-                  camp_cost: 50
-                  items: {
-                    item_id: 1,
-                    size: m,
-                    quantity: 2,
-                    item_cost: 20
-                  }
-                  total_price: 100
-                  create_at: "01-02-2023 15:50:50"
-                  payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
-                  status: "pending"
-                message: "success show detail booking"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-
-  /bookings/{id}/accept:
-    put:
-      tags:
-        - bookings
-      summary: "by host"
-      description: update status booking
-      security:
-        - JWTAuth: []
-      parameters:
-        - name: id
-          description: booking_id
-          required: true
-          in: path
-          schema:
-            type: string
-            example: 1
-      responses:
-        200:
-          description: update success
-          content:
-            application/json:
-              schema:
-                type: object
-              example:
-                message: "success accept booking"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-      
-  /bookings/{id}/cancel:
-    put:
-      tags:
-        - bookings
-      summary: "by user & host"
-      description: update status booking
-      security:
-        - JWTAuth: []
-      parameters:
-        - name: id
-          description: booking_id
-          required: true
-          in: path
-          schema:
-            type: string
-            example: 1
-      responses:
-        200:
-          description: update success
-          content:
-            application/json:
-              schema:
-                type: object
-              example:
-                message: "success cancel booking"
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-
-components:
-  securitySchemes:
-    JWTAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: "user token"
-  schemas:
-    responseObject:
-      type: object
-      properties:
-        data:
-          type: object
-        message:
-          type: string
-    responseObjectArr:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-        message:
-          type: string
-  responses:
-    400:
-      description: "error from user"
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-          example:
-            message: "bad request"
-    500:
-      description: "error from server"
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-          example:
-            message: "internal server error"
     /camps:
         post:
             tags:
@@ -678,16 +274,7 @@ components:
                             example:
                                 message: success add new camp
                 400:
-                    description: bad request
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: input error validation because some fields do not meet predetermined requirements
+                    $ref: "#/components/responses/400"
                 401:
                     description: unauthorized
                     content:
@@ -700,16 +287,7 @@ components:
                             example:
                                 message: access is denied due to invalid credential
                 500:
-                    description: internal server error
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: internal server error
+                    $ref: "#/components/responses/500"
         get:
             tags:
                 - "camps"
@@ -810,16 +388,7 @@ components:
                             example:
                                 message: access is denied due to invalid credential
                 500:
-                    description: internal server error
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: internal server error
+                    $ref: "#/components/responses/500"
     /camps/{id}:
         get:
             tags:
@@ -928,16 +497,7 @@ components:
                             example:
                                 message: data camp not found
                 500:
-                    description: internal server error
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: internal server error
+                    $ref: "#/components/responses/500"
         put:
             tags:
                 - "camps"
@@ -1015,16 +575,7 @@ components:
                             example:
                                 message: success update camp
                 400:
-                    description: bad request
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: input error validation because some fields do not meet predetermined requirements
+                    $ref: "#/components/responses/400"
                 401:
                     description: unauthorized
                     content:
@@ -1048,16 +599,7 @@ components:
                             example:
                                 message: data camp not found
                 500:
-                    description: internal server error
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: internal server error
+                    $ref: "#/components/responses/500"
         delete:
             tags:
                 - "camps"
@@ -1165,16 +707,7 @@ components:
                             example:
                                 message: data camp not found
                 500:
-                    description: internal server error
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: internal server error
+                    $ref: "#/components/responses/500"
     /camps/{id}/decline:
         put:
             tags:
@@ -1224,7 +757,50 @@ components:
                             example:
                                 message: data camp not found
                 500:
-                    description: internal server error
+                    $ref: "#/components/responses/500"
+
+    /items:
+        post:
+            tags:
+                - items
+            summary: "by host"
+            description: add items by host
+            security:
+                - JWTAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                camp_id:
+                                    type: integer
+                                size:
+                                    type: string
+                                stock:
+                                    type: string
+                                price:
+                                    type: integer
+                                image:
+                                    type: string
+                        example:
+                            camp_id: 1
+                            size: s
+                            stock: 5
+                            price: 5
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                file:
+                                    type: string
+                                    format: binary
+                        example:
+                            image: "https://dhywgdyhdy98127d.jpg"
+            responses:
+                201:
+                    description: "success insert data"
                     content:
                         application/json:
                             schema:
@@ -1233,7 +809,346 @@ components:
                                     message:
                                         type: string
                             example:
-                                message: internal server error
+                                message: "success add new item"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+
+    /items/{id}:
+        put:
+            tags:
+                - items
+            summary: "by host"
+            description: edit items by host
+            security:
+                - JWTAuth: []
+            parameters:
+                - name: id
+                  description: item_id
+                  required: true
+                  in: path
+                  schema:
+                      type: string
+                      example: 1
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                size:
+                                    type: string
+                                stock:
+                                    type: string
+                                price:
+                                    type: integer
+                                image:
+                                    type: string
+                        example:
+                            size: m
+                            stock: 10
+                            price: 10
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                file:
+                                    type: string
+                                    format: binary
+                        example:
+                            image: "https://ndusigyin1.jpg"
+            responses:
+                200:
+                    description: update success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                            example:
+                                message: "success update items"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+        delete:
+            tags:
+                - items
+            summary: by host
+            description: delete data from items
+            security:
+                - JWTAuth: []
+            parameters:
+                - name: id
+                  description: item_id
+                  required: true
+                  in: path
+                  schema:
+                      type: string
+                      example: 1
+            responses:
+                200:
+                    description: deleted item success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                example:
+                                    message: "success delete item"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+
+    /bookings:
+        post:
+            tags:
+                - bookings
+            summary: by user
+            description: add booking for user
+            security:
+                - JWTAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                camp_id:
+                                    type: integer
+                                item_id:
+                                    type: integer
+                                quantity:
+                                    type: integer
+                                check_in:
+                                    type: string
+                                check_out:
+                                    type: string
+                                guest:
+                                    type: integer
+                        example:
+                            camp_id: 1
+                            item_id: 1
+                            quantity: 2
+                            check_in: 01-02-2023
+                            check_out: 02-02-2023
+                            guest: 2
+            responses:
+                201:
+                    description: "success insert data"
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                data:
+                                    payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
+                                    create_at: 01-02-2023 15:50:50
+                                    status: pending
+                                    total_price: 100
+                                message: "success booking"
+        get:
+            tags:
+                - bookings
+            summary: by user & host
+            description: get booking data for user
+            security:
+                - JWTAuth: []
+            responses:
+                200:
+                    description: "success show booking"
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                data:
+                                    [
+                                        {
+                                            id: 1,
+                                            ticket: ACT-34799-XVII-MMDKJF,
+                                            camp_title: tanakita,
+                                            camp_image: "https://app.s9dh712hunsd1.jpg",
+                                            camp_location: sukabumi,
+                                            check_in: "01-02-2023",
+                                            check_out: "02-02-2023",
+                                            status: "pending",
+                                            create_at: "01-02-2023 15:50:50",
+                                            total_price: 100,
+                                        },
+                                        {
+                                            id: 2,
+                                            ticket: ABC-27883-XVII-KKDTC,
+                                            camp_title: tanakita,
+                                            camp_image: "https://app.nd8nd871y2ss.jpg",
+                                            camp_location: sukabumi,
+                                            check_in: "01-02-2023",
+                                            check_out: "03-02-2023",
+                                            status: "pending",
+                                            create_at: "01-02-2023 15:50:50",
+                                            total_price: 200,
+                                        },
+                                    ]
+                                message: "show all transaction success"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+
+    /bookings/{id}:
+        get:
+            tags:
+                - bookings
+            summary: "by user & host"
+            description: get detail booking
+            security:
+                - JWTAuth: []
+            parameters:
+                - name: id
+                  description: booking_id
+                  required: true
+                  in: path
+                  schema:
+                      type: string
+                      example: 1
+            responses:
+                200:
+                    description: "success show booking"
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                data:
+                                    id: 1
+                                    ticket: ACT-34799-XVII-MMDKJF
+                                    camp_title: tanakita
+                                    camp_image: "https://app.s9dh712hunsd1.jpg"
+                                    camp_location: sukabumi
+                                    check_in: "01-02-2023"
+                                    check_out: "02-02-2023"
+                                    guest: 2
+                                    camp_cost: 50
+                                    items: { item_id: 1, size: m, quantity: 2, item_cost: 20 }
+                                    total_price: 100
+                                    create_at: "01-02-2023 15:50:50"
+                                    payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
+                                    status: "pending"
+                                message: "success show detail booking"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+
+    /bookings/{id}/accept:
+        put:
+            tags:
+                - bookings
+            summary: "by host"
+            description: update status booking
+            security:
+                - JWTAuth: []
+            parameters:
+                - name: id
+                  description: booking_id
+                  required: true
+                  in: path
+                  schema:
+                      type: string
+                      example: 1
+            responses:
+                200:
+                    description: update success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                            example:
+                                message: "success accept booking"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+
+    /bookings/{id}/cancel:
+        put:
+            tags:
+                - bookings
+            summary: "by user & host"
+            description: update status booking
+            security:
+                - JWTAuth: []
+            parameters:
+                - name: id
+                  description: booking_id
+                  required: true
+                  in: path
+                  schema:
+                      type: string
+                      example: 1
+            responses:
+                200:
+                    description: update success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                            example:
+                                message: "success cancel booking"
+                400:
+                    $ref: "#/components/responses/400"
+                500:
+                    $ref: "#/components/responses/500"
+
+    /bookings/callback:
+        post:
+            tags:
+                - bookings
+            summary: by user
+            description: add booking for user
+            security:
+                - JWTAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                order_id:
+                                    type: string
+                                settlement_time:
+                                    type: string
+                                transaction_status:
+                                    type: string
+                        example:
+                            order_id: ACT-34799-XVII-MMDKJF
+                            settlement_time: "2023-01-30 03:17:20"
+                            transaction_status: settlement
+
+            responses:
+                200:
+                    description: "success insert data"
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                message: "success update transaction"
+
 components:
     securitySchemes:
         JWTAuth:
@@ -1241,3 +1156,43 @@ components:
             scheme: bearer
             bearerFormat: JWT
             description: "user token"
+    schemas:
+        responseObject:
+            type: object
+            properties:
+                data:
+                    type: object
+                message:
+                    type: string
+        responseObjectArr:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        type: object
+                message:
+                    type: string
+    responses:
+        400:
+            description: "error from user"
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            message:
+                                type: string
+                    example:
+                        message: "bad request"
+        500:
+            description: "error from server"
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            message:
+                                type: string
+                    example:
+                        message: "internal server error"
