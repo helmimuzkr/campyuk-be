@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"campkuy-api/config"
+	"campyuk-api/config"
 
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
