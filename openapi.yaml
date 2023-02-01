@@ -436,6 +436,8 @@ paths:
                                                 type: string
                                             images:
                                                 type: array
+                                                items:
+                                                    type: string
                                             items:
                                                 type: array
                                                 items:
@@ -1164,15 +1166,15 @@ components:
                     type: object
                 message:
                     type: string
-        responseObjectArr:
-            type: object
-            properties:
-                data:
-                    type: array
-                    items:
-                        type: object
-                message:
-                    type: string
+        # responseObjectArr:
+            # type: object
+            # properties:
+            #     data:
+            #         type: array
+            #         items:
+            #             type: object
+            #     message:
+            #         type: string
     responses:
         400:
             description: "error from user"
