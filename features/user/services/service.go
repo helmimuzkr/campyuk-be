@@ -113,10 +113,10 @@ func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader,
 		if err != nil {
 			log.Println(err)
 			var msg string
-			if strings.Contains(err.Error(), "kesalahan input") {
+			if strings.Contains(err.Error(), "wrong input") {
 				msg = err.Error()
 			} else {
-				msg = "gagal upload gambar karena kesalahan pada sistem server"
+				msg = "failed to upload image, server error"
 			}
 			return user.Core{}, errors.New(msg)
 		}
