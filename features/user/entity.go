@@ -8,11 +8,11 @@ import (
 
 type Core struct {
 	ID        uint
-	Username  string
+	Username  string `validate:"min=5,omitempty"`
 	Fullname  string
-	Email     string
+	Email     string `validate:"omitempty,email"`
 	UserImage string
-	Password  string
+	Password  string `validate:"min=5,omitempty"`
 	Role      string
 }
 
