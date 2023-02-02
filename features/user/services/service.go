@@ -1,7 +1,6 @@
 package services
 
 import (
-	"campyuk-api/config"
 	"campyuk-api/features/user"
 	"campyuk-api/helper"
 	"errors"
@@ -11,7 +10,6 @@ import (
 
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/go-playground/validator"
-	"github.com/golang-jwt/jwt"
 )
 
 type userUseCase struct {
@@ -75,12 +73,7 @@ func (uuc *userUseCase) Login(email, password string) (string, user.Core, error)
 		return "", user.Core{}, errors.New("password not matched")
 	}
 
-	claims := jwt.MapClaims{}
-	claims["authorized"] = true
-	claims["userID"] = res.ID
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	useToken, _ := token.SignedString([]byte(config.JWT_KEY))
-
+	useToken, _ := helper.GenerateJWT(int(res.ID), res.Role)
 	return useToken, res, nil
 }
 
