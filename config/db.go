@@ -1,6 +1,7 @@
 package config
 
 import (
+	user "campyuk-api/features/user/data"
 	"fmt"
 	"log"
 
@@ -18,4 +19,8 @@ func InitDB(ac AppConfig) *gorm.DB {
 	}
 
 	return db
+}
+
+func Migrate(db *gorm.DB) {
+	db.AutoMigrate(user.User{})
 }
