@@ -1006,7 +1006,7 @@ paths:
                                             ticket: ACT-34799-XVII-MMDKJF,
                                             camp_title: tanakita,
                                             camp_image: "https://app.s9dh712hunsd1.jpg",
-                                            camp_location: sukabumi,
+                                            camp_city: sukabumi,
                                             check_in: "01-02-2023",
                                             check_out: "02-02-2023",
                                             status: "pending",
@@ -1018,7 +1018,7 @@ paths:
                                             ticket: ABC-27883-XVII-KKDTC,
                                             camp_title: tanakita,
                                             camp_image: "https://app.nd8nd871y2ss.jpg",
-                                            camp_location: sukabumi,
+                                            camp_city: sukabumi,
                                             check_in: "01-02-2023",
                                             check_out: "03-02-2023",
                                             status: "pending",
@@ -1102,7 +1102,7 @@ paths:
                                     ticket: ACT-34799-XVII-MMDKJF
                                     camp_title: tanakita
                                     camp_image: "https://app.s9dh712hunsd1.jpg"
-                                    camp_location: sukabumi
+                                    camp_city: sukabumi
                                     camp_price: 20000
                                     check_in: "01-02-2023"
                                     check_out: "02-02-2023"
