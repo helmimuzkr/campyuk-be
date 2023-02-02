@@ -6,7 +6,7 @@ servers:
 info:
     version: "1.0.0"
     title: Campyuk App Project
-    description: The API for the EatBacon IOT project
+    description: The API for campyuk app project
 tags:
     - name: auth
     - name: users
@@ -463,7 +463,7 @@ paths:
                                         - https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
                                     items:
                                         - item_id: 1
-                                          name: tent
+                                          name: tent small
                                           stock: 10
                                           rent_price: 100000
                                           item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
@@ -790,7 +790,7 @@ paths:
                                     type: string
                         example:
                             camp_id: 1
-                            name: tent
+                            name: tent small
                             stock: 5
                             price: 5
                     multipart/form-data:
@@ -841,7 +841,7 @@ paths:
                         schema:
                             type: object
                             properties:
-                                size:
+                                name:
                                     type: string
                                 stock:
                                     type: string
@@ -850,7 +850,7 @@ paths:
                                 image:
                                     type: string
                         example:
-                            size: m
+                            name: tent small
                             stock: 10
                             price: 10
                     multipart/form-data:
@@ -933,21 +933,26 @@ paths:
                                     type: string
                                 guest:
                                     type: integer
+                                bank:
+                                    type: string
                         example:
                             camp_id: 1
                             items:
                                 - item_id: 1
                                   quantity: 2
-                                  total_price: 200000
+                                  rent_cost: 200000
                                 - item_id: 2
                                   quantity: 1
-                                  total_price: 200000
+                                  rent_cost: 200000
                                 - item_id: 3
                                   quantity: 1
-                                  total_price: 300000
+                                  rent_cost: 300000
+                            camp_cost: 50000
+                            total_price: 750000
                             check_in: 01-02-2023
                             check_out: 02-02-2023
                             guest: 2
+                            bank: bca
             responses:
                 201:
                     description: "success insert data"
@@ -960,10 +965,7 @@ paths:
                                         type: string
                             example:
                                 data:
-                                    payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
-                                    booking_date: 01-02-2023
-                                    status: pending
-                                    total_price: 700000
+                                    booking_id: 1
                                 message: "success booking"
         get:
             tags:
@@ -1047,7 +1049,7 @@ paths:
                                 data:
                                     total_price: 10000
                                     bank: bca
-                                    va_number: "9231767841"
+                                    virtual_number: "9231767841"
                                 message: success bank transfer transaction is created
                 400:
                     $ref: "#/components/responses/400"
@@ -1091,10 +1093,10 @@ paths:
                                     check_out: "02-02-2023"
                                     guest: 2
                                     camp_cost: 50
-                                    items: { item_id: 1, size: m, quantity: 2, item_cost: 20 }
+                                    items: { item_id: 1, name: tent small, price: 10, quantity: 2}
                                     total_price: 100
-                                    create_at: "01-02-2023 15:50:50"
-                                    payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
+                                    booking_date: "01-02-2023"
+                                    virtual_number: "4716239019741"
                                     status: "pending"
                                 message: "success show detail booking"
                 400:
