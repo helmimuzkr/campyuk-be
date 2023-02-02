@@ -463,17 +463,17 @@ paths:
                                         - https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
                                     items:
                                         - item_id: 1
-                                          size: s
+                                          name: tent
                                           stock: 10
                                           rent_price: 100000
                                           item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
                                         - item_id: 2
-                                          size: m
+                                          name: bonfire
                                           stock: 1
                                           rent_price: 200000
                                           item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
                                         - item_id: 3
-                                          size: l
+                                          name: sleepingbag
                                           stock: 3
                                           rent_price: 300000
                                           item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
@@ -780,7 +780,7 @@ paths:
                             properties:
                                 camp_id:
                                     type: integer
-                                size:
+                                name:
                                     type: string
                                 stock:
                                     type: string
@@ -790,7 +790,7 @@ paths:
                                     type: string
                         example:
                             camp_id: 1
-                            size: s
+                            name: tent
                             stock: 5
                             price: 5
                     multipart/form-data:
@@ -921,8 +921,10 @@ paths:
                             properties:
                                 camp_id:
                                     type: integer
-                                item_id:
-                                    type: integer
+                                items:
+                                    type: array
+                                    items:
+                                        type: object
                                 quantity:
                                     type: integer
                                 check_in:
@@ -933,8 +935,16 @@ paths:
                                     type: integer
                         example:
                             camp_id: 1
-                            item_id: 1
-                            quantity: 2
+                            items:
+                                - item_id: 1
+                                  quantity: 2
+                                  total_price: 200000
+                                - item_id: 2
+                                  quantity: 1
+                                  total_price: 200000
+                                - item_id: 3
+                                  quantity: 1
+                                  total_price: 300000
                             check_in: 01-02-2023
                             check_out: 02-02-2023
                             guest: 2
@@ -951,9 +961,9 @@ paths:
                             example:
                                 data:
                                     payment_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/81c328f7-ccb3-4047-9791-2fb347783a11#/407"
-                                    create_at: 01-02-2023 15:50:50
+                                    booking_date: 01-02-2023
                                     status: pending
-                                    total_price: 100
+                                    total_price: 700000
                                 message: "success booking"
         get:
             tags:
