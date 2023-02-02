@@ -318,7 +318,7 @@ paths:
                                     total_pages: 1
                                 data:
                                     - id: 1
-                                      verification_status: true
+                                      verification_status: accepted
                                       host_name: john
                                       title: Tanakita Camp
                                       price: 100000
@@ -326,7 +326,7 @@ paths:
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
                                     - id: 2
-                                      verification_status: true
+                                      verification_status: accepted
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
@@ -334,7 +334,7 @@ paths:
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
                                     - id: 3
-                                      verification_status: true
+                                      verification_status: accepted
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
@@ -342,7 +342,7 @@ paths:
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
                                     - id: 4
-                                      verification_status: true
+                                      verification_status: accepted
                                       host_name: john
                                       title: Tanakita Camp
                                       price: 100000
@@ -350,7 +350,7 @@ paths:
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
                                     - id: 5
-                                      verification_status: true
+                                      verification_status: accepted
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
@@ -358,7 +358,7 @@ paths:
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
                                     - id: 6
-                                      verification_status: true
+                                      verification_status: accepted
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
@@ -366,7 +366,7 @@ paths:
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
                                     - id: 7
-                                      verification_status: true
+                                      verification_status: accepted
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
@@ -374,7 +374,7 @@ paths:
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
                                     - id: 8
-                                      verification_status: true
+                                      verification_status: accepted
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
@@ -1103,12 +1103,23 @@ paths:
                                     camp_title: tanakita
                                     camp_image: "https://app.s9dh712hunsd1.jpg"
                                     camp_location: sukabumi
+                                    camp_price: 20000
                                     check_in: "01-02-2023"
                                     check_out: "02-02-2023"
                                     guest: 2
-                                    camp_cost: 50
-                                    items: { item_id: 1, name: tent small, price: 10, quantity: 2 }
-                                    total_price: 100
+                                    camp_cost: 500000
+                                    items:
+                                        - item_id: 1
+                                          name: Tent small
+                                          price: 100000
+                                          quantity: 2
+                                          rent_cost: 200000
+                                        - item_id: 2
+                                          name: Sleeping bag
+                                          price: 200000
+                                          quantity: 2
+                                          rent_cost: 400000
+                                    total_price: 100000
                                     booking_date: "01-02-2023"
                                     bank: "bca"
                                     virtual_number: "4716239019741"
