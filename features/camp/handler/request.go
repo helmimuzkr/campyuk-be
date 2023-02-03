@@ -10,3 +10,5 @@ type campRequest struct {
 	City        string  `json:"city" form:"city"`
 	Distance    int     `json:"distance" form:"distance"`
 }
+
+

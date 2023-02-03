@@ -82,7 +82,14 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 }
 
 func (cs *campService) List(token interface{}) ([]camp.Core, error) {
-	return nil, nil
+	id, role := helper.ExtractToken(token)
+
+	res, err := cs.qry.List(id, role)
+	if err != nil {
+		return nil, errors.New("internal server error")
+	}
+
+	return res, nil
 }
 
 func (cs *campService) GetByID(token interface{}, campID uint) (camp.Core, error) {

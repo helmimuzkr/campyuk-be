@@ -11,6 +11,7 @@ import (
 	usrData "campyuk-api/features/user/data"
 	usrHdl "campyuk-api/features/user/handler"
 	usrSrv "campyuk-api/features/user/services"
+	_middlewareCustom "campyuk-api/middleware"
 
 	"log"
 
@@ -59,6 +60,7 @@ func main() {
 	e.DELETE("/users", uHdl.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	e.POST("/camps", campHandler.Add(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.GET("/camps", campHandler.List(), _middlewareCustom.JWTWithConfig())
 
 	e.POST("/items", iHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/items/:id", iHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
