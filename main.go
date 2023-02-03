@@ -2,6 +2,9 @@ package main
 
 import (
 	"campyuk-api/config"
+	_campData "campyuk-api/features/camp/data"
+	_campHandler "campyuk-api/features/camp/handler"
+	_campService "campyuk-api/features/camp/service"
 	itmData "campyuk-api/features/item/data"
 	itmHdl "campyuk-api/features/item/handler"
 	itmSrv "campyuk-api/features/item/service"
@@ -19,6 +22,7 @@ func main() {
 	e := echo.New()
 	cfg := config.InitConfig()
 	db := config.InitDB(*cfg)
+	config.Migrate(db)
 
 	// v := validator.New()
 	// cld := config.NewCloudinary(*cfg)
@@ -32,6 +36,10 @@ func main() {
 	iData := itmData.New(db)
 	iSrv := itmSrv.New(iData)
 	iHdl := itmHdl.New(iSrv)
+
+	campData := _campData.New(db)
+	campSrv := _campService.New(campData)
+	campHandler := _campHandler.New(campSrv)
 
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.CORS())
@@ -47,6 +55,7 @@ func main() {
 	e.DELETE("/users", uHdl.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	// camp
+	e.POST("/camps", campHandler.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	// item
 	e.POST("/items", iHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
