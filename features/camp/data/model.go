@@ -20,8 +20,8 @@ type Camp struct {
 	Address            string
 	City               string
 	Document           string
-	CampImages         []CampImage `foreignKey:"CampID"`
-	Items              []data.Item `foreignKey:"CampID"`
+	CampImages         []CampImage `gorm:"foreignKey:CampID"`
+	Items              []data.Item `gorm:"foreignKey:CampID"`
 }
 
 type CampImage struct {
@@ -33,6 +33,7 @@ type CampImage struct {
 type CampModel struct {
 	ID                 uint
 	VerificationStatus string
+	HostID             uint
 	Fullname           string
 	Title              string
 	Price              int
@@ -43,8 +44,8 @@ type CampModel struct {
 	Address            string
 	City               string
 	Document           string
-	CampImages         []string
-	Items              []CampItemModel
+	CampImages         []CampImage     `gorm:"-"`
+	Items              []CampItemModel `gorm:"-"`
 }
 
 type CampItemModel struct {
@@ -101,7 +102,7 @@ func ToItemsCore(cim []CampItemModel) []camp.CampItem {
 }
 
 func ToCampCore(cm CampModel) camp.Core {
-	return camp.Core{
+	c := camp.Core{
 		ID:                 cm.ID,
 		VerificationStatus: cm.VerificationStatus,
 		HostName:           cm.Fullname,
@@ -114,9 +115,17 @@ func ToCampCore(cm CampModel) camp.Core {
 		Address:            cm.Address,
 		City:               cm.City,
 		Document:           cm.Document,
-		Images:             cm.CampImages,
+		Images:             ToImageCore(cm.CampImages),
 		Items:              ToItemsCore(cm.Items),
 	}
+
+	images := []string{}
+	for _, v := range cm.CampImages {
+		images = append(images, v.Image)
+	}
+	c.Images = images
+
+	return c
 }
 
 func ToListCampCore(cm []CampModel) []camp.Core {
@@ -124,6 +133,5 @@ func ToListCampCore(cm []CampModel) []camp.Core {
 	for _, v := range cm {
 		cores = append(cores, ToCampCore(v))
 	}
-
 	return cores
 }

@@ -38,9 +38,34 @@ func (cd *campData) Add(userID uint, newCamp camp.Core) error {
 
 	return nil
 }
+
 func (cd *campData) List(userID uint, role string) ([]camp.Core, error) {
-	return nil, nil
+	var cm []CampModel
+
+	switch role {
+	case "host":
+		res, err := cd.listCampHost(userID)
+		if err != nil {
+			return nil, err
+		}
+		cm = res
+	case "admin":
+		res, err := cd.listCampAdmin()
+		if err != nil {
+			return nil, err
+		}
+		cm = res
+	default:
+		res, err := cd.listCampUser()
+		if err != nil {
+			return nil, err
+		}
+		cm = res
+	}
+
+	return ToListCampCore(cm), nil
 }
+
 func (cd *campData) GetByID(userID uint, role string, campID uint) (camp.Core, error) {
 	return camp.Core{}, nil
 }
@@ -53,3 +78,75 @@ func (cd *campData) Delete(userID uint, campID uint) error {
 func (cd *campData) RequestAdmin(userID uint, campID uint) error {
 	return nil
 }
+
+// ------------------------
+// Functions that are not include in the contract
+// ------------------------
+
+func (cd *campData) listCampUser() ([]CampModel, error) {
+	cm := []CampModel{}
+	// Select camp
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED'"
+	tx := cd.db.Raw(qc).Find(&cm)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	// Find camp image
+	for i := range cm {
+		ci := []CampImage{}
+		tx = tx.Raw("SELECT image FROM camp_images WHERE camp_id = ?", cm[i].ID).Find(&ci)
+		if tx.Error != nil {
+			return nil, tx.Error
+		}
+		cm[i].CampImages = ci
+	}
+
+	return cm, nil
+}
+
+func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
+	cm := []CampModel{}
+	// Select camp
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ?"
+	tx := cd.db.Raw(qc, userID).Find(&cm)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	// Find camp image
+	for i := range cm {
+		ci := []CampImage{}
+		tx = tx.Raw("SELECT image FROM camp_images WHERE camp_id = ?", cm[i].ID).Find(&ci)
+		if tx.Error != nil {
+			return nil, tx.Error
+		}
+		cm[i].CampImages = ci
+	}
+
+	return cm, nil
+}
+
+func (cd *campData) listCampAdmin() ([]CampModel, error) {
+	cm := []CampModel{}
+	// Select camp
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING'"
+	tx := cd.db.Raw(qc).Find(&cm)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	// Find camp image
+	for i := range cm {
+		ci := []CampImage{}
+		tx = tx.Raw("SELECT image FROM camp_images WHERE camp_id = ?", cm[i].ID).Find(&ci)
+		if tx.Error != nil {
+			return nil, tx.Error
+		}
+		cm[i].CampImages = ci
+	}
+
+	return cm, nil
+}
+
+// qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.description, camps.latitude, camps.longitude, camps.distance, camps.address, camps.city, camps.document FROM camps JOIN users ON users.id = camps.host_id WHERE camps.host_id = ?"
