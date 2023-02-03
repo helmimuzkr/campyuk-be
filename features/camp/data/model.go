@@ -2,6 +2,7 @@ package data
 
 import (
 	"campyuk-api/features/camp"
+	"campyuk-api/features/item/data"
 
 	"gorm.io/gorm"
 )
@@ -13,13 +14,14 @@ type Camp struct {
 	Title              string
 	Price              int
 	Description        string
-	Latitude           float64
-	Longtitude         float64
+	Latitude           float64 `gorm:"type:decimal(16,15)"`
+	Longitude          float64 `gorm:"type:decimal(17,14)"`
 	Distance           int
 	Address            string
 	City               string
 	Document           string
 	CampImages         []CampImage `foreignKey:"CampID"`
+	Items              []data.Item `foreignKey:"CampID"`
 }
 
 type CampImage struct {
@@ -34,9 +36,9 @@ type CampModel struct {
 	Fullname           string
 	Title              string
 	Price              int
-	Description        string  `gorm:"type:longtext"`
-	Latitude           float64 `gorm:"type:decimal(10,15)"`
-	Longitude          float64 `gorm:"type:decimal(11,14)"`
+	Description        string
+	Latitude           float64
+	Longitude          float64
 	Distance           int
 	Address            string
 	City               string
@@ -62,7 +64,7 @@ func ToData(hostID uint, c camp.Core) Camp {
 		Price:              c.Price,
 		Description:        c.Description,
 		Latitude:           c.Latitude,
-		Longtitude:         c.Longitude,
+		Longitude:          c.Longitude,
 		Distance:           c.Distance,
 		Address:            c.Address,
 		City:               c.City,
