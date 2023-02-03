@@ -18,12 +18,12 @@ func main() {
 	db := config.InitDB(*cfg)
 
 	// v := validator.New()
-	cld := config.NewCloudinary(*cfg)
+	// cld := config.NewCloudinary(*cfg)
 
 	config.Migrate(db)
 
 	uData := usrData.New(db)
-	uSrv := usrSrv.New(uData, cld)
+	uSrv := usrSrv.New(uData)
 	uHdl := usrHdl.New(uSrv)
 
 	e.Pre(middleware.RemoveTrailingSlash())
