@@ -15,6 +15,13 @@ import (
 )
 
 func UploadFile(file *multipart.FileHeader) (string, error) {
+	// Format check
+	filename := strings.Split(file.Filename, ".")
+	format := filename[len(filename)-1]
+	if format != "pdf" && format != "png" && format != "jpg" && format != "jpeg" {
+		return "", errors.New("bad request because of format not pdf, png, jpg, or jpeg")
+	}
+
 	src, _ := file.Open()
 	defer src.Close()
 
@@ -32,28 +39,16 @@ func UploadFile(file *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 
-	// Pengecekan format file
-	format := uploadResult.Format
-	if format != "jpeg" && format != "png" && format != "jpg" && format != "pdf" {
-		cld.Upload.Destroy(
-			context.Background(),
-			uploader.DestroyParams{
-				PublicID: uploadResult.PublicID,
-			},
-		)
-		return "", errors.New("kesalahan input user karena format gambar bukan jpg, jpeg, ataupun png")
-	}
-
 	return uploadResult.SecureURL, nil
 }
 
 func GetPublicID(secureURL string) string {
 	// Proses filter Public ID dari SecureURL(avatar)
 	urls := strings.Split(secureURL, "/")
-	urls = urls[len(urls)-3:]                               // array [file, user, random_name.extension]
+	urls = urls[len(urls)-2:]                               // array [file, random_name.extension]
 	noExtension := strings.Split(urls[len(urls)-1], ".")[0] // remove ".extension", result "random_name"
-	urls = append(urls[:2], noExtension)                    // new array [file, user, random_name]
-	publicID := strings.Join(urls, "/")                     // "file/user/random_name"
+	urls = append(urls[:1], noExtension)                    // new array [file, random_name]
+	publicID := strings.Join(urls, "/")                     // "file/random_name"
 
 	return publicID
 }
