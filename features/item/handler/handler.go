@@ -47,7 +47,7 @@ func (ih *itemHandler) Update() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "wrong input format"})
 		}
 
-		res, err := ih.srv.Add(c.Get("user"), uint(itemID), *RequestToCore(input))
+		res, err := ih.srv.Update(c.Get("user"), uint(itemID), *RequestToCore(input))
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}

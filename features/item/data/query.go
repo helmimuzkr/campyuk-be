@@ -20,6 +20,7 @@ func New(db *gorm.DB) item.ItemData {
 
 func (id *itemData) Add(userID uint, campID uint, addItem item.Core) (item.Core, error) {
 	cnv := CoreToData(addItem)
+	cnv.CampID = campID
 	err := id.db.Create(&cnv).Error
 	if err != nil {
 		log.Println("query error", err.Error())
@@ -30,9 +31,9 @@ func (id *itemData) Add(userID uint, campID uint, addItem item.Core) (item.Core,
 	return addItem, nil
 }
 
-func (id *itemData) Update(itemID uint, campID uint, updateData item.Core) (item.Core, error) {
+func (id *itemData) Update(userID uint, itemID uint, updateData item.Core) (item.Core, error) {
 	cnv := CoreToData(updateData)
-	qry := id.db.Model(&Item{}).Where("id = ? and camp_id = ?", itemID, campID).Updates(&cnv)
+	qry := id.db.Model(&Item{}).Where("id = ?", itemID).Updates(&cnv)
 
 	affrows := qry.RowsAffected
 	if affrows <= 0 {
