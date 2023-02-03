@@ -23,7 +23,7 @@ type ItemService interface {
 }
 
 type ItemData interface {
-	Add(userID uint, newItem Core) (Core, error)
-	Update(userID uint, itemID uint, updateData Core) (Core, error)
-	Delete(userID uint, itemID uint) error
+	Add(campID uint, newItem Core) (Core, error)
+	Update(itemID uint, campID uint, updateData Core) (Core, error)
+	Delete(itemID uint, campID uint) error
 }
