@@ -14,6 +14,16 @@ import (
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 )
 
+func NewCloudinary() *cloudinary.Cloudinary {
+	cld, err := cloudinary.NewFromParams(config.CLOUDINARY_CLOUD_NAME, config.CLOUDINARY_API_KEY, config.CLOUDINARY_API_SECRET)
+	if err != nil {
+		log.Println("init cloudinary gagal", err)
+		return nil
+	}
+
+	return cld
+}
+
 func UploadFile(file *multipart.FileHeader) (string, error) {
 	// Format check
 	filename := strings.Split(file.Filename, ".")
@@ -26,6 +36,7 @@ func UploadFile(file *multipart.FileHeader) (string, error) {
 	defer src.Close()
 
 	publicID := time.Now().Format("20060102-150405") // Format  "(YY-MM-DD)-(hh-mm-ss)""
+
 	cld := NewCloudinary()
 	uploadResult, err := cld.Upload.Upload(
 		context.Background(),
@@ -67,14 +78,4 @@ func DestroyFile(publicID string) error {
 	}
 
 	return nil
-}
-
-func NewCloudinary() *cloudinary.Cloudinary {
-	cld, err := cloudinary.NewFromParams(config.CLOUDINARY_CLOUD_NAME, config.CLOUDINARY_API_KEY, config.CLOUDINARY_API_SECRET)
-	if err != nil {
-		log.Println("init cloudinary gagal", err)
-		return nil
-	}
-
-	return cld
 }
