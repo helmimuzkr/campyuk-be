@@ -8,21 +8,18 @@ import (
 	"mime/multipart"
 	"strings"
 
-	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/go-playground/validator/v10"
 )
 
 type campService struct {
 	qry camp.CampData
 	vld *validator.Validate
-	cld *cloudinary.Cloudinary
 }
 
-func New(q camp.CampData, v *validator.Validate, c *cloudinary.Cloudinary) camp.CampService {
+func New(q camp.CampData, v *validator.Validate) camp.CampService {
 	return &campService{
 		qry: q,
 		vld: v,
-		cld: c,
 	}
 }
 
@@ -32,7 +29,12 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 		return errors.New("access is denied due to invalid credential")
 	}
 
-	docURL, err := helper.UploadFile(document, cs.cld)
+	if err := cs.vld.Struct(newCamp); err != nil {
+		msg := helper.ValidationErrorHandle(err)
+		return errors.New(msg)
+	}
+
+	docURL, err := helper.UploadFile(document)
 	if err != nil {
 		log.Println(err)
 		var msg string
@@ -46,7 +48,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 
 	imageURLs := []string{}
 	for _, h := range imagesHeader {
-		image, err := helper.UploadFile(h, cs.cld)
+		image, err := helper.UploadFile(h)
 		if err != nil {
 			log.Println(err)
 			var msg string
@@ -59,7 +61,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 			// Hapus image di Cloudinary(terlanjur upload) jika salah satu image gagal diupload
 			for _, url := range imageURLs {
 				publicID := helper.GetPublicID(url)
-				if err = helper.DestroyFile(publicID, cs.cld); err != nil {
+				if err = helper.DestroyFile(publicID); err != nil {
 					log.Println(err)
 					return errors.New("failed to upload image because internal server error")
 				}
