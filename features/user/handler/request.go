@@ -15,6 +15,7 @@ type RegisterRequest struct {
 	Fullname string `json:"fullname" form:"fullname"`
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
+	Role     string `json:"role" form:"role"`
 }
 
 type UpdateRequest struct {
@@ -40,6 +41,7 @@ func ReqToCore(data interface{}) *user.Core {
 		res.Fullname = cnv.Fullname
 		res.Email = cnv.Email
 		res.Password = cnv.Password
+		res.Role = cnv.Role
 	case UpdateRequest:
 		cnv := data.(UpdateRequest)
 		res.Username = cnv.Username
