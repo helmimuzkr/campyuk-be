@@ -2,12 +2,17 @@ package helper
 
 import (
 	"campyuk-api/config"
+	"log"
 
 	"github.com/golang-jwt/jwt"
 )
 
 func ExtractToken(t interface{}) (uint, string) {
-	user := t.(*jwt.Token)
+	user, ok := t.(*jwt.Token)
+	if !ok {
+		log.Println("t interface {} is nil, not *jwt.Token")
+		return 0, ""
+	}
 	var (
 		userID uint
 		role   string

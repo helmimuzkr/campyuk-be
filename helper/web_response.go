@@ -51,6 +51,9 @@ func ErrorResponse(msg string) (int, interface{}) {
 		code = http.StatusInternalServerError
 	case strings.Contains(msg, "denied"):
 		code = http.StatusUnauthorized
+	case strings.Contains(msg, "jwt"):
+		msg = "access is denied due to invalid credential"
+		code = http.StatusUnauthorized
 	}
 
 	return code, resp
