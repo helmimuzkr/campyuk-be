@@ -4,6 +4,7 @@ import (
 	"campyuk-api/features/item"
 	"campyuk-api/helper"
 	"errors"
+	"log"
 	"strings"
 )
 
@@ -28,9 +29,12 @@ func (is *itemSrv) Add(token interface{}, campID uint, newItem item.Core) (item.
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
 			msg = "data not found"
+		} else if strings.Contains(err.Error(), "denied") {
+			msg = err.Error()
 		} else {
 			msg = "internal server error"
 		}
+		log.Println(err)
 		return item.Core{}, errors.New(msg)
 	}
 
@@ -48,9 +52,12 @@ func (is *itemSrv) Update(token interface{}, itemID uint, updateData item.Core) 
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
 			msg = "data not found"
+		} else if strings.Contains(err.Error(), "denied") {
+			msg = err.Error()
 		} else {
 			msg = "internal server error"
 		}
+		log.Println(err)
 		return item.Core{}, errors.New(msg)
 	}
 
@@ -68,9 +75,12 @@ func (is *itemSrv) Delete(token interface{}, itemID uint) error {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
 			msg = "data not found"
+		} else if strings.Contains(err.Error(), "denied") {
+			msg = err.Error()
 		} else {
 			msg = "internal server error"
 		}
+		log.Println(err)
 		return errors.New(msg)
 	}
 
