@@ -49,6 +49,8 @@ func ErrorResponse(msg string) (int, interface{}) {
 		code = http.StatusBadRequest
 	case strings.Contains(msg, "upload"):
 		code = http.StatusInternalServerError
+	case strings.Contains(msg, "denied"):
+		code = http.StatusUnauthorized
 	}
 
 	return code, resp

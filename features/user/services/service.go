@@ -8,7 +8,7 @@ import (
 	"mime/multipart"
 	"strings"
 
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 )
 
 type userUseCase struct {
@@ -99,7 +99,6 @@ func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader,
 		if fileData.Size > 5000000 {
 			return user.Core{}, errors.New("size error")
 		}
-		log.Println(fileData)
 		secureURL, err := helper.UploadFile(&fileData)
 		if err != nil {
 			log.Println(err)

@@ -14,11 +14,29 @@ import (
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 )
 
+func NewCloudinary() *cloudinary.Cloudinary {
+	cld, err := cloudinary.NewFromParams(config.CLOUDINARY_CLOUD_NAME, config.CLOUDINARY_API_KEY, config.CLOUDINARY_API_SECRET)
+	if err != nil {
+		log.Println("init cloudinary gagal", err)
+		return nil
+	}
+
+	return cld
+}
+
 func UploadFile(file *multipart.FileHeader) (string, error) {
+	// Format check
+	filename := strings.Split(file.Filename, ".")
+	format := filename[len(filename)-1]
+	if format != "pdf" && format != "png" && format != "jpg" && format != "jpeg" {
+		return "", errors.New("bad request because of format not pdf, png, jpg, or jpeg")
+	}
+
 	src, _ := file.Open()
 	defer src.Close()
 
 	publicID := time.Now().Format("20060102-150405") // Format  "(YY-MM-DD)-(hh-mm-ss)""
+
 	cld := NewCloudinary()
 	uploadResult, err := cld.Upload.Upload(
 		context.Background(),
@@ -32,28 +50,16 @@ func UploadFile(file *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 
-	// Pengecekan format file
-	format := uploadResult.Format
-	if format != "jpeg" && format != "png" && format != "jpg" && format != "pdf" {
-		cld.Upload.Destroy(
-			context.Background(),
-			uploader.DestroyParams{
-				PublicID: uploadResult.PublicID,
-			},
-		)
-		return "", errors.New("kesalahan input user karena format gambar bukan jpg, jpeg, ataupun png")
-	}
-
 	return uploadResult.SecureURL, nil
 }
 
 func GetPublicID(secureURL string) string {
 	// Proses filter Public ID dari SecureURL(avatar)
 	urls := strings.Split(secureURL, "/")
-	urls = urls[len(urls)-3:]                               // array [file, user, random_name.extension]
+	urls = urls[len(urls)-2:]                               // array [file, random_name.extension]
 	noExtension := strings.Split(urls[len(urls)-1], ".")[0] // remove ".extension", result "random_name"
-	urls = append(urls[:2], noExtension)                    // new array [file, user, random_name]
-	publicID := strings.Join(urls, "/")                     // "file/user/random_name"
+	urls = append(urls[:1], noExtension)                    // new array [file, random_name]
+	publicID := strings.Join(urls, "/")                     // "file/random_name"
 
 	return publicID
 }
@@ -72,14 +78,4 @@ func DestroyFile(publicID string) error {
 	}
 
 	return nil
-}
-
-func NewCloudinary() *cloudinary.Cloudinary {
-	cld, err := cloudinary.NewFromParams(config.CLOUDINARY_CLOUD_NAME, config.CLOUDINARY_API_KEY, config.CLOUDINARY_API_SECRET)
-	if err != nil {
-		log.Println("init cloudinary gagal", err)
-		return nil
-	}
-
-	return cld
 }

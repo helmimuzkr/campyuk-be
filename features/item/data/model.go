@@ -16,18 +16,20 @@ type Item struct {
 
 func ToCore(data Item) item.Core {
 	return item.Core{
-		ID:    data.ID,
-		Name:  data.Name,
-		Stock: data.Stock,
-		Price: data.Price,
+		ID:     data.ID,
+		CampID: int(data.CampID),
+		Name:   data.Name,
+		Stock:  data.Stock,
+		Price:  data.Price,
 	}
 }
 
 func CoreToData(data item.Core) Item {
 	return Item{
-		Model: gorm.Model{ID: data.ID},
-		Name:  data.Name,
-		Stock: data.Stock,
-		Price: data.Price,
+		Model:  gorm.Model{ID: data.ID},
+		CampID: uint(data.CampID),
+		Name:   data.Name,
+		Stock:  data.Stock,
+		Price:  data.Price,
 	}
 }
