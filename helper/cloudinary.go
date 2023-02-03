@@ -3,6 +3,7 @@ package helper
 import (
 	"context"
 	"errors"
+	"log"
 	"mime/multipart"
 	"strings"
 	"time"
@@ -13,12 +14,12 @@ import (
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 )
 
-func UploadFile(file *multipart.FileHeader, cld *cloudinary.Cloudinary) (string, error) {
+func UploadFile(file *multipart.FileHeader) (string, error) {
 	src, _ := file.Open()
 	defer src.Close()
 
 	publicID := time.Now().Format("20060102-150405") // Format  "(YY-MM-DD)-(hh-mm-ss)""
-
+	cld := NewCloudinary()
 	uploadResult, err := cld.Upload.Upload(
 		context.Background(),
 		src,
@@ -57,8 +58,9 @@ func GetPublicID(secureURL string) string {
 	return publicID
 }
 
-func DestroyFile(publicID string, cld *cloudinary.Cloudinary) error {
+func DestroyFile(publicID string) error {
 	// Proses destroy file
+	cld := NewCloudinary()
 	_, err := cld.Upload.Destroy(
 		context.Background(),
 		uploader.DestroyParams{
@@ -70,4 +72,14 @@ func DestroyFile(publicID string, cld *cloudinary.Cloudinary) error {
 	}
 
 	return nil
+}
+
+func NewCloudinary() *cloudinary.Cloudinary {
+	cld, err := cloudinary.NewFromParams(config.CLOUDINARY_CLOUD_NAME, config.CLOUDINARY_API_KEY, config.CLOUDINARY_API_SECRET)
+	if err != nil {
+		log.Println("init cloudinary gagal", err)
+		return nil
+	}
+
+	return cld
 }
