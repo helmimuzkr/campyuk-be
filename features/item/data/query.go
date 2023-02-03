@@ -18,16 +18,16 @@ func New(db *gorm.DB) item.ItemData {
 	}
 }
 
-func (id *itemData) Add(campID uint, newItem item.Core) (item.Core, error) {
-	cnv := CoreToData(newItem)
+func (id *itemData) Add(userID uint, campID uint, addItem item.Core) (item.Core, error) {
+	cnv := CoreToData(addItem)
 	err := id.db.Create(&cnv).Error
 	if err != nil {
 		log.Println("query error", err.Error())
 		return item.Core{}, errors.New("querry error, fail to add item")
 	}
 
-	newItem.ID = cnv.ID
-	return newItem, nil
+	addItem.ID = cnv.ID
+	return addItem, nil
 }
 
 func (id *itemData) Update(itemID uint, campID uint, updateData item.Core) (item.Core, error) {
