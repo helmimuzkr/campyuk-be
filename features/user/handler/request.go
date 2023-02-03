@@ -15,6 +15,7 @@ type RegisterRequest struct {
 	Fullname string `json:"fullname" form:"fullname"`
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
+	Role     string `json:"role" form:"role"`
 }
 
 type UpdateRequest struct {
@@ -22,6 +23,7 @@ type UpdateRequest struct {
 	Fullname   string `json:"fullname" form:"fullname"`
 	Email      string `json:"email" form:"email"`
 	Password   string `json:"password" form:"password"`
+	Role       string `json:"role" form:"role"`
 	UserImage  string `json:"user_image" form:"user_image"`
 	FileHeader multipart.FileHeader
 }
@@ -40,6 +42,7 @@ func ReqToCore(data interface{}) *user.Core {
 		res.Fullname = cnv.Fullname
 		res.Email = cnv.Email
 		res.Password = cnv.Password
+		res.Role = cnv.Role
 	case UpdateRequest:
 		cnv := data.(UpdateRequest)
 		res.Username = cnv.Username
@@ -47,6 +50,7 @@ func ReqToCore(data interface{}) *user.Core {
 		res.Email = cnv.Email
 		res.Password = cnv.Password
 		res.UserImage = cnv.UserImage
+		res.Role = cnv.Role
 	default:
 		return nil
 	}

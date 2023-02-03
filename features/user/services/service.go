@@ -8,21 +8,18 @@ import (
 	"mime/multipart"
 	"strings"
 
-	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/go-playground/validator"
 )
 
 type userUseCase struct {
 	qry user.UserData
 	vld *validator.Validate
-	cld *cloudinary.Cloudinary
 }
 
 func New(ud user.UserData) user.UserService {
 	return &userUseCase{
 		qry: ud,
 		vld: validator.New(),
-		cld: &cloudinary.Cloudinary{},
 	}
 }
 
@@ -102,7 +99,8 @@ func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader,
 		if fileData.Size > 5000000 {
 			return user.Core{}, errors.New("size error")
 		}
-		secureURL, err := helper.UploadFile(&fileData, uuc.cld)
+		log.Println(fileData)
+		secureURL, err := helper.UploadFile(&fileData)
 		if err != nil {
 			log.Println(err)
 			var msg string
@@ -129,7 +127,7 @@ func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader,
 
 	if res.UserImage != "" {
 		publicID := helper.GetPublicID(res.UserImage)
-		if err := helper.DestroyFile(publicID, uuc.cld); err != nil {
+		if err := helper.DestroyFile(publicID); err != nil {
 			log.Println("destroy file", err)
 			return user.Core{}, errors.New("failed to destroy image")
 		}
