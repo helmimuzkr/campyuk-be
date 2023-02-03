@@ -11,16 +11,15 @@ type Item struct {
 	Name   string
 	Stock  int
 	Price  int
-	CampID int
+	CampID uint
 }
 
 func ToCore(data Item) item.Core {
 	return item.Core{
-		ID:     data.ID,
-		Name:   data.Name,
-		Stock:  data.Stock,
-		Price:  data.Price,
-		CampID: data.CampID,
+		ID:    data.ID,
+		Name:  data.Name,
+		Stock: data.Stock,
+		Price: data.Price,
 	}
 }
 
