@@ -27,9 +27,9 @@ func (is *itemSrv) Add(token interface{}, campID uint, newItem item.Core) (item.
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
-			msg = "data tidak ditemukan"
+			msg = "data not found"
 		} else {
-			msg = "terjadi kesalahan pada server"
+			msg = "internal server error"
 		}
 		return item.Core{}, errors.New(msg)
 	}
@@ -47,9 +47,9 @@ func (is *itemSrv) Update(token interface{}, itemID uint, updateData item.Core) 
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
-			msg = "data tidak ditemukan"
+			msg = "data not found"
 		} else {
-			msg = "terdapat masalah pada server"
+			msg = "internal server error"
 		}
 		return item.Core{}, errors.New(msg)
 	}
@@ -67,9 +67,9 @@ func (is *itemSrv) Delete(token interface{}, itemID uint) error {
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
-			msg = "data tidak ditemukan"
+			msg = "data not found"
 		} else {
-			msg = "terdapat masalah pada server"
+			msg = "internal server error"
 		}
 		return errors.New(msg)
 	}
