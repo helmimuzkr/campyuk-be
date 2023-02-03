@@ -7,6 +7,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -103,35 +104,35 @@ func TestLogin(t *testing.T) {
 	})
 }
 
-// func TestProfile(t *testing.T) {
-// 	data := mocks.NewUserData(t)
-// 	resData := user.Core{ID: uint(1), Username: "griffin", Fullname: "griffinhenry", Email: "grf@gmail.com"}
+func TestProfile(t *testing.T) {
+	data := mocks.NewUserData(t)
+	resData := user.Core{ID: uint(1), Username: "griffin", Fullname: "griffinhenry", Email: "grf@gmail.com"}
 
-// 	t.Run("success show profile", func(t *testing.T) {
-// 		data.On("Profile", uint(1)).Return(resData, nil).Once()
-// 		srv := New(data, cld)
-// 		_, token := helper.GenerateJWT(1, "user")
-// 		useToken := token.(*jwt.Token)
-// 		useToken.Valid = true
-// 		res, err := srv.Profile(useToken)
-// 		assert.Nil(t, err)
-// 		assert.Equal(t, resData.Fullname, res.Fullname)
-// 		data.AssertExpectations(t)
-// 	})
+	t.Run("success show profile", func(t *testing.T) {
+		data.On("Profile", uint(1)).Return(resData, nil).Once()
+		srv := New(data)
+		_, token := helper.GenerateJWT(1, "user")
+		useToken := token.(*jwt.Token)
+		useToken.Valid = true
+		res, err := srv.Profile(useToken)
+		assert.Nil(t, err)
+		assert.Equal(t, resData.Fullname, res.Fullname)
+		data.AssertExpectations(t)
+	})
 
-// 	t.Run("data not found", func(t *testing.T) {
-// 		data.On("Profile", uint(1)).Return(user.Core{}, errors.New("query error, problem with server")).Once()
-// 		srv := New(data, cld)
-// 		_, token := helper.GenerateJWT(1, "user")
-// 		useToken := token.(*jwt.Token)
-// 		useToken.Valid = true
-// 		res, err := srv.Profile(useToken)
-// 		assert.NotNil(t, err)
-// 		assert.ErrorContains(t, err, "server")
-// 		assert.Equal(t, user.Core{}, res)
-// 		data.AssertExpectations(t)
-// 	})
-// }
+	t.Run("data not found", func(t *testing.T) {
+		data.On("Profile", uint(1)).Return(user.Core{}, errors.New("query error, problem with server")).Once()
+		srv := New(data)
+		_, token := helper.GenerateJWT(1, "user")
+		useToken := token.(*jwt.Token)
+		useToken.Valid = true
+		res, err := srv.Profile(useToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "server")
+		assert.Equal(t, user.Core{}, res)
+		data.AssertExpectations(t)
+	})
+}
 
 // func TestUpdate(t *testing.T) {
 // 	data := mocks.NewUserData(t)
@@ -198,29 +199,29 @@ func TestLogin(t *testing.T) {
 // 	})
 // }
 
-// func TestDelete(t *testing.T) {
-// 	data := mocks.NewUserData(t)
+func TestDelete(t *testing.T) {
+	data := mocks.NewUserData(t)
 
-// 	t.Run("success delete profile", func(t *testing.T) {
-// 		data.On("Delete", uint(1)).Return(nil).Once()
-// 		srv := New(data, cld)
-// 		_, token := helper.GenerateJWT(1, "user")
-// 		useToken := token.(*jwt.Token)
-// 		useToken.Valid = true
-// 		err := srv.Delete(useToken)
-// 		assert.Nil(t, err)
-// 		data.AssertExpectations(t)
-// 	})
+	t.Run("success delete profile", func(t *testing.T) {
+		data.On("Delete", uint(1)).Return(nil).Once()
+		srv := New(data)
+		_, token := helper.GenerateJWT(1, "user")
+		useToken := token.(*jwt.Token)
+		useToken.Valid = true
+		err := srv.Delete(useToken)
+		assert.Nil(t, err)
+		data.AssertExpectations(t)
+	})
 
-// 	t.Run("internal server error", func(t *testing.T) {
-// 		data.On("Delete", mock.Anything).Return(errors.New("server error")).Once()
-// 		srv := New(data, cld)
-// 		_, token := helper.GenerateJWT(1, "user")
-// 		useToken := token.(*jwt.Token)
-// 		useToken.Valid = true
-// 		err := srv.Delete(useToken)
-// 		assert.NotNil(t, err)
-// 		assert.ErrorContains(t, err, "error")
-// 		data.AssertExpectations(t)
-// 	})
-// }
+	t.Run("internal server error", func(t *testing.T) {
+		data.On("Delete", mock.Anything).Return(errors.New("server error")).Once()
+		srv := New(data)
+		_, token := helper.GenerateJWT(1, "user")
+		useToken := token.(*jwt.Token)
+		useToken.Valid = true
+		err := srv.Delete(useToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "error")
+		data.AssertExpectations(t)
+	})
+}
