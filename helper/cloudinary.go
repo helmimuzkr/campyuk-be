@@ -42,9 +42,8 @@ func UploadFile(file *multipart.FileHeader) (string, error) {
 		context.Background(),
 		src,
 		uploader.UploadParams{
-			PublicID:     publicID,
-			ResourceType: "image",
-			Folder:       config.CLOUDINARY_UPLOAD_FOLDER,
+			PublicID: publicID,
+			Folder:   config.CLOUDINARY_UPLOAD_FOLDER,
 		})
 	if err != nil {
 		return "", err
