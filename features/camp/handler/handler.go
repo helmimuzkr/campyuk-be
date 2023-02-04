@@ -98,7 +98,20 @@ func (ch *campHandler) Update() echo.HandlerFunc {
 }
 func (ch *campHandler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+		if token == nil {
+			token = jwt.New(jwt.SigningMethodES256)
+		}
+
+		paramID := c.Param("id")
+		campID, _ := strconv.Atoi(paramID)
+
+		err := ch.srv.Delete(token, uint(campID))
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "success delete camp"))
 	}
 }
 func (ch *campHandler) Accept() echo.HandlerFunc {
