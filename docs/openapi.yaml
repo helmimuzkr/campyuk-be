@@ -11,6 +11,7 @@ tags:
     - name: auth
     - name: users
     - name: camps
+    - name: images
     - name: items
     - name: bookings
 paths:
@@ -215,8 +216,6 @@ paths:
                         schema:
                             type: object
                             properties:
-                                host_id:
-                                    type: integer
                                 title:
                                     type: string
                                 price:
@@ -312,10 +311,10 @@ paths:
                             example:
                                 pagination:
                                     page: 1
-                                    limit: 8
+                                    limit: 4
                                     offset: 0
                                     total_record: 8
-                                    total_pages: 1
+                                    total_pages: 2
                                 data:
                                     - id: 1
                                       verification_status: accepted
@@ -344,38 +343,6 @@ paths:
                                     - id: 4
                                       verification_status: accepted
                                       host_name: john
-                                      title: Tanakita Camp
-                                      price: 100000
-                                      city: Gotham City
-                                      distance: 100
-                                      image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - id: 5
-                                      verification_status: accepted
-                                      host_name: doe
-                                      title: Tanakita Camp
-                                      price: 100000
-                                      city: Gotham City
-                                      distance: 100
-                                      image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - id: 6
-                                      verification_status: accepted
-                                      host_name: doe
-                                      title: Tanakita Camp
-                                      price: 100000
-                                      city: Gotham City
-                                      distance: 100
-                                      image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - id: 7
-                                      verification_status: accepted
-                                      host_name: doe
-                                      title: Tanakita Camp
-                                      price: 100000
-                                      city: Gotham City
-                                      distance: 100
-                                      image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                    - id: 8
-                                      verification_status: accepted
-                                      host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
                                       city: Gotham City
@@ -466,25 +433,26 @@ paths:
                                     city: Gotham city
                                     distance: 100
                                     images:
-                                        - https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
-                                        - https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fdisplay.ub.ac.id%2Fwp-content%2Fuploads%2F2021%2F05%2F055886600_1526867328-20180520-Refleksi-20-Tahun-Reformasi-dalam-Jepretan-Kamera-AFP-1-1024x591.png&f=1&nofb=1&ipt=0255ab3e0e0ec03987a0d34de8ce3fa8a130a0262b5af32372607cb2846334ae&ipo=images
-                                        - https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
+                                        - image_id: 1
+                                          image: https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fdisplay.ub.ac.id%2Fwp-content%2Fuploads%2F2021%2F05%2F055886600_1526867328-20180520-Refleksi-20-Tahun-Reformasi-dalam-Jepretan-Kamera-AFP-1-1024x591.png&f=1&nofb=1&ipt=0255ab3e0e0ec03987a0d34de8ce3fa8a130a0262b5af32372607cb2846334ae&ipo=images
+                                        - image_id: 2
+                                          image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
+                                        - image_id: 3
+                                          image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
+                                        - https://external-content.duckduckgo.com/
                                     items:
                                         - item_id: 1
                                           name: tent small
                                           stock: 10
                                           rent_price: 100000
-                                          item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
                                         - item_id: 2
                                           name: bonfire
                                           stock: 1
                                           rent_price: 200000
-                                          item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
                                         - item_id: 3
                                           name: sleepingbag
                                           stock: 3
                                           rent_price: 300000
-                                          item_image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-2.tstatic.net%2Fmanado%2Ffoto%2Fbank%2Fimages%2Fkeadaan-gorden-yang-ada-di-rumah-jabatan-ketua-fraksi-pks-dpr-ri.jpg&f=1&nofb=1&ipt=3844fa3e62210b13ca63ee6d62a2ca2c3f2049ef1a612556dfbf2fa2c6926e94&ipo=images
                                 message: success show detail camp
                 401:
                     description: unauthorized
@@ -771,6 +739,150 @@ paths:
                 500:
                     $ref: "#/components/responses/500"
 
+    /images:
+        post:
+            tags:
+                - "images"
+            summary: Add image (host)
+            description: Add new image in camp ground
+            security:
+                - JWTAuth: []
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                camp_id:
+                                    type: integer
+                                images:
+                                    type: string
+                                    format: binary
+                        example:
+                            camp_id: 1
+                            images: binary
+            responses:
+                201:
+                    description: success add image
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                message: success add iamge
+                400:
+                    $ref: "#/components/responses/400"
+                401:
+                    description: unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                message: access is denied due to invalid credential
+                500:
+                    $ref: "#/components/responses/500"
+    /images/{id}:
+        # put:
+        #     tags:
+        #         - "images"
+        #     summary: update image (host)
+        #     description: Add new image in camp ground
+        #     security:
+        #         - JWTAuth: []
+        #     parameters:
+        #         - name: id
+        #           in: path
+        #           required: true
+        #           schema:
+        #               type: integer
+        #     requestBody:
+        #         required: true
+        #         content:
+        #             multipart/form-data:
+        #                 schema:
+        #                     type: object
+        #                     properties:
+        #                         images:
+        #                             type: string
+        #                             format: binary
+        #                 example:
+        #                     images: binary
+        #     responses:
+        #         200:
+        #             description: success add image
+        #             content:
+        #                 application/json:
+        #                     schema:
+        #                         type: object
+        #                         properties:
+        #                             message:
+        #                                 type: string
+        #                     example:
+        #                         message: success update iamge
+        #         400:
+        #             $ref: "#/components/responses/400"
+        #         401:
+        #             description: unauthorized
+        #             content:
+        #                 application/json:
+        #                     schema:
+        #                         type: object
+        #                         properties:
+        #                             message:
+        #                                 type: string
+        #                     example:
+        #                         message: access is denied due to invalid credential
+        #         500:
+        #             $ref: "#/components/responses/500"
+        delete:
+            tags:
+                - "images"
+            summary: delete image (host)
+            description: Add new image in camp ground
+            security:
+                - JWTAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    description: success delete image
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                message: success delete iamge
+                400:
+                    $ref: "#/components/responses/400"
+                401:
+                    description: unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                message: access is denied due to invalid credential
+                500:
+                    $ref: "#/components/responses/500"
+
     /items:
         post:
             tags:
@@ -828,61 +940,61 @@ paths:
                     $ref: "#/components/responses/500"
 
     /items/{id}:
-        put:
-            tags:
-                - items
-            summary: "by host"
-            description: edit items by host
-            security:
-                - JWTAuth: []
-            parameters:
-                - name: id
-                  description: item_id
-                  required: true
-                  in: path
-                  schema:
-                      type: string
-                      example: 1
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                name:
-                                    type: string
-                                stock:
-                                    type: string
-                                price:
-                                    type: integer
-                                image:
-                                    type: string
-                        example:
-                            name: tent small
-                            stock: 10
-                            price: 10
-                    multipart/form-data:
-                        schema:
-                            type: object
-                            properties:
-                                file:
-                                    type: string
-                                    format: binary
-                        example:
-                            image: "https://ndusigyin1.jpg"
-            responses:
-                200:
-                    description: update success
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                            example:
-                                message: "success update items"
-                400:
-                    $ref: "#/components/responses/400"
-                500:
-                    $ref: "#/components/responses/500"
+        # put:
+        #     tags:
+        #         - items
+        #     summary: "by host"
+        #     description: edit items by host
+        #     security:
+        #         - JWTAuth: []
+        #     parameters:
+        #         - name: id
+        #           description: item_id
+        #           required: true
+        #           in: path
+        #           schema:
+        #               type: string
+        #               example: 1
+        #     requestBody:
+        #         content:
+        #             application/json:
+        #                 schema:
+        #                     type: object
+        #                     properties:
+        #                         name:
+        #                             type: string
+        #                         stock:
+        #                             type: string
+        #                         price:
+        #                             type: integer
+        #                         image:
+        #                             type: string
+        #                 example:
+        #                     name: tent small
+        #                     stock: 10
+        #                     price: 10
+        #             multipart/form-data:
+        #                 schema:
+        #                     type: object
+        #                     properties:
+        #                         file:
+        #                             type: string
+        #                             format: binary
+        #                 example:
+        #                     image: "https://ndusigyin1.jpg"
+        #     responses:
+        #         200:
+        #             description: update success
+        #             content:
+        #                 application/json:
+        #                     schema:
+        #                         type: object
+        #                     example:
+        #                         message: "success update items"
+        #         400:
+        #             $ref: "#/components/responses/400"
+        #         500:
+        #             $ref: "#/components/responses/500"
         delete:
             tags:
                 - items
