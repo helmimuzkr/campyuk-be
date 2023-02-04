@@ -67,10 +67,10 @@ func (uq *userQuery) Profile(userID uint) (user.Core, error) {
 	return ToCore(res), nil
 }
 
-func (uq *userQuery) Update(id uint, updateData user.Core) (user.Core, error) {
+func (uq *userQuery) Update(userID uint, updateData user.Core) (user.Core, error) {
 	cnv := CoreToData(updateData)
 	res := User{}
-	qry := uq.db.Model(&res).Where("id = ?", id).Updates(&cnv)
+	qry := uq.db.Model(&res).Where("id = ?", userID).Updates(&cnv)
 
 	affrows := qry.RowsAffected
 	if affrows == 0 {
@@ -87,9 +87,9 @@ func (uq *userQuery) Update(id uint, updateData user.Core) (user.Core, error) {
 	return ToCore(cnv), nil
 }
 
-func (uq *userQuery) Delete(id uint) error {
+func (uq *userQuery) Delete(userID uint) error {
 	res := User{}
-	qry := uq.db.Delete(&res, id)
+	qry := uq.db.Delete(&res, userID)
 
 	rowAffect := qry.RowsAffected
 	if rowAffect <= 0 {
