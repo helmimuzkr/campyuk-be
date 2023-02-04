@@ -25,11 +25,10 @@ type BookingHandler interface {
 }
 
 type BookingService interface {
-	Create(token interface{})
-	Update(token interface{})
+	Create(token interface{}) (Core, error)
+	Update(token interface{}) (Core, error)
 	List(token interface{}) ([]Core, error)
 	GetByID(token interface{}, bookingID uint) (Core, error)
-	Accept()
 	Cancel(token interface{}, bookingID uint) (Core, error)
 }
 
