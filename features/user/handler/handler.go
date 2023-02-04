@@ -50,10 +50,10 @@ func (uc *userControll) Register() echo.HandlerFunc {
 
 		res, err := uc.srv.Register(*ReqToCore(input))
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 		log.Println(res)
-		return c.JSON(http.StatusCreated, map[string]interface{}{"message": "success create account"})
+		return c.JSON(helper.SuccessResponse(http.StatusCreated, "success create account"))
 	}
 }
 
