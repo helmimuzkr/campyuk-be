@@ -1,20 +1,22 @@
 package handler
 
 type campResponse struct {
-	ID                 uint        `json:"id"`
-	VerificationStatus string      `json:"verification_status"`
-	HostName           string      `json:"host_name"`
-	Title              string      `json:"title"`
-	Price              int         `json:"price"`
-	Address            string      `json:"address"`
-	City               string      `json:"city"`
-	Distance           int         `json:"distance"`
-	Images             []campImage `json:"images"`
+	ID                 uint   `json:"id"`
+	VerificationStatus string `json:"verification_status"`
+	HostName           string `json:"host_name"`
+	Title              string `json:"title"`
+	Price              int    `json:"price"`
+	Address            string `json:"address"`
+	City               string `json:"city"`
+	Distance           int    `json:"distance"`
+	Document           string `json:"document,omitempty"`
+	Image              string `json:"image,omitempty"`
 }
 
 type campDetailReponse struct {
 	campResponse
-	Items []campItem `json:"items"`
+	Images []campImage `json:"images"`
+	Items  []campItem  `json:"items"`
 }
 
 type campItem struct {

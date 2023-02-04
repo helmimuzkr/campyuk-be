@@ -50,7 +50,7 @@ type CampService interface {
 	Add(token interface{}, newCamp Core, document *multipart.FileHeader, images []*multipart.FileHeader) error
 	List(token interface{}) ([]Core, error)
 	GetByID(token interface{}, campID uint) (Core, error)
-	Update(token interface{}, campID uint, udpateCamp Core, document *multipart.FileHeader, images []*multipart.FileHeader) error
+	Update(token interface{}, campID uint, udpateCamp Core, document *multipart.FileHeader) error
 	Delete(token interface{}, campID uint) error
 	RequestAdmin(token interface{}, campID uint) error
 }

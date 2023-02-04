@@ -33,7 +33,8 @@ func (uuc *userUseCase) Register(newUser user.Core) (user.Core, error) {
 	err = uuc.vld.Struct(&newUser)
 	if err != nil {
 		log.Println("err", err)
-		return user.Core{}, errors.New("bad request")
+		msg := helper.ValidationErrorHandle(err)
+		return user.Core{}, errors.New(msg)
 	}
 
 	newUser.Password = string(hashed)

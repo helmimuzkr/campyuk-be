@@ -66,6 +66,10 @@ func (ch *campHandler) List() echo.HandlerFunc {
 		response := []campResponse{}
 		copier.Copy(&response, &res)
 
+		for i := range res {
+			response[i].Image = res[i].Images[0].ImageURL
+		}
+
 		return c.JSON(helper.SuccessResponse(200, "success show list camp", response))
 	}
 }
@@ -93,7 +97,25 @@ func (ch *campHandler) GetByID() echo.HandlerFunc {
 }
 func (ch *campHandler) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+
+		str := c.Param("id")
+		campID, _ := strconv.Atoi(str)
+
+		cr := campRequest{}
+		if err := c.Bind(&cr); err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		document, _ := c.FormFile("document")
+
+		updateCamp := camp.Core{}
+		copier.Copy(&updateCamp, &cr)
+
+		if err := ch.srv.Update(token, uint(campID), updateCamp, document); err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+		return c.JSON(helper.SuccessResponse(201, "success update camp"))
 	}
 }
 func (ch *campHandler) Delete() echo.HandlerFunc {

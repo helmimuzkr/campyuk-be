@@ -94,7 +94,7 @@ func (cs *campService) List(token interface{}) ([]camp.Core, error) {
 }
 
 func (cs *campService) GetByID(token interface{}, campID uint) (camp.Core, error) {
-	userID, _ := helper.ExtractToken(token)
+	userID, role := helper.ExtractToken(token)
 
 	res, err := cs.qry.GetByID(userID, campID)
 	if err != nil {
@@ -108,10 +108,65 @@ func (cs *campService) GetByID(token interface{}, campID uint) (camp.Core, error
 		return camp.Core{}, errors.New(msg)
 	}
 
+	if role != "host" && role != "admin" {
+		res.Document = ""
+	}
+
 	return res, nil
 }
 
-func (cs *campService) Update(token interface{}, campID uint, udpateCamp camp.Core, document *multipart.FileHeader, image []*multipart.FileHeader) error {
+func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Core, document *multipart.FileHeader) error {
+	userID, role := helper.ExtractToken(token)
+	if role != "host" {
+		return errors.New("access is denied due to invalid credential")
+	}
+
+	res, err := cs.qry.GetByID(userID, campID)
+	if err != nil {
+		log.Println(err)
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "camp not found"
+		} else {
+			msg = "internal server errorr"
+		}
+		return errors.New(msg)
+	}
+
+	if document != nil {
+		docURL, err := helper.UploadFile(document)
+		if err != nil {
+			log.Println(err)
+			var msg string
+			if strings.Contains(err.Error(), "bad request") {
+				msg = err.Error()
+			} else {
+				msg = "failed to upload image because internal server error"
+			}
+			return errors.New(msg)
+		}
+		updateCamp.Document = docURL
+	}
+
+	if err := cs.qry.Update(userID, campID, updateCamp); err != nil {
+		log.Println(err)
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "camp not found"
+		} else {
+			msg = "internal server errorr"
+		}
+		return errors.New(msg)
+	}
+
+	if res.Document != "" {
+		publicID := helper.GetPublicID(res.Document)
+		if err := helper.DestroyFile(publicID); err != nil {
+			log.Println("destroy file", err)
+			return errors.New("failed to destroy image")
+		}
+	}
+
 	return nil
 }
 
