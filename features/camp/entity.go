@@ -43,23 +43,23 @@ type CampHandler interface {
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
 	Accept() echo.HandlerFunc
-	Decline() echo.HandlerFunc
+	Reject() echo.HandlerFunc
 }
 
 type CampService interface {
 	Add(token interface{}, newCamp Core, document *multipart.FileHeader, images []*multipart.FileHeader) error
-	List(token interface{}) ([]Core, error)
+	List(token interface{}, page int) (map[string]interface{}, []Core, error)
 	GetByID(token interface{}, campID uint) (Core, error)
 	Update(token interface{}, campID uint, udpateCamp Core, document *multipart.FileHeader) error
 	Delete(token interface{}, campID uint) error
-	RequestAdmin(token interface{}, campID uint) error
+	RequestAdmin(token interface{}, campID uint, status string) error
 }
 
 type CampData interface {
 	Add(userID uint, newCamp Core) error
-	List(userID uint, role string) ([]Core, error)
+	List(userID uint, role string, limit int, offset int) (int, []Core, error)
 	GetByID(userID uint, campID uint) (Core, error)
 	Update(userID uint, campID uint, updateCamp Core) error
 	Delete(userID uint, campID uint) error
-	RequestAdmin(userID uint, campID uint) error
+	RequestAdmin(campID uint, status string) error
 }

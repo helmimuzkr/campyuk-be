@@ -82,15 +82,33 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 	return nil
 }
 
-func (cs *campService) List(token interface{}) ([]camp.Core, error) {
+func (cs *campService) List(token interface{}, page int) (map[string]interface{}, []camp.Core, error) {
 	id, role := helper.ExtractToken(token)
 
-	res, err := cs.qry.List(id, role)
+	if page < 1 {
+		page = 1
+	}
+	// Limit
+	limit := 4
+	// Calculate offset
+	offset := (page - 1) * limit
+
+	totalRecord, res, err := cs.qry.List(id, role, limit, offset)
 	if err != nil {
-		return nil, errors.New("internal server error")
+		return nil, nil, errors.New("internal server error")
 	}
 
-	return res, nil
+	// Total pages
+	totalPage := totalRecord / limit
+
+	pagination := make(map[string]interface{})
+	pagination["page"] = page
+	pagination["limit"] = limit
+	pagination["offset"] = offset
+	pagination["totalRecord"] = totalRecord
+	pagination["totalPage"] = totalPage
+
+	return pagination, res, nil
 }
 
 func (cs *campService) GetByID(token interface{}, campID uint) (camp.Core, error) {
@@ -171,19 +189,38 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 }
 
 func (cs *campService) Delete(token interface{}, campID uint) error {
-	userID, _ := helper.ExtractToken(token)
+	userID, role := helper.ExtractToken(token)
+	if role != "host" {
+		return errors.New("access is denied due to invalid credential")
+	}
 
 	err := cs.qry.Delete(userID, campID)
 	if err != nil {
 		log.Println("delete error")
 		if strings.Contains(err.Error(), "cannot") {
-			return errors.New("access is denied")
+			return errors.New("access is denied due to invalid credential")
 		}
 		return errors.New("internal server error")
 	}
 	return nil
 }
 
-func (cs *campService) RequestAdmin(token interface{}, campID uint) error {
+func (cs *campService) RequestAdmin(token interface{}, campID uint, status string) error {
+	_, role := helper.ExtractToken(token)
+	if role != "admin" {
+		return errors.New("access is denied due to invalid credential")
+	}
+
+	if err := cs.qry.RequestAdmin(campID, status); err != nil {
+		log.Println(err)
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "camp not found"
+		} else {
+			msg = "internal server errorr"
+		}
+		return errors.New(msg)
+	}
+
 	return nil
 }

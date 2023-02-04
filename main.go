@@ -63,6 +63,8 @@ func main() {
 	e.GET("/camps", campHandler.List(), _middlewareCustom.JWTWithConfig())
 	e.GET("/camps/:id", campHandler.GetByID(), _middlewareCustom.JWTWithConfig())
 	e.PUT("/camps/:id", campHandler.Update(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.PUT("/camps/:id/accept", campHandler.Accept(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.PUT("/camps/:id/reject", campHandler.Reject(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	e.POST("/items", iHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/items/:id", iHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
