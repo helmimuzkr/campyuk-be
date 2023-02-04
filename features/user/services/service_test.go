@@ -106,11 +106,12 @@ func TestLogin(t *testing.T) {
 
 func TestProfile(t *testing.T) {
 	data := mocks.NewUserData(t)
-	resData := user.Core{ID: uint(1), Username: "griffin", Fullname: "griffinhenry", Email: "grf@gmail.com"}
+	resData := user.Core{ID: 1, Username: "griffin", Fullname: "griffinhenry", Email: "grf@gmail.com"}
+	srv := New(data)
 
 	t.Run("success show profile", func(t *testing.T) {
 		data.On("Profile", uint(1)).Return(resData, nil).Once()
-		srv := New(data)
+
 		_, token := helper.GenerateJWT(1, "user")
 		useToken := token.(*jwt.Token)
 		useToken.Valid = true
@@ -122,7 +123,7 @@ func TestProfile(t *testing.T) {
 
 	t.Run("data not found", func(t *testing.T) {
 		data.On("Profile", uint(1)).Return(user.Core{}, errors.New("query error, problem with server")).Once()
-		srv := New(data)
+
 		_, token := helper.GenerateJWT(1, "user")
 		useToken := token.(*jwt.Token)
 		useToken.Valid = true

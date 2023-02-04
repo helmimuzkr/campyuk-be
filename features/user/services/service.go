@@ -80,7 +80,7 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 		return user.Core{}, errors.New("data not found")
 	}
 
-	res, err := uuc.qry.Profile(uint(id))
+	res, err := uuc.qry.Profile(id)
 	if err != nil {
 		log.Println("data not found")
 		return user.Core{}, errors.New("query error, problem with server")

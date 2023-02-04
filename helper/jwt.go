@@ -3,6 +3,7 @@ package helper
 import (
 	"campyuk-api/config"
 	"log"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -23,7 +24,7 @@ func ExtractToken(t interface{}) (uint, string) {
 		case float64:
 			userID = uint(claims["userID"].(float64))
 		case int:
-			userID = claims["userID"].(uint)
+			userID = uint(claims["userID"].(int))
 		}
 		role = claims["role"].(string)
 	}
@@ -35,7 +36,13 @@ func GenerateJWT(id int, role string) (string, interface{}) {
 	claims["authorized"] = true
 	claims["userID"] = id
 	claims["role"] = role
+	claims["exp"] = time.Now().Add(time.Hour * 2).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	useToken, _ := token.SignedString([]byte(config.JWT_KEY))
+	useToken, err := token.SignedString([]byte(config.JWT_KEY))
+	if err != nil {
+		log.Println("generate jwt error", err.Error())
+		return "", nil
+	}
+
 	return useToken, token
 }
