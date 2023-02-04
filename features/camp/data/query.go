@@ -41,31 +41,31 @@ func (cd *campData) Add(userID uint, newCamp camp.Core) error {
 	return nil
 }
 
-func (cd *campData) List(userID uint, role string) ([]camp.Core, error) {
+func (cd *campData) List(userID uint, role string, limit int, offset int) (int, []camp.Core, error) {
 	var cm []CampModel
 
 	switch role {
 	case "host":
-		res, err := cd.listCampHost(userID)
+		res, err := cd.listCampHost(userID, limit, offset)
 		if err != nil {
-			return nil, err
+			return 0, nil, err
 		}
 		cm = res
 	case "admin":
-		res, err := cd.listCampAdmin()
+		res, err := cd.listCampAdmin(limit, offset)
 		if err != nil {
-			return nil, err
+			return 0, nil, err
 		}
 		cm = res
 	default:
-		res, err := cd.listCampUser()
+		res, err := cd.listCampUser(limit, offset)
 		if err != nil {
-			return nil, err
+			return 0, nil, err
 		}
 		cm = res
 	}
 
-	return ToListCampCore(cm), nil
+	return len(cm), ToListCampCore(cm), nil
 }
 
 func (cd *campData) GetByID(userID uint, campID uint) (camp.Core, error) {
@@ -107,22 +107,25 @@ func (cd *campData) Update(userID uint, campID uint, updateCamp camp.Core) error
 }
 func (cd *campData) Delete(userID uint, campID uint) error {
 	data := Camp{}
-	err := cd.db.Where("id = ? AND user_id = ?", userID, campID).First(&data).Error
-	if err != nil {
-		log.Println("delete camp query error", err.Error())
-		return errors.New("failed to delete camp")
-	}
-
-	qry := cd.db.Delete(&data, campID)
+	qry := cd.db.Where("host_id = ?", userID).Delete(&data, campID)
 	affrows := qry.RowsAffected
 	if affrows <= 0 {
 		log.Println("no rows affected")
-		return errors.New("no item deleted")
+		return errors.New("no camp deleted")
 	}
 
 	return nil
 }
-func (cd *campData) RequestAdmin(userID uint, campID uint) error {
+func (cd *campData) RequestAdmin(campID uint, status string) error {
+	tx := cd.db.Exec("UPDATE camps SET verification_status=? WHERE id = ?", status, campID)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if tx.RowsAffected <= 0 {
+		log.Println("no rows affected")
+		return errors.New("status update failed")
+	}
+
 	return nil
 }
 
@@ -130,11 +133,11 @@ func (cd *campData) RequestAdmin(userID uint, campID uint) error {
 // Functions that are not include in the contract
 // ------------------------
 
-func (cd *campData) listCampUser() ([]CampModel, error) {
+func (cd *campData) listCampUser(limit int, offset int) ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED' AND camps.deleted_at IS NULL"
-	tx := cd.db.Raw(qc).Find(&cm)
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED' AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
+	tx := cd.db.Raw(qc, limit, offset).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -152,11 +155,11 @@ func (cd *campData) listCampUser() ([]CampModel, error) {
 	return cm, nil
 }
 
-func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
+func (cd *campData) listCampHost(userID uint, limit int, offset int) ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ? AND camps.deleted_at IS NULL"
-	tx := cd.db.Raw(qc, userID).Find(&cm)
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ? AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
+	tx := cd.db.Raw(qc, userID, limit, offset).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -174,11 +177,11 @@ func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
 	return cm, nil
 }
 
-func (cd *campData) listCampAdmin() ([]CampModel, error) {
+func (cd *campData) listCampAdmin(limit int, offset int) ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING' AND camps.deleted_at IS NULL"
-	tx := cd.db.Raw(qc).Find(&cm)
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING' AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
+	tx := cd.db.Raw(qc, limit, offset).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

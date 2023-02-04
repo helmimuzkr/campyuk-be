@@ -58,19 +58,35 @@ func (ch *campHandler) List() echo.HandlerFunc {
 			token = jwt.New(jwt.SigningMethodES256)
 		}
 
-		res, err := ch.srv.List(token)
+		str := c.QueryParam("page")
+		page, _ := strconv.Atoi(str)
+
+		paginate, res, err := ch.srv.List(token, page)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		response := []campResponse{}
-		copier.Copy(&response, &res)
-
+		campResponse := []campResponse{}
+		copier.Copy(&campResponse, &res)
 		for i := range res {
-			response[i].Image = res[i].Images[0].ImageURL
+			campResponse[i].Image = res[i].Images[0].ImageURL
 		}
 
-		return c.JSON(helper.SuccessResponse(200, "success show list camp", response))
+		pagination := paginationResponse{
+			Page:        paginate["page"].(int),
+			Limit:       paginate["limit"].(int),
+			Offset:      paginate["offset"].(int),
+			TotalRecord: paginate["totalRecord"].(int),
+			TotalPage:   paginate["totalPage"].(int),
+		}
+
+		response := withPagination{
+			Pagination: pagination,
+			Data:       campResponse,
+			Message:    "success show list camp",
+		}
+
+		return c.JSON(200, response)
 	}
 }
 
@@ -121,9 +137,6 @@ func (ch *campHandler) Update() echo.HandlerFunc {
 func (ch *campHandler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
-		if token == nil {
-			token = jwt.New(jwt.SigningMethodES256)
-		}
 
 		paramID := c.Param("id")
 		campID, _ := strconv.Atoi(paramID)
@@ -138,11 +151,35 @@ func (ch *campHandler) Delete() echo.HandlerFunc {
 }
 func (ch *campHandler) Accept() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+
+		paramID := c.Param("id")
+		campID, _ := strconv.Atoi(paramID)
+
+		status := "ACCEPTED"
+
+		err := ch.srv.RequestAdmin(token, uint(campID), status)
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "success accept camp"))
 	}
 }
-func (ch *campHandler) Decline() echo.HandlerFunc {
+func (ch *campHandler) Reject() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+
+		paramID := c.Param("id")
+		campID, _ := strconv.Atoi(paramID)
+
+		status := "REJECTED"
+
+		err := ch.srv.RequestAdmin(token, uint(campID), status)
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "success reject camp"))
 	}
 }

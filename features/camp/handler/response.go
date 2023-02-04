@@ -13,21 +13,34 @@ type campResponse struct {
 	Image              string `json:"image,omitempty"`
 }
 
+type campItem struct {
+	ID        uint   `json:"item_id"`
+	Name      string `json:"name"`
+	Stock     int    `json:"stock"`
+	RentPrice int    `json:"rent_price"`
+}
+
+type campImage struct {
+	ID       uint   `json:"image_id"`
+	ImageURL string `json:"image"`
+}
+
 type campDetailReponse struct {
 	campResponse
 	Images []campImage `json:"images"`
 	Items  []campItem  `json:"items"`
 }
 
-type campItem struct {
-	ID        uint   `json:"item_id"`
-	Name      string `json:"name"`
-	Stock     int    `json:"stock"`
-	RentPrice int    `json:"rent_price"`
-	ItemImage string `json:"item_image"`
+type paginationResponse struct {
+	Page        int `json:"page"`
+	Limit       int `json:"limit"`
+	Offset      int `json:"offset"`
+	TotalRecord int `json:"total_rercord"`
+	TotalPage   int `json:"total_page"`
 }
 
-type campImage struct {
-	ID       uint   `json:"image_id"`
-	ImageURL string `json:"image"`
+type withPagination struct {
+	Pagination paginationResponse `json:"pagination"`
+	Data       []campResponse     `json:"data"`
+	Message    string             `json:"message"`
 }
