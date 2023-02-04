@@ -6,32 +6,32 @@ import (
 	"gorm.io/gorm"
 )
 
-type bookingQuery struct {
+type bookingData struct {
 	db *gorm.DB
 }
 
 func New(db *gorm.DB) booking.BookingData {
-	return &bookingQuery{
+	return &bookingData{
 		db: db,
 	}
 }
 
-func (bq *bookingQuery) Create(userID uint, virtualNumber string) (booking.Core, error) {
+func (bq *bookingData) Create(userID uint, virtualNumber string) (booking.Core, error) {
 	return booking.Core{}, nil
 }
 
-func (bq *bookingQuery) Update(bookingID uint) (booking.Core, error) {
+func (bq *bookingData) Update(bookingID uint) (booking.Core, error) {
 	return booking.Core{}, nil
 }
 
-func (bq *bookingQuery) List(userID uint) ([]booking.Core, error) {
+func (bq *bookingData) List(userID uint) ([]booking.Core, error) {
 	return []booking.Core{}, nil
 }
 
-func (bq *bookingQuery) GetByID(userID uint, bookingID uint) (booking.Core, error) {
+func (bq *bookingData) GetByID(userID uint, bookingID uint) (booking.Core, error) {
 	return booking.Core{}, nil
 }
 
-func (bq *bookingQuery) Cancel(userID uint, bookingID uint) (booking.Core, error) {
+func (bq *bookingData) Cancel(userID uint, bookingID uint) (booking.Core, error) {
 	return booking.Core{}, nil
 }
