@@ -2,6 +2,7 @@ package data
 
 import (
 	"campyuk-api/features/camp"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -27,7 +28,7 @@ func (cd *campData) Add(userID uint, newCamp camp.Core) error {
 	cim := ToImageData(cm.ID, newCamp.Images)
 	for _, v := range cim {
 		// Kenapa pakai exec ketimbang batch create dari gorm? dikarenakan kena panic error.
-		tx = tx.Exec("INSERT INTO camp_images(camp_id, image) VALUES(?, ?)", v.CampID, v.Image)
+		tx = tx.Exec("INSERT INTO images(camp_id, image) VALUES(?, ?)", v.CampID, v.Image)
 		if tx.Error != nil {
 			tx.Rollback()
 			return tx.Error
@@ -66,9 +67,34 @@ func (cd *campData) List(userID uint, role string) ([]camp.Core, error) {
 	return ToListCampCore(cm), nil
 }
 
-func (cd *campData) GetByID(userID uint, role string, campID uint) (camp.Core, error) {
-	return camp.Core{}, nil
+func (cd *campData) GetByID(userID uint, campID uint) (camp.Core, error) {
+	c := CampModel{}
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.description, camps.latitude, camps.longitude, camps.distance, camps.address, camps.city, camps.document FROM camps JOIN users ON users.id = camps.host_id WHERE camps.id = ? AND camps.deleted_at IS NULL"
+	tx := cd.db.Raw(qc, campID).First(&c)
+	if tx.Error != nil {
+		return camp.Core{}, tx.Error
+	}
+
+	images := []Image{}
+	tx = tx.Raw("SELECT * FROM images WHERE camp_id = ? AND deleted_at IS NULL", campID).Find(&images)
+	if tx.Error != nil {
+		log.Println(tx.Error)
+		log.Println("no image found in camp")
+	}
+
+	items := []CampItemModel{}
+	tx = tx.Raw("SELECT * FROM items WHERE camp_id = ? AND deleted_at IS NULL", campID).Find(&items)
+	if tx.Error != nil {
+		log.Println(tx.Error)
+		log.Println("no item found in camp")
+	}
+
+	c.Images = images
+	c.Items = items
+
+	return ToCampCore(c), nil
 }
+
 func (cd *campData) Update(userID uint, campID uint, updateCamp camp.Core) error {
 	return nil
 }
@@ -86,7 +112,7 @@ func (cd *campData) RequestAdmin(userID uint, campID uint) error {
 func (cd *campData) listCampUser() ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED'"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED' AND camps.deleted_at IS NULL"
 	tx := cd.db.Raw(qc).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -94,12 +120,12 @@ func (cd *campData) listCampUser() ([]CampModel, error) {
 
 	// Find camp image
 	for i := range cm {
-		ci := []CampImage{}
-		tx = tx.Raw("SELECT image FROM camp_images WHERE camp_id = ?", cm[i].ID).Find(&ci)
+		ci := Image{}
+		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
-		cm[i].CampImages = ci
+		cm[i].Images = append(cm[i].Images, ci)
 	}
 
 	return cm, nil
@@ -108,7 +134,7 @@ func (cd *campData) listCampUser() ([]CampModel, error) {
 func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ?"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ? AND camps.deleted_at IS NULL"
 	tx := cd.db.Raw(qc, userID).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -116,12 +142,12 @@ func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
 
 	// Find camp image
 	for i := range cm {
-		ci := []CampImage{}
-		tx = tx.Raw("SELECT image FROM camp_images WHERE camp_id = ?", cm[i].ID).Find(&ci)
+		ci := Image{}
+		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
-		cm[i].CampImages = ci
+		cm[i].Images = append(cm[i].Images, ci)
 	}
 
 	return cm, nil
@@ -130,7 +156,7 @@ func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
 func (cd *campData) listCampAdmin() ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING'"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING' AND camps.deleted_at IS NULL"
 	tx := cd.db.Raw(qc).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -138,15 +164,13 @@ func (cd *campData) listCampAdmin() ([]CampModel, error) {
 
 	// Find camp image
 	for i := range cm {
-		ci := []CampImage{}
-		tx = tx.Raw("SELECT image FROM camp_images WHERE camp_id = ?", cm[i].ID).Find(&ci)
+		ci := Image{}
+		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
-		cm[i].CampImages = ci
+		cm[i].Images = append(cm[i].Images, ci)
 	}
 
 	return cm, nil
 }
-
-// qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.description, camps.latitude, camps.longitude, camps.distance, camps.address, camps.city, camps.document FROM camps JOIN users ON users.id = camps.host_id WHERE camps.host_id = ?"

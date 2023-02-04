@@ -20,11 +20,11 @@ type Camp struct {
 	Address            string
 	City               string
 	Document           string
-	CampImages         []CampImage `gorm:"foreignKey:CampID"`
+	Images             []Image     `gorm:"foreignKey:CampID"`
 	Items              []data.Item `gorm:"foreignKey:CampID"`
 }
 
-type CampImage struct {
+type Image struct {
 	gorm.Model
 	CampID uint
 	Image  string
@@ -44,7 +44,7 @@ type CampModel struct {
 	Address            string
 	City               string
 	Document           string
-	CampImages         []CampImage     `gorm:"-"`
+	Images             []Image         `gorm:"-"`
 	Items              []CampItemModel `gorm:"-"`
 }
 
@@ -52,7 +52,7 @@ type CampItemModel struct {
 	ID        uint
 	Name      string
 	Stock     int
-	RentPrice int
+	Price     int
 	ItemImage string
 }
 
@@ -73,19 +73,23 @@ func ToData(hostID uint, c camp.Core) Camp {
 	}
 }
 
-func ToImageData(campID uint, c []string) []CampImage {
-	images := []CampImage{}
+func ToImageData(campID uint, c []camp.Image) []Image {
+	images := []Image{}
 	for _, v := range c {
-		images = append(images, CampImage{CampID: campID, Image: v})
+		images = append(images, Image{CampID: campID, Image: v.ImageURL})
 	}
 
 	return images
 }
 
-func ToImageCore(ci []CampImage) []string {
-	images := []string{}
+func ToImageCore(ci []Image) []camp.Image {
+	images := []camp.Image{}
 	for _, v := range ci {
-		images = append(images, v.Image)
+		i := camp.Image{
+			ID:       v.ID,
+			ImageURL: v.Image,
+		}
+		images = append(images, i)
 	}
 
 	return images
@@ -94,7 +98,7 @@ func ToImageCore(ci []CampImage) []string {
 func ToItemsCore(cim []CampItemModel) []camp.CampItem {
 	items := []camp.CampItem{}
 	for _, v := range cim {
-		i := camp.CampItem{ID: v.ID, Name: v.Name, Stock: v.Stock, RentPrice: v.RentPrice, ItemImage: v.ItemImage}
+		i := camp.CampItem{ID: v.ID, Name: v.Name, Stock: v.Stock, RentPrice: v.Price, ItemImage: v.ItemImage}
 		items = append(items, i)
 	}
 
@@ -115,15 +119,9 @@ func ToCampCore(cm CampModel) camp.Core {
 		Address:            cm.Address,
 		City:               cm.City,
 		Document:           cm.Document,
-		Images:             ToImageCore(cm.CampImages),
+		Images:             ToImageCore(cm.Images),
 		Items:              ToItemsCore(cm.Items),
 	}
-
-	images := []string{}
-	for _, v := range cm.CampImages {
-		images = append(images, v.Image)
-	}
-	c.Images = images
 
 	return c
 }

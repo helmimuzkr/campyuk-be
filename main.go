@@ -61,6 +61,7 @@ func main() {
 
 	e.POST("/camps", campHandler.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.GET("/camps", campHandler.List(), _middlewareCustom.JWTWithConfig())
+	e.GET("/camps/:id", campHandler.GetByID(), _middlewareCustom.JWTWithConfig())
 
 	e.POST("/items", iHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/items/:id", iHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))

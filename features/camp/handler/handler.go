@@ -3,6 +3,7 @@ package handler
 import (
 	"campyuk-api/features/camp"
 	"campyuk-api/helper"
+	"strconv"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/jinzhu/copier"
@@ -46,7 +47,7 @@ func (ch *campHandler) Add() echo.HandlerFunc {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		return c.JSON(helper.SuccessResponse(201, "sukses add new camp"))
+		return c.JSON(helper.SuccessResponse(201, "success add new camp"))
 	}
 }
 
@@ -62,7 +63,7 @@ func (ch *campHandler) List() echo.HandlerFunc {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		response := []listCampResponse{}
+		response := []campResponse{}
 		copier.Copy(&response, &res)
 
 		return c.JSON(helper.SuccessResponse(200, "success show list camp", response))
@@ -71,7 +72,23 @@ func (ch *campHandler) List() echo.HandlerFunc {
 
 func (ch *campHandler) GetByID() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+		if token == nil {
+			token = jwt.New(jwt.SigningMethodES256)
+		}
+
+		str := c.Param("id")
+		campID, _ := strconv.Atoi(str)
+
+		res, err := ch.srv.GetByID(token, uint(campID))
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		response := campDetailReponse{}
+		copier.Copy(&response, &res)
+
+		return c.JSON(helper.SuccessResponse(200, "success show detail camp", response))
 	}
 }
 func (ch *campHandler) Update() echo.HandlerFunc {

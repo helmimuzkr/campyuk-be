@@ -46,9 +46,9 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 		return errors.New(msg)
 	}
 
-	imageURLs := []string{}
+	imageCore := []camp.Image{}
 	for _, h := range imagesHeader {
-		image, err := helper.UploadFile(h)
+		imageURL, err := helper.UploadFile(h)
 		if err != nil {
 			log.Println(err)
 			var msg string
@@ -59,8 +59,8 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 			}
 
 			// Hapus image di Cloudinary(terlanjur upload) jika salah satu image gagal diupload
-			for _, url := range imageURLs {
-				publicID := helper.GetPublicID(url)
+			for _, v := range imageCore {
+				publicID := helper.GetPublicID(v.ImageURL)
 				if err = helper.DestroyFile(publicID); err != nil {
 					log.Println(err)
 					return errors.New("failed to upload image because internal server error")
@@ -68,11 +68,12 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 			}
 			return errors.New(msg)
 		}
-		imageURLs = append(imageURLs, image)
+
+		imageCore = append(imageCore, camp.Image{ImageURL: imageURL})
 	}
 
 	newCamp.Document = docURL
-	newCamp.Images = imageURLs
+	newCamp.Images = imageCore
 	newCamp.VerificationStatus = "PENDING"
 	if err := cs.qry.Add(userID, newCamp); err != nil {
 		return errors.New("internal server error")
@@ -93,7 +94,21 @@ func (cs *campService) List(token interface{}) ([]camp.Core, error) {
 }
 
 func (cs *campService) GetByID(token interface{}, campID uint) (camp.Core, error) {
-	return camp.Core{}, nil
+	userID, _ := helper.ExtractToken(token)
+
+	res, err := cs.qry.GetByID(userID, campID)
+	if err != nil {
+		log.Println(err)
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "camp not found"
+		} else {
+			msg = "internal server errorr"
+		}
+		return camp.Core{}, errors.New(msg)
+	}
+
+	return res, nil
 }
 
 func (cs *campService) Update(token interface{}, campID uint, udpateCamp camp.Core, document *multipart.FileHeader, image []*multipart.FileHeader) error {
