@@ -45,8 +45,8 @@ func TestRegister(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
-	t.Run("duplicated", func(t *testing.T) {
-		data.On("Register", mock.Anything).Return(user.Core{}, errors.New("duplicated")).Once()
+	t.Run("data already used", func(t *testing.T) {
+		data.On("Register", mock.Anything).Return(user.Core{}, errors.New("data already used, duplicated")).Once()
 		res, err := srv.Register(input)
 		assert.NotNil(t, err)
 		assert.Equal(t, uint(0), res.ID)
@@ -61,7 +61,7 @@ func TestLogin(t *testing.T) {
 	hashed, _ := helper.GeneratePassword("gg123")
 	resData := user.Core{ID: uint(1), Username: "griffin", Fullname: "griffinhenry", Email: "grf@gmail.com", Password: hashed}
 
-	t.Run("login success", func(t *testing.T) {
+	t.Run("success login", func(t *testing.T) {
 		data.On("Login", input).Return(resData, nil).Once()
 		srv := New(data)
 		token, res, err := srv.Login(input, "gg123")
@@ -92,7 +92,7 @@ func TestLogin(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
-	t.Run("account not found", func(t *testing.T) {
+	t.Run("account not registered", func(t *testing.T) {
 		data.On("Login", input).Return(user.Core{}, errors.New("data not found")).Once()
 		srv := New(data)
 		token, res, err := srv.Login(input, "gg123")
@@ -130,6 +130,19 @@ func TestProfile(t *testing.T) {
 		res, err := srv.Profile(useToken)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "server")
+		assert.Equal(t, user.Core{}, res)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("internal server error", func(t *testing.T) {
+		data.On("Profile", uint(1)).Return(user.Core{}, errors.New("query error, problem with server")).Once()
+
+		_, token := helper.GenerateJWT(1, "user")
+		useToken := token.(*jwt.Token)
+		useToken.Valid = true
+		res, err := srv.Profile(useToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "error")
 		assert.Equal(t, user.Core{}, res)
 		data.AssertExpectations(t)
 	})
