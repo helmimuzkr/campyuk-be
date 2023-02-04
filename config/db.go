@@ -29,6 +29,6 @@ func InitDB(ac AppConfig) *gorm.DB {
 func Migrate(db *gorm.DB) {
 	db.AutoMigrate(&user.User{})
 	db.AutoMigrate(&camp.Camp{})
-	db.AutoMigrate(&camp.CampImage{})
+	db.AutoMigrate(&camp.Image{})
 	db.AutoMigrate(&item.Item{})
 }

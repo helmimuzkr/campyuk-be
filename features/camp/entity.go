@@ -19,8 +19,13 @@ type Core struct {
 	Address            string `validate:"required,min=5"`
 	City               string `validate:"required,min=3"`
 	Document           string
-	Images             []string
+	Images             []Image
 	Items              []CampItem
+}
+
+type Image struct {
+	ID       uint
+	ImageURL string
 }
 
 type CampItem struct {
@@ -53,7 +58,7 @@ type CampService interface {
 type CampData interface {
 	Add(userID uint, newCamp Core) error
 	List(userID uint, role string) ([]Core, error)
-	GetByID(userID uint, role string, campID uint) (Core, error)
+	GetByID(userID uint, campID uint) (Core, error)
 	Update(userID uint, campID uint, updateCamp Core) error
 	Delete(userID uint, campID uint) error
 	RequestAdmin(userID uint, campID uint) error
