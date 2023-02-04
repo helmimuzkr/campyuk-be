@@ -7,12 +7,14 @@ type AddItemRequest struct {
 	Name   string `json:"name" form:"name"`
 	Stock  int    `json:"stock" form:"stock"`
 	Price  int    `json:"price" form:"price"`
+	Image  string `json:"image" form:"image"`
 }
 
 type UpdateItemRequest struct {
 	Name  string `json:"name" form:"name"`
 	Stock int    `json:"stock" form:"stock"`
 	Price int    `json:"price" form:"price"`
+	Image string `json:"image" form:"image"`
 }
 
 func RequestToCore(dataCart interface{}) *item.Core {
@@ -24,11 +26,13 @@ func RequestToCore(dataCart interface{}) *item.Core {
 		res.Name = cnv.Name
 		res.Stock = cnv.Stock
 		res.Price = cnv.Price
+		res.Image = cnv.Image
 	case UpdateItemRequest:
 		cnv := dataCart.(UpdateItemRequest)
 		res.Name = cnv.Name
 		res.Stock = cnv.Stock
 		res.Price = cnv.Price
+		res.Image = cnv.Image
 	default:
 		return nil
 	}
