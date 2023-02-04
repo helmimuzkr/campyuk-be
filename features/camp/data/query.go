@@ -2,6 +2,7 @@ package data
 
 import (
 	"campyuk-api/features/camp"
+	"errors"
 	"log"
 
 	"gorm.io/gorm"
@@ -99,6 +100,20 @@ func (cd *campData) Update(userID uint, campID uint, updateCamp camp.Core) error
 	return nil
 }
 func (cd *campData) Delete(userID uint, campID uint) error {
+	data := Camp{}
+	err := cd.db.Where("id = ? AND user_id = ?", userID, campID).First(&data).Error
+	if err != nil {
+		log.Println("delete camp query error", err.Error())
+		return errors.New("failed to delete camp")
+	}
+
+	qry := cd.db.Delete(&data, campID)
+	affrows := qry.RowsAffected
+	if affrows <= 0 {
+		log.Println("no rows affected")
+		return errors.New("no item deleted")
+	}
+
 	return nil
 }
 func (cd *campData) RequestAdmin(userID uint, campID uint) error {

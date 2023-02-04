@@ -116,6 +116,16 @@ func (cs *campService) Update(token interface{}, campID uint, udpateCamp camp.Co
 }
 
 func (cs *campService) Delete(token interface{}, campID uint) error {
+	userID, _ := helper.ExtractToken(token)
+
+	err := cs.qry.Delete(userID, campID)
+	if err != nil {
+		log.Println("delete error")
+		if strings.Contains(err.Error(), "cannot") {
+			return errors.New("access is denied")
+		}
+		return errors.New("internal server error")
+	}
 	return nil
 }
 
