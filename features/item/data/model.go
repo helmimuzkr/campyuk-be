@@ -11,7 +11,6 @@ type Item struct {
 	Name   string
 	Stock  int
 	Price  int
-	Image  string
 	CampID uint
 }
 
@@ -22,7 +21,6 @@ func ToCore(data Item) item.Core {
 		Name:   data.Name,
 		Stock:  data.Stock,
 		Price:  data.Price,
-		Image:  data.Image,
 	}
 }
 
@@ -33,6 +31,5 @@ func CoreToData(data item.Core) Item {
 		Name:   data.Name,
 		Stock:  data.Stock,
 		Price:  data.Price,
-		Image:  data.Image,
 	}
 }

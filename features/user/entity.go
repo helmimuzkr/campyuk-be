@@ -36,6 +36,6 @@ type UserData interface {
 	Login(username string) (Core, error)
 	Register(newUser Core) (Core, error)
 	Profile(userID uint) (Core, error)
-	Update(id uint, updateData Core) (Core, error)
-	Delete(id uint) error
+	Update(userID uint, updateData Core) (Core, error)
+	Delete(userID uint) error
 }

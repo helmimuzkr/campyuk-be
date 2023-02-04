@@ -7,7 +7,6 @@ type Core struct {
 	Name   string
 	Stock  int
 	Price  int
-	Image  string
 	CampID int
 }
 
