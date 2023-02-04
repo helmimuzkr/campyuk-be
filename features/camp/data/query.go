@@ -96,6 +96,12 @@ func (cd *campData) GetByID(userID uint, campID uint) (camp.Core, error) {
 }
 
 func (cd *campData) Update(userID uint, campID uint, updateCamp camp.Core) error {
+	campData := ToData(userID, updateCamp)
+	tx := cd.db.Where("id = ? AND host_id = ?", campID, userID).Updates(&campData)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
 	return nil
 }
 func (cd *campData) Delete(userID uint, campID uint) error {
