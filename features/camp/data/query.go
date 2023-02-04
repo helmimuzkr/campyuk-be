@@ -69,21 +69,21 @@ func (cd *campData) List(userID uint, role string) ([]camp.Core, error) {
 
 func (cd *campData) GetByID(userID uint, campID uint) (camp.Core, error) {
 	c := CampModel{}
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.description, camps.latitude, camps.longitude, camps.distance, camps.address, camps.city, camps.document FROM camps JOIN users ON users.id = camps.host_id WHERE camps.id = ?"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.description, camps.latitude, camps.longitude, camps.distance, camps.address, camps.city, camps.document FROM camps JOIN users ON users.id = camps.host_id WHERE camps.id = ? AND camps.deleted_at IS NULL"
 	tx := cd.db.Raw(qc, campID).First(&c)
 	if tx.Error != nil {
 		return camp.Core{}, tx.Error
 	}
 
 	images := []Image{}
-	tx = tx.Raw("SELECT * FROM images WHERE camp_id = ?", campID).Find(&images)
+	tx = tx.Raw("SELECT * FROM images WHERE camp_id = ? AND deleted_at IS NULL", campID).Find(&images)
 	if tx.Error != nil {
 		log.Println(tx.Error)
 		log.Println("no image found in camp")
 	}
 
 	items := []CampItemModel{}
-	tx = tx.Raw("SELECT * FROM items WHERE camp_id = ?", campID).Find(&items)
+	tx = tx.Raw("SELECT * FROM items WHERE camp_id = ? AND deleted_at IS NULL", campID).Find(&items)
 	if tx.Error != nil {
 		log.Println(tx.Error)
 		log.Println("no item found in camp")
@@ -112,7 +112,7 @@ func (cd *campData) RequestAdmin(userID uint, campID uint) error {
 func (cd *campData) listCampUser() ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED'"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED' AND camps.deleted_at IS NULL"
 	tx := cd.db.Raw(qc).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -121,7 +121,7 @@ func (cd *campData) listCampUser() ([]CampModel, error) {
 	// Find camp image
 	for i := range cm {
 		ci := Image{}
-		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? ORDER BY id ASC", cm[i].ID).First(&ci)
+		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
@@ -134,7 +134,7 @@ func (cd *campData) listCampUser() ([]CampModel, error) {
 func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ?"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ? AND camps.deleted_at IS NULL"
 	tx := cd.db.Raw(qc, userID).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -143,7 +143,7 @@ func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
 	// Find camp image
 	for i := range cm {
 		ci := Image{}
-		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? ORDER BY id ASC", cm[i].ID).First(&ci)
+		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
@@ -156,7 +156,7 @@ func (cd *campData) listCampHost(userID uint) ([]CampModel, error) {
 func (cd *campData) listCampAdmin() ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING'"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING' AND camps.deleted_at IS NULL"
 	tx := cd.db.Raw(qc).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -165,7 +165,7 @@ func (cd *campData) listCampAdmin() ([]CampModel, error) {
 	// Find camp image
 	for i := range cm {
 		ci := Image{}
-		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? ORDER BY id ASC", cm[i].ID).First(&ci)
+		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
