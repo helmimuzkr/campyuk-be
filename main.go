@@ -8,6 +8,9 @@ import (
 	_campData "campyuk-api/features/camp/data"
 	_campHandler "campyuk-api/features/camp/handler"
 	_campService "campyuk-api/features/camp/service"
+	_imageData "campyuk-api/features/image/data"
+	_imageHandler "campyuk-api/features/image/handler"
+	_imageService "campyuk-api/features/image/service"
 	itmData "campyuk-api/features/item/data"
 	itmHdl "campyuk-api/features/item/handler"
 	itmSrv "campyuk-api/features/item/service"
@@ -48,6 +51,10 @@ func main() {
 	campSrv := _campService.New(campData, v)
 	campHandler := _campHandler.New(campSrv)
 
+	imageData := _imageData.New(db)
+	imageSrv := _imageService.New(imageData)
+	imageHandler := _imageHandler.New(imageSrv)
+
 	bookingData := _bookingData.New(db)
 	bookingSrv := _bookingService.New(bookingData, coreapiMidtrans)
 	bookingHandler := _bookingHandler.New(bookingSrv)
@@ -71,8 +78,12 @@ func main() {
 	e.GET("/camps", campHandler.List(), _middlewareCustom.JWTWithConfig())
 	e.GET("/camps/:id", campHandler.GetByID(), _middlewareCustom.JWTWithConfig())
 	e.PUT("/camps/:id", campHandler.Update(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.DELETE("/camps/:id", campHandler.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/camps/:id/accept", campHandler.Accept(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/camps/:id/decline", campHandler.Decline(), middleware.JWT([]byte(config.JWT_KEY)))
+
+	e.POST("/images", imageHandler.Add(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.DELETE("/images/:id", imageHandler.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	e.POST("/items", iHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/items/:id", iHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
