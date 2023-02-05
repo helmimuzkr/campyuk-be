@@ -3,8 +3,6 @@ package data
 import (
 	"campyuk-api/features/booking"
 
-	"github.com/midtrans/midtrans-go"
-	"github.com/midtrans/midtrans-go/coreapi"
 	"gorm.io/gorm"
 )
 
@@ -38,13 +36,4 @@ func (bd *bookingData) List(userID uint) ([]booking.Core, error) {
 
 func (bd *bookingData) GetByID(userID uint, bookingID uint) (booking.Core, error) {
 	return booking.Core{}, nil
-}
-
-// ------------------------
-// Functions that are not include in the contract
-// ------------------------
-
-func (bd *bookingData) ChargePayment(newBooking booking.Core, items *[]midtrans.ItemDetails) (*coreapi.ChargeResponse, error) {
-
-	return nil, nil
 }
