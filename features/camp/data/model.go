@@ -1,8 +1,9 @@
 package data
 
 import (
+	_booking "campyuk-api/features/booking/data"
 	"campyuk-api/features/camp"
-	"campyuk-api/features/item/data"
+	_item "campyuk-api/features/item/data"
 
 	"gorm.io/gorm"
 )
@@ -20,8 +21,9 @@ type Camp struct {
 	Address            string
 	City               string
 	Document           string
-	Images             []Image     `gorm:"foreignKey:CampID"`
-	Items              []data.Item `gorm:"foreignKey:CampID"`
+	Images             []Image            `gorm:"foreignKey:CampID"`
+	Items              []_item.Item       `gorm:"foreignKey:CampID"`
+	Bookings           []_booking.Booking `gorm:"foreignKey:CampID"`
 }
 
 type Image struct {
