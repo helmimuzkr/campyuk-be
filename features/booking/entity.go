@@ -4,15 +4,33 @@ import "github.com/labstack/echo/v4"
 
 type Core struct {
 	ID            uint
-	Checkin       string
-	Checkout      string
+	Ticket        string
+	UserID        uint   // Guest
+	Email         string // Email guest
+	CampID        uint
+	Title         string
+	Image         string
+	Address       string
+	City          string
+	CampPrice     string
+	CheckIn       string
+	CheckOut      string
 	BookingDate   string
 	Guest         int
 	CampCost      int
+	Items         []Item
 	TotalPrice    int
 	Status        string
 	Bank          string
 	VirtualNumber string
+}
+
+type Item struct {
+	ID       uint
+	Name     string
+	Price    int
+	Quantity int
+	RentCost int
 }
 
 type BookingHandler interface {
@@ -22,20 +40,20 @@ type BookingHandler interface {
 	GetByID() echo.HandlerFunc
 	Accept() echo.HandlerFunc
 	Cancel() echo.HandlerFunc
+	Callback() echo.HandlerFunc
 }
 
 type BookingService interface {
-	Create(token interface{}) (Core, error)
-	Update(token interface{}) (Core, error)
+	Create(token interface{}, newBooking Core) (Core, error)
+	Update(token interface{}, status string) error
 	List(token interface{}) ([]Core, error)
 	GetByID(token interface{}, bookingID uint) (Core, error)
-	Cancel(token interface{}, bookingID uint) (Core, error)
 }
 
 type BookingData interface {
-	Create(userID uint, virtualNumber string) (Core, error)
-	Update(bookingID uint) (Core, error)
+	Create(userID uint, newBooking Core) (Core, error)
+
+	Update(userID uint, role string, bookingID uint, status string) error
 	List(userID uint) ([]Core, error)
 	GetByID(userID uint, bookingID uint) (Core, error)
-	Cancel(userID uint, bookingID uint) (Core, error)
 }

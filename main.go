@@ -2,6 +2,9 @@ package main
 
 import (
 	"campyuk-api/config"
+	_bookingData "campyuk-api/features/booking/data"
+	_bookingHandler "campyuk-api/features/booking/handler"
+	_bookingService "campyuk-api/features/booking/service"
 	_campData "campyuk-api/features/camp/data"
 	_campHandler "campyuk-api/features/camp/handler"
 	_campService "campyuk-api/features/camp/service"
@@ -28,6 +31,7 @@ func main() {
 
 	v := validator.New()
 	// cld := config.NewCloudinary(*cfg)
+	coreapiMidtrans := config.NewCoreMidtrans()
 
 	config.Migrate(db)
 
@@ -43,6 +47,10 @@ func main() {
 	campData := _campData.New(db)
 	campSrv := _campService.New(campData, v)
 	campHandler := _campHandler.New(campSrv)
+
+	bookingData := _bookingData.New(db)
+	bookingSrv := _bookingService.New(bookingData, coreapiMidtrans)
+	bookingHandler := _bookingHandler.New(bookingSrv)
 
 	// MIDDLEWARE
 	e.Pre(middleware.RemoveTrailingSlash())
@@ -69,6 +77,8 @@ func main() {
 	e.POST("/items", iHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/items/:id", iHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.DELETE("/items/:id", iHdl.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
+
+	e.POST("/bookings", bookingHandler.Create(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())

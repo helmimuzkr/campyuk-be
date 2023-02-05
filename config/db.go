@@ -1,6 +1,7 @@
 package config
 
 import (
+	booking "campyuk-api/features/booking/data"
 	camp "campyuk-api/features/camp/data"
 	item "campyuk-api/features/item/data"
 	user "campyuk-api/features/user/data"
@@ -31,4 +32,6 @@ func Migrate(db *gorm.DB) {
 	db.AutoMigrate(&camp.Camp{})
 	db.AutoMigrate(&camp.Image{})
 	db.AutoMigrate(&item.Item{})
+	db.AutoMigrate(&booking.Booking{})
+	db.AutoMigrate(&booking.RentItem{})
 }
