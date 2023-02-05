@@ -5,6 +5,7 @@ import (
 	"campyuk-api/helper"
 	"campyuk-api/mocks"
 	"errors"
+	"mime/multipart"
 	"testing"
 
 	"github.com/golang-jwt/jwt"
@@ -148,70 +149,49 @@ func TestProfile(t *testing.T) {
 	})
 }
 
-// func TestUpdate(t *testing.T) {
-// 	data := mocks.NewUserData(t)
-// 	inputData := user.Core{ID: uint(1), Username: "griffin", Email: "grf@gmail.com"}
-// 	resData := user.Core{ID: uint(1), Username: "griffinh", Email: "grif@gmail.com"}
+func TestUpdate(t *testing.T) {
+	data := mocks.NewUserData(t)
+	inputData := user.Core{ID: uint(1), Username: "griffin", Fullname: "griffinhenry", Email: "grf@gmail.com"}
+	resData := user.Core{ID: uint(1), Username: "griffinh", Fullname: "griffinhenry", Email: "grif@gmail.com", UserImage: "https://res.cloudinary.com/djqjmzwsa/image/upload/v1675603226/campyuk/20230205-212016.jpg"}
 
-// 	t.Run("success updating account", func(t *testing.T) {
-// 		data.On("Update", uint(1), inputData).Return(resData, nil).Once()
-// 		srv := New(data)
-// 		_, token := helper.GenerateJWT(1, "user")
-// 		pToken := token.(*jwt.Token)
-// 		pToken.Valid = true
+	t.Run("success updating account", func(t *testing.T) {
+		data.On("Update", uint(1), inputData).Return(resData, nil).Once()
+		srv := New(data)
+		_, token := helper.GenerateJWT(1, "user")
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		res, err := srv.Update(pToken, multipart.FileHeader{}, inputData)
+		assert.Nil(t, err)
+		assert.NotEqual(t, resData.ID, res.ID)
+		data.AssertExpectations(t)
+	})
 
-// 		file, _ := os.Open("./file-test/test.png")
-// 		defer file.Close()
-// 		fileHeader := &multipart.FileHeader{
-// 			Filename: file.Name(),
-// 		}
+	t.Run("data not found", func(t *testing.T) {
+		data.On("Update", uint(1), inputData).Return(user.Core{}, errors.New("not found")).Once()
+		srv := New(data)
+		_, token := helper.GenerateJWT(1, "user")
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		res, err := srv.Update(pToken, multipart.FileHeader{}, inputData)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		assert.Equal(t, user.Core{}, res)
+		data.AssertExpectations(t)
+	})
 
-// 		res, err := srv.Update(pToken, *fileHeader, inputData)
-// 		assert.Nil(t, err)
-// 		assert.NotEqual(t, resData.ID, res.ID)
-// 		data.AssertExpectations(t)
-// 	})
-
-// 	t.Run("incorrect input", func(t *testing.T) {
-// 		data.On("Update", uint(1), inputData).Return(user.Core{}, errors.New("incorrect input from user")).Once()
-// 		srv := New(data)
-// 		_, token := helper.GenerateJWT(1, "user")
-// 		pToken := token.(*jwt.Token)
-// 		pToken.Valid = true
-
-// 		file, _ := os.Open("./file-test/test.png")
-// 		defer file.Close()
-// 		fileHeader := &multipart.FileHeader{
-// 			Filename: file.Name(),
-// 		}
-
-// 		res, err := srv.Update(pToken, *fileHeader, inputData)
-// 		assert.NotNil(t, err)
-// 		assert.ErrorContains(t, err, "input")
-// 		assert.Equal(t, user.Core{}, res)
-// 		data.AssertExpectations(t)
-// 	})
-
-// 	t.Run("failed upload image", func(t *testing.T) {
-// 		data.On("Update", uint(1), inputData).Return(user.Core{}, errors.New("failed to upload image, server error")).Once()
-// 		srv := New(data)
-// 		_, token := helper.GenerateJWT(1, "user")
-// 		pToken := token.(*jwt.Token)
-// 		pToken.Valid = true
-
-// 		file, _ := os.Open("./file-test/test.png")
-// 		defer file.Close()
-// 		fileHeader := &multipart.FileHeader{
-// 			Filename: file.Name(),
-// 		}
-
-// 		res, err := srv.Update(pToken, *fileHeader, inputData)
-// 		assert.NotNil(t, err)
-// 		assert.ErrorContains(t, err, "server")
-// 		assert.Equal(t, user.Core{}, res)
-// 		data.AssertExpectations(t)
-// 	})
-// }
+	t.Run("internal server error", func(t *testing.T) {
+		data.On("Update", uint(1), inputData).Return(user.Core{}, errors.New("server error")).Once()
+		srv := New(data)
+		_, token := helper.GenerateJWT(1, "user")
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		res, err := srv.Update(pToken, multipart.FileHeader{}, inputData)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "server")
+		assert.Equal(t, user.Core{}, res)
+		data.AssertExpectations(t)
+	})
+}
 
 func TestDelete(t *testing.T) {
 	data := mocks.NewUserData(t)
