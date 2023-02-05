@@ -166,7 +166,7 @@ func (ch *campHandler) Accept() echo.HandlerFunc {
 		return c.JSON(helper.SuccessResponse(200, "success accept camp"))
 	}
 }
-func (ch *campHandler) Reject() echo.HandlerFunc {
+func (ch *campHandler) Decline() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
 

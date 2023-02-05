@@ -33,7 +33,6 @@ type CampItem struct {
 	Name      string
 	Stock     int
 	RentPrice int
-	ItemImage string
 }
 
 type CampHandler interface {
@@ -43,7 +42,7 @@ type CampHandler interface {
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
 	Accept() echo.HandlerFunc
-	Reject() echo.HandlerFunc
+	Decline() echo.HandlerFunc
 }
 
 type CampService interface {

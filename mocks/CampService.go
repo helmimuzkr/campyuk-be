@@ -64,36 +64,45 @@ func (_m *CampService) GetByID(token interface{}, campID uint) (camp.Core, error
 	return r0, r1
 }
 
-// List provides a mock function with given fields: token
-func (_m *CampService) List(token interface{}) ([]camp.Core, error) {
-	ret := _m.Called(token)
+// List provides a mock function with given fields: token, page
+func (_m *CampService) List(token interface{}, page int) (map[string]interface{}, []camp.Core, error) {
+	ret := _m.Called(token, page)
 
-	var r0 []camp.Core
-	if rf, ok := ret.Get(0).(func(interface{}) []camp.Core); ok {
-		r0 = rf(token)
+	var r0 map[string]interface{}
+	if rf, ok := ret.Get(0).(func(interface{}, int) map[string]interface{}); ok {
+		r0 = rf(token, page)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]camp.Core)
+			r0 = ret.Get(0).(map[string]interface{})
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}) error); ok {
-		r1 = rf(token)
+	var r1 []camp.Core
+	if rf, ok := ret.Get(1).(func(interface{}, int) []camp.Core); ok {
+		r1 = rf(token, page)
 	} else {
-		r1 = ret.Error(1)
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).([]camp.Core)
+		}
 	}
 
-	return r0, r1
+	var r2 error
+	if rf, ok := ret.Get(2).(func(interface{}, int) error); ok {
+		r2 = rf(token, page)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
-// RequestAdmin provides a mock function with given fields: token, campID
-func (_m *CampService) RequestAdmin(token interface{}, campID uint) error {
-	ret := _m.Called(token, campID)
+// RequestAdmin provides a mock function with given fields: token, campID, status
+func (_m *CampService) RequestAdmin(token interface{}, campID uint, status string) error {
+	ret := _m.Called(token, campID, status)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(interface{}, uint) error); ok {
-		r0 = rf(token, campID)
+	if rf, ok := ret.Get(0).(func(interface{}, uint, string) error); ok {
+		r0 = rf(token, campID, status)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -101,13 +110,13 @@ func (_m *CampService) RequestAdmin(token interface{}, campID uint) error {
 	return r0
 }
 
-// Update provides a mock function with given fields: token, campID, udpateCamp, document, images
-func (_m *CampService) Update(token interface{}, campID uint, udpateCamp camp.Core, document *multipart.FileHeader, images []*multipart.FileHeader) error {
-	ret := _m.Called(token, campID, udpateCamp, document, images)
+// Update provides a mock function with given fields: token, campID, udpateCamp, document
+func (_m *CampService) Update(token interface{}, campID uint, udpateCamp camp.Core, document *multipart.FileHeader) error {
+	ret := _m.Called(token, campID, udpateCamp, document)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(interface{}, uint, camp.Core, *multipart.FileHeader, []*multipart.FileHeader) error); ok {
-		r0 = rf(token, campID, udpateCamp, document, images)
+	if rf, ok := ret.Get(0).(func(interface{}, uint, camp.Core, *multipart.FileHeader) error); ok {
+		r0 = rf(token, campID, udpateCamp, document)
 	} else {
 		r0 = ret.Error(0)
 	}
