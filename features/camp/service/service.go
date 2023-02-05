@@ -41,7 +41,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 		if strings.Contains(err.Error(), "bad request") {
 			msg = err.Error()
 		} else {
-			msg = "failed to upload image because internal server error"
+			msg = "failed to upload document because internal server error"
 		}
 		return errors.New(msg)
 	}
@@ -88,17 +88,17 @@ func (cs *campService) List(token interface{}, page int) (map[string]interface{}
 	if page < 1 {
 		page = 1
 	}
-	// Limit
 	limit := 4
 	// Calculate offset
 	offset := (page - 1) * limit
 
+	// Get total record, list camp, and error
 	totalRecord, res, err := cs.qry.List(id, role, limit, offset)
 	if err != nil {
+		log.Println(err)
 		return nil, nil, errors.New("internal server error")
 	}
 
-	// Total pages
 	totalPage := totalRecord / limit
 
 	pagination := make(map[string]interface{})
@@ -159,7 +159,7 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 			if strings.Contains(err.Error(), "bad request") {
 				msg = err.Error()
 			} else {
-				msg = "failed to upload image because internal server error"
+				msg = "failed to upload document because internal server error"
 			}
 			return errors.New(msg)
 		}
@@ -181,7 +181,7 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 		publicID := helper.GetPublicID(res.Document)
 		if err := helper.DestroyFile(publicID); err != nil {
 			log.Println("destroy file", err)
-			return errors.New("failed to destroy image")
+			return errors.New("failed to destroy document")
 		}
 	}
 
@@ -194,14 +194,45 @@ func (cs *campService) Delete(token interface{}, campID uint) error {
 		return errors.New("access is denied due to invalid credential")
 	}
 
+	// res, err := cs.qry.GetByID(userID, campID)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	msg := ""
+	// 	if strings.Contains(err.Error(), "not found") {
+	// 		msg = "camp not found"
+	// 	} else {
+	// 		msg = "internal server errorr"
+	// 	}
+	// 	return errors.New(msg)
+	// }
+
 	err := cs.qry.Delete(userID, campID)
 	if err != nil {
 		log.Println("delete error")
-		if strings.Contains(err.Error(), "cannot") {
-			return errors.New("access is denied due to invalid credential")
+		if strings.Contains(err.Error(), "not found") {
+			return errors.New("camp not found")
 		}
 		return errors.New("internal server error")
 	}
+
+	// if res.Document != "" {
+	// 	publicID := helper.GetPublicID(res.Document)
+	// 	if err := helper.DestroyFile(publicID); err != nil {
+	// 		log.Println("destroy file", err)
+	// 		return errors.New("failed to destroy document")
+	// 	}
+	// }
+
+	// if res.Images != nil {
+	// 	for _, v := range res.Images {
+	// 		publicID := helper.GetPublicID(v.ImageURL)
+	// 		if err := helper.DestroyFile(publicID); err != nil {
+	// 			log.Println("destroy file", err)
+	// 			return errors.New("failed to destroy image")
+	// 		}
+	// 	}
+	// }
+
 	return nil
 }
 
