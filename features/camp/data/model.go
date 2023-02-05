@@ -49,11 +49,10 @@ type CampModel struct {
 }
 
 type CampItemModel struct {
-	ID        uint
-	Name      string
-	Stock     int
-	Price     int
-	ItemImage string
+	ID    uint
+	Name  string
+	Stock int
+	Price int
 }
 
 func ToData(hostID uint, c camp.Core) Camp {
@@ -98,7 +97,7 @@ func ToImageCore(ci []Image) []camp.Image {
 func ToItemsCore(cim []CampItemModel) []camp.CampItem {
 	items := []camp.CampItem{}
 	for _, v := range cim {
-		i := camp.CampItem{ID: v.ID, Name: v.Name, Stock: v.Stock, RentPrice: v.Price, ItemImage: v.ItemImage}
+		i := camp.CampItem{ID: v.ID, Name: v.Name, Stock: v.Stock, RentPrice: v.Price}
 		items = append(items, i)
 	}
 
