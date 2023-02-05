@@ -41,20 +41,20 @@ func (_m *CampData) Delete(userID uint, campID uint) error {
 	return r0
 }
 
-// GetByID provides a mock function with given fields: userID, role, campID
-func (_m *CampData) GetByID(userID uint, role string, campID uint) (camp.Core, error) {
-	ret := _m.Called(userID, role, campID)
+// GetByID provides a mock function with given fields: userID, campID
+func (_m *CampData) GetByID(userID uint, campID uint) (camp.Core, error) {
+	ret := _m.Called(userID, campID)
 
 	var r0 camp.Core
-	if rf, ok := ret.Get(0).(func(uint, string, uint) camp.Core); ok {
-		r0 = rf(userID, role, campID)
+	if rf, ok := ret.Get(0).(func(uint, uint) camp.Core); ok {
+		r0 = rf(userID, campID)
 	} else {
 		r0 = ret.Get(0).(camp.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, string, uint) error); ok {
-		r1 = rf(userID, role, campID)
+	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
+		r1 = rf(userID, campID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -62,36 +62,43 @@ func (_m *CampData) GetByID(userID uint, role string, campID uint) (camp.Core, e
 	return r0, r1
 }
 
-// List provides a mock function with given fields: userID, role
-func (_m *CampData) List(userID uint, role string) ([]camp.Core, error) {
-	ret := _m.Called(userID, role)
+// List provides a mock function with given fields: userID, role, limit, offset
+func (_m *CampData) List(userID uint, role string, limit int, offset int) (int, []camp.Core, error) {
+	ret := _m.Called(userID, role, limit, offset)
 
-	var r0 []camp.Core
-	if rf, ok := ret.Get(0).(func(uint, string) []camp.Core); ok {
-		r0 = rf(userID, role)
+	var r0 int
+	if rf, ok := ret.Get(0).(func(uint, string, int, int) int); ok {
+		r0 = rf(userID, role, limit, offset)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]camp.Core)
+		r0 = ret.Get(0).(int)
+	}
+
+	var r1 []camp.Core
+	if rf, ok := ret.Get(1).(func(uint, string, int, int) []camp.Core); ok {
+		r1 = rf(userID, role, limit, offset)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).([]camp.Core)
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
-		r1 = rf(userID, role)
+	var r2 error
+	if rf, ok := ret.Get(2).(func(uint, string, int, int) error); ok {
+		r2 = rf(userID, role, limit, offset)
 	} else {
-		r1 = ret.Error(1)
+		r2 = ret.Error(2)
 	}
 
-	return r0, r1
+	return r0, r1, r2
 }
 
-// RequestAdmin provides a mock function with given fields: userID, campID
-func (_m *CampData) RequestAdmin(userID uint, campID uint) error {
-	ret := _m.Called(userID, campID)
+// RequestAdmin provides a mock function with given fields: campID, status
+func (_m *CampData) RequestAdmin(campID uint, status string) error {
+	ret := _m.Called(campID, status)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
-		r0 = rf(userID, campID)
+	if rf, ok := ret.Get(0).(func(uint, string) error); ok {
+		r0 = rf(campID, status)
 	} else {
 		r0 = ret.Error(0)
 	}
