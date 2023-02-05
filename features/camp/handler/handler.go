@@ -111,6 +111,7 @@ func (ch *campHandler) GetByID() echo.HandlerFunc {
 		return c.JSON(helper.SuccessResponse(200, "success show detail camp", response))
 	}
 }
+
 func (ch *campHandler) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
@@ -134,6 +135,7 @@ func (ch *campHandler) Update() echo.HandlerFunc {
 		return c.JSON(helper.SuccessResponse(201, "success update camp"))
 	}
 }
+
 func (ch *campHandler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
@@ -149,6 +151,7 @@ func (ch *campHandler) Delete() echo.HandlerFunc {
 		return c.JSON(helper.SuccessResponse(200, "success delete camp"))
 	}
 }
+
 func (ch *campHandler) Accept() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
@@ -166,6 +169,7 @@ func (ch *campHandler) Accept() echo.HandlerFunc {
 		return c.JSON(helper.SuccessResponse(200, "success accept camp"))
 	}
 }
+
 func (ch *campHandler) Decline() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")

@@ -3,6 +3,7 @@ package data
 import (
 	_booking "campyuk-api/features/booking/data"
 	"campyuk-api/features/camp"
+	_image "campyuk-api/features/image/data"
 	_item "campyuk-api/features/item/data"
 
 	"gorm.io/gorm"
@@ -21,15 +22,9 @@ type Camp struct {
 	Address            string
 	City               string
 	Document           string
-	Images             []Image            `gorm:"foreignKey:CampID"`
+	Images             []_image.Image     `gorm:"foreignKey:CampID"`
 	Items              []_item.Item       `gorm:"foreignKey:CampID"`
 	Bookings           []_booking.Booking `gorm:"foreignKey:CampID"`
-}
-
-type Image struct {
-	gorm.Model
-	CampID uint
-	Image  string
 }
 
 type CampModel struct {
@@ -46,8 +41,14 @@ type CampModel struct {
 	Address            string
 	City               string
 	Document           string
-	Images             []Image         `gorm:"-"`
+	Images             []ImageModel    `gorm:"-"`
 	Items              []CampItemModel `gorm:"-"`
+}
+
+type ImageModel struct {
+	gorm.Model
+	CampID uint
+	Image  string
 }
 
 type CampItemModel struct {
@@ -74,16 +75,16 @@ func ToData(hostID uint, c camp.Core) Camp {
 	}
 }
 
-func ToImageData(campID uint, c []camp.Image) []Image {
-	images := []Image{}
+func ToImageData(campID uint, c []camp.Image) []ImageModel {
+	images := []ImageModel{}
 	for _, v := range c {
-		images = append(images, Image{CampID: campID, Image: v.ImageURL})
+		images = append(images, ImageModel{CampID: campID, Image: v.ImageURL})
 	}
 
 	return images
 }
 
-func ToImageCore(ci []Image) []camp.Image {
+func ToImageCore(ci []ImageModel) []camp.Image {
 	images := []camp.Image{}
 	for _, v := range ci {
 		i := camp.Image{

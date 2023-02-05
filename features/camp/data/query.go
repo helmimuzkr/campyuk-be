@@ -93,7 +93,7 @@ func (cd *campData) GetByID(userID uint, campID uint) (camp.Core, error) {
 		return camp.Core{}, tx.Error
 	}
 
-	images := []Image{}
+	images := []ImageModel{}
 	tx = tx.Raw("SELECT * FROM images WHERE camp_id = ? AND deleted_at IS NULL", campID).Find(&images)
 	if tx.Error != nil {
 		log.Println(tx.Error)
@@ -163,7 +163,7 @@ func (cd *campData) listCampUser(limit int, offset int) ([]CampModel, error) {
 
 	// Find camp image
 	for i := range cm {
-		ci := Image{}
+		ci := ImageModel{}
 		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
@@ -185,7 +185,7 @@ func (cd *campData) listCampHost(userID uint, limit int, offset int) ([]CampMode
 
 	// Find camp image
 	for i := range cm {
-		ci := Image{}
+		ci := ImageModel{}
 		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
@@ -207,7 +207,7 @@ func (cd *campData) listCampAdmin(limit int, offset int) ([]CampModel, error) {
 
 	// Find camp image
 	for i := range cm {
-		ci := Image{}
+		ci := ImageModel{}
 		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
 			return nil, tx.Error
