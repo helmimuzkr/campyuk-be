@@ -43,21 +43,38 @@ func (cd *campData) Add(userID uint, newCamp camp.Core) error {
 
 func (cd *campData) List(userID uint, role string, limit int, offset int) (int, []camp.Core, error) {
 	var cm []CampModel
+	var totalRecord int64
 
 	switch role {
 	case "host":
+		// Find total record
+		tx := cd.db.Raw("SELECT count(id) FROM camps WHERE host_id = ? AND deleted_at IS NULL", userID).Find(&totalRecord)
+		if tx.Error != nil {
+			return 0, nil, tx.Error
+		}
+		// Find List
 		res, err := cd.listCampHost(userID, limit, offset)
 		if err != nil {
 			return 0, nil, err
 		}
-		cm = res
+		cm = res // Assign to model
+
 	case "admin":
+		tx := cd.db.Raw("SELECT count(id) FROM camps WHERE verification_status = 'PENDING' AND deleted_at IS NULL").Find(&totalRecord)
+		if tx.Error != nil {
+			return 0, nil, tx.Error
+		}
 		res, err := cd.listCampAdmin(limit, offset)
 		if err != nil {
 			return 0, nil, err
 		}
 		cm = res
+
 	default:
+		tx := cd.db.Raw("SELECT count(id) FROM camps WHERE verification_status = 'ACCEPTED' AND deleted_at IS NULL").Find(&totalRecord)
+		if tx.Error != nil {
+			return 0, nil, tx.Error
+		}
 		res, err := cd.listCampUser(limit, offset)
 		if err != nil {
 			return 0, nil, err
@@ -65,7 +82,7 @@ func (cd *campData) List(userID uint, role string, limit int, offset int) (int, 
 		cm = res
 	}
 
-	return len(cm), ToListCampCore(cm), nil
+	return int(totalRecord), ToListCampCore(cm), nil
 }
 
 func (cd *campData) GetByID(userID uint, campID uint) (camp.Core, error) {
@@ -105,6 +122,7 @@ func (cd *campData) Update(userID uint, campID uint, updateCamp camp.Core) error
 
 	return nil
 }
+
 func (cd *campData) Delete(userID uint, campID uint) error {
 	data := Camp{}
 	qry := cd.db.Where("host_id = ?", userID).Delete(&data, campID)
@@ -116,6 +134,7 @@ func (cd *campData) Delete(userID uint, campID uint) error {
 
 	return nil
 }
+
 func (cd *campData) RequestAdmin(campID uint, status string) error {
 	tx := cd.db.Exec("UPDATE camps SET verification_status=? WHERE id = ?", status, campID)
 	if tx.Error != nil {
