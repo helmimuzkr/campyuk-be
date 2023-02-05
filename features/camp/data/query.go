@@ -136,7 +136,7 @@ func (cd *campData) RequestAdmin(campID uint, status string) error {
 func (cd *campData) listCampUser(limit int, offset int) ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED' AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.address, camps.distance, camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'ACCEPTED' AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
 	tx := cd.db.Raw(qc, limit, offset).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -158,7 +158,7 @@ func (cd *campData) listCampUser(limit int, offset int) ([]CampModel, error) {
 func (cd *campData) listCampHost(userID uint, limit int, offset int) ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ? AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.address,camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE users.id = ? AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
 	tx := cd.db.Raw(qc, userID, limit, offset).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -180,7 +180,7 @@ func (cd *campData) listCampHost(userID uint, limit int, offset int) ([]CampMode
 func (cd *campData) listCampAdmin(limit int, offset int) ([]CampModel, error) {
 	cm := []CampModel{}
 	// Select camp
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING' AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
+	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.address,camps.distance,camps.city FROM camps JOIN users ON users.id = camps.host_id WHERE camps.verification_status = 'PENDING' AND camps.deleted_at IS NULL ORDER BY camps.id DESC LIMIT ? OFFSET ?"
 	tx := cd.db.Raw(qc, limit, offset).Find(&cm)
 	if tx.Error != nil {
 		return nil, tx.Error
