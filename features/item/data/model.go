@@ -1,6 +1,7 @@
 package data
 
 import (
+	"campyuk-api/features/booking/data"
 	"campyuk-api/features/item"
 
 	"gorm.io/gorm"
@@ -8,10 +9,11 @@ import (
 
 type Item struct {
 	gorm.Model
-	Name   string
-	Stock  int
-	Price  int
-	CampID uint
+	Name      string
+	Stock     int
+	Price     int
+	CampID    uint
+	RentItems []data.RentItem `gorm:"foreignKey:ItemID"`
 }
 
 func ToCore(data Item) item.Core {
