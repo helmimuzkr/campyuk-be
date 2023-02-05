@@ -52,7 +52,6 @@ type BookingService interface {
 
 type BookingData interface {
 	Create(userID uint, newBooking Core) (Core, error)
-
 	Update(userID uint, role string, bookingID uint, status string) error
 	List(userID uint) ([]Core, error)
 	GetByID(userID uint, bookingID uint) (Core, error)
