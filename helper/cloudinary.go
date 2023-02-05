@@ -3,6 +3,7 @@ package helper
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"mime/multipart"
 	"strings"
@@ -35,7 +36,7 @@ func UploadFile(file *multipart.FileHeader) (string, error) {
 	src, _ := file.Open()
 	defer src.Close()
 
-	publicID := time.Now().Format("20060102-150405") // Format  "(YY-MM-DD)-(hh-mm-ss)""
+	publicID := fmt.Sprintf("%d-%s", int(file.Size), time.Now().Format("20060102-150405")) // Format  "file_size-(YY-MM-DD)-(hh-mm-ss)""
 
 	cld := NewCloudinary()
 	uploadResult, err := cld.Upload.Upload(
