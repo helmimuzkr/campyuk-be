@@ -69,16 +69,31 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	return res, nil
 }
 
-func (bs *bookingSrv) Update(token interface{}, updateBooking booking.Core) error {
-	return nil
-}
+func (bs *bookingSrv) List(token interface{}, page int) ([]booking.Core, error) {
 
-func (bs *bookingSrv) List(token interface{}) ([]booking.Core, error) {
 	return nil, nil
 }
 
 func (bs *bookingSrv) GetByID(token interface{}, bookingID uint) (booking.Core, error) {
-	return booking.Core{}, nil
+	userID, role := helper.ExtractToken(token)
+	if role != "guest" && role != "host" {
+		return booking.Core{}, errors.New("access is denied due to invalid credential")
+	}
+
+	res, err := bs.qry.GetByID(userID, bookingID, role)
+	if err != nil {
+		log.Println(err)
+		if strings.Contains(err.Error(), "access is denied") {
+			return booking.Core{}, err
+		}
+		if strings.Contains(err.Error(), "not found") {
+			return booking.Core{}, errors.New("booking order not found")
+		}
+
+		return booking.Core{}, errors.New("internal server error")
+	}
+
+	return res, nil
 }
 
 func (bs *bookingSrv) Accept(token interface{}, bookingID uint, status string) error {
@@ -87,7 +102,7 @@ func (bs *bookingSrv) Accept(token interface{}, bookingID uint, status string) e
 		return errors.New("access is denied due to invalid credential")
 	}
 
-	if err := bs.qry.Update(id, bookingID, status); err != nil {
+	if err := bs.qry.Update(id, role, bookingID, status); err != nil {
 		log.Println(err)
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
@@ -102,9 +117,12 @@ func (bs *bookingSrv) Accept(token interface{}, bookingID uint, status string) e
 }
 
 func (bs *bookingSrv) Cancel(token interface{}, bookingID uint, status string) error {
-	id, _ := helper.ExtractToken(token)
+	id, role := helper.ExtractToken(token)
+	if role != "guest" && role != "host" {
+		return errors.New("access is denied due to invalid credential")
+	}
 
-	if err := bs.qry.Update(id, bookingID, status); err != nil {
+	if err := bs.qry.Update(id, role, bookingID, status); err != nil {
 		log.Println(err)
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {

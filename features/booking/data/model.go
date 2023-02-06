@@ -31,13 +31,15 @@ type RentItem struct {
 	Cost      int
 }
 
-type BookingDAO struct {
+type BookingCamp struct {
 	ID            uint
 	Ticket        string
 	UserID        uint // Guest
 	CampID        uint
 	Title         string
 	Image         string
+	Latitude      float64
+	Longitude     float64
 	Address       string
 	City          string
 	CampPrice     string `gorm:"column:price"`
@@ -50,14 +52,14 @@ type BookingDAO struct {
 	Status        string
 	Bank          string
 	VirtualNumber string
-	Items         []ItemDAO `gorm:"-:all"`
+	Items         []Item `gorm:"-"`
 }
 
-type ItemDAO struct {
+type Item struct {
 	Name     string
 	Price    int
 	Quantity int
-	RentCost int
+	RentCost int `gorm:"column:cost"`
 }
 
 func ToData(userID uint, core booking.Core) Booking {
@@ -91,13 +93,15 @@ func ToData(userID uint, core booking.Core) Booking {
 	return b
 }
 
-func ToCore(data BookingDAO) booking.Core {
+func ToCore(data BookingCamp) booking.Core {
 	return booking.Core{
 		ID:            data.ID,
-		UserID:        data.UserID,
+		GuestID:       data.UserID,
 		Ticket:        data.Ticket,
 		Title:         data.Title,
 		Image:         data.Image,
+		Latitude:      data.Latitude,
+		Longitude:     data.Longitude,
 		Address:       data.Address,
 		City:          data.City,
 		CampPrice:     data.CampPrice,
@@ -114,7 +118,7 @@ func ToCore(data BookingDAO) booking.Core {
 	}
 }
 
-func ToItemsCore(data []ItemDAO) []booking.Item {
+func ToItemsCore(data []Item) []booking.Item {
 	var cores []booking.Item
 
 	for _, v := range data {
@@ -126,6 +130,16 @@ func ToItemsCore(data []ItemDAO) []booking.Item {
 		c.RentCost = v.RentCost
 
 		cores = append(cores, c)
+	}
+
+	return cores
+}
+
+func ToListCore(data []BookingCamp) []booking.Core {
+	cores := []booking.Core{}
+
+	for _, v := range data {
+		cores = append(cores, ToCore(v))
 	}
 
 	return cores
