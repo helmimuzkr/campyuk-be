@@ -77,6 +77,16 @@ func (bc *bookingController) Cancel() echo.HandlerFunc {
 
 func (bc *bookingController) Callback() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		cb := Callback{}
+		if err := c.Bind(&cb); err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		err := bc.srv.Callback(cb.OrderID, cb.TransactionStatus)
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "success update transaction"))
 	}
 }

@@ -26,7 +26,7 @@ func (bd *bookingData) Create(userID uint, newBooking booking.Core) (booking.Cor
 	return booking.Core{ID: model.ID}, nil
 }
 
-func (bd *bookingData) Update(userID uint, role string, bookingID uint, status string) error {
+func (bd *bookingData) Update(userID uint, role string, updateBooking booking.Core) error {
 	return nil
 }
 
@@ -36,4 +36,13 @@ func (bd *bookingData) List(userID uint) ([]booking.Core, error) {
 
 func (bd *bookingData) GetByID(userID uint, bookingID uint) (booking.Core, error) {
 	return booking.Core{}, nil
+}
+
+func (bd *bookingData) Callback(ticket string, status string) error {
+	err := bd.db.Where("ticket = ?", ticket).Update("status", status).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
