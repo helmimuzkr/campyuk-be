@@ -62,6 +62,7 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	res, err := bs.qry.Create(id, newBooking)
 	if err != nil {
 		log.Fatal(err.Error())
+		return booking.Core{}, errors.New("internal server error")
 	}
 
 	return res, nil
