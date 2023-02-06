@@ -96,7 +96,7 @@ func (bs *bookingSrv) Callback(ticket string, status string) error {
 
 func (bs *bookingSrv) RequestHost(token interface{}, bookingID uint, status string) error {
 	_, role := helper.ExtractToken(token)
-	if role != "admin" {
+	if role != "host" {
 		return errors.New("access is denied due to invalid credential")
 	}
 
