@@ -39,7 +39,7 @@ func (bd *bookingData) GetByID(userID uint, bookingID uint) (booking.Core, error
 }
 
 func (bd *bookingData) Callback(ticket string, status string) error {
-	err := bd.db.Where("ticket = ?", ticket).Update("status", status).Error
+	err := bd.db.Model(&Booking{}).Where("ticket = ?", ticket).Update("status", status).Error
 	if err != nil {
 		return err
 	}
