@@ -6,8 +6,9 @@ type campResponse struct {
 	HostName           string  `json:"host_name"`
 	Title              string  `json:"title"`
 	Price              int     `json:"price"`
-	Latitude           float64 `json:"latitude"`
-	Longitude          float64 `json:"longitude"`
+	Description        string  `json:"description,omitempty"`
+	Latitude           float64 `json:"latitude,omitempty"`
+	Longitude          float64 `json:"longitude,omitempty"`
 	Address            string  `json:"address"`
 	City               string  `json:"city"`
 	Distance           int     `json:"distance"`

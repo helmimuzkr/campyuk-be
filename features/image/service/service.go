@@ -66,7 +66,7 @@ func (is *imageService) Delete(token interface{}, imageID uint) error {
 		if strings.Contains(err.Error(), "access is denied") {
 			msg = err.Error()
 		} else {
-			msg = "failed to upload image because internal server error"
+			msg = "internal server error"
 		}
 		return errors.New(msg)
 	}
