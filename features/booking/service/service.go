@@ -73,12 +73,33 @@ func (bs *bookingSrv) Update(token interface{}, updateBooking booking.Core) erro
 	return nil
 }
 
-func (bs *bookingSrv) List(token interface{}) ([]booking.Core, error) {
+func (bs *bookingSrv) List(token interface{}, page int) ([]booking.Core, error) {
+
 	return nil, nil
 }
 
 func (bs *bookingSrv) GetByID(token interface{}, bookingID uint) (booking.Core, error) {
-	return booking.Core{}, nil
+	userID, role := helper.ExtractToken(token)
+	if role != "guest" && role != "host" {
+		return booking.Core{}, errors.New("access is denied due to invalid credential")
+	}
+
+	res, err := bs.qry.GetByID(userID, bookingID, role)
+	if err != nil {
+		log.Println(err)
+		if strings.Contains(err.Error(), "access is denied") {
+			return booking.Core{}, err
+		}
+		if strings.Contains(err.Error(), "not found") {
+			return booking.Core{}, errors.New("booking order not found")
+		}
+
+		return booking.Core{}, errors.New("internal server error")
+	}
+
+
+
+	return res, nil
 }
 
 func (bs *bookingSrv) Accept(token interface{}, bookingID uint, status string) error {

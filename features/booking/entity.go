@@ -5,11 +5,13 @@ import "github.com/labstack/echo/v4"
 type Core struct {
 	ID            uint
 	Ticket        string
-	UserID        uint   // Guest
+	GuestID       uint   // Guest
 	Email         string // Email guest
 	CampID        uint
 	Title         string
 	Image         string
+	Latitude      float64
+	Longitude     float64
 	Address       string
 	City          string
 	CampPrice     string
@@ -45,7 +47,8 @@ type BookingHandler interface {
 
 type BookingService interface {
 	Create(token interface{}, newBooking Core) (Core, error)
-	List(token interface{}) ([]Core, error)
+	Update(token interface{}, status string) error
+	List(token interface{}, page int) ([]Core, error)
 	GetByID(token interface{}, bookingID uint) (Core, error)
 	Accept(token interface{}, bookingID uint, status string) error
 	Cancel(token interface{}, bookingID uint, status string) error
@@ -54,8 +57,7 @@ type BookingService interface {
 
 type BookingData interface {
 	Create(userID uint, newBooking Core) (Core, error)
-	List(userID uint) ([]Core, error)
-	GetByID(userID uint, bookingID uint) (Core, error)
-	Update(userID uint, bookingID uint, status string) error
-	Callback(ticket string, status string) error
+	Update(userID uint, role string, bookingID uint, status string) error
+	List(userID uint, role string, limit int, offset int) (int, []Core, error)
+	GetByID(userID uint, bookingID uint, role string) (Core, error)
 }

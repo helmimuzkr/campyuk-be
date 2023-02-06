@@ -3,7 +3,6 @@ package handler
 import (
 	"campyuk-api/features/booking"
 	"campyuk-api/helper"
-	"log"
 	"strconv"
 
 	"github.com/jinzhu/copier"
@@ -61,7 +60,20 @@ func (bc *bookingController) List() echo.HandlerFunc {
 
 func (bc *bookingController) GetByID() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+
+		str := c.Param("id")
+		bookingID, _ := strconv.Atoi(str)
+
+		res, err := bc.srv.GetByID(token, uint(bookingID))
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		response := bookingDetailResponse{}
+		copier.Copy(&response, &res)
+
+		return c.JSON(helper.SuccessResponse(200, "success show detail booking", response))
 	}
 }
 
@@ -107,7 +119,7 @@ func (bc *bookingController) Callback() echo.HandlerFunc {
 		if err := c.Bind(&cb); err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
-		log.Println("ini log callback", cb)
+
 		err := bc.srv.Callback(cb.OrderID, cb.TransactionStatus)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))

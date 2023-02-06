@@ -1,24 +1,35 @@
 package handler
 
 type bookingResponse struct {
-	CampID     uint   `json:"camp_id"`
-	Email      string `json:"email"` // Email guest
-	Title      string `json:"title"`
-	Image      string `json:"image"`
-	Address    string `json:"address"`
-	City       string `json:"city"`
-	CampPrice  string `json:"camp_price"`
-	CheckIn    string `json:"check_in"`
-	CheckOut   string `json:"check_out"`
-	Guest      int    `json:"guest"`
-	CampCost   int    `json:"camp_cost"`
-	TotalPrice int    `json:"total_price"`
+	ID            uint    `json:"id"`
+	Ticket        string  `json:"ticket"`
+	Title         string  `json:"camp_title"`
+	Image         string  `json:"camp_image"`
+	Latitude      float64 `json:"camp_latitude"`
+	Longitude     float64 `json:"camp_longitude"`
+	Address       string  `json:"camp_address"`
+	City          string  `json:"camp_city"`
+	CampPrice     string  `json:"camp_price"`
+	CheckIn       string  `json:"check_in"`
+	CheckOut      string  `json:"check_out"`
+	Guest         int     `json:"guest"`
+	CampCost      int     `json:"camp_cost"`
+	TotalPrice    int     `json:"total_price"`
+	Status        string  `json:"status"`
+	BookingDate   string  `json:"booking_date"`
+	Bank          string  `json:"bank"`
+	VirtualNumber string  `json:"virtual_number"`
 }
 
 type itemResponse struct {
-	ID       uint `json:"item_id"`
-	Name     string
-	Price    int
-	Quantity int `json:"quantity"`
-	RentCost int `json:"rent_cost"`
+	ID       uint   `json:"item_id,omitempty"`
+	Name     string `json:"name"`
+	Price    int    `json:"rent_price"`
+	Quantity int    `json:"quantity"`
+	RentCost int    `json:"rent_cost"`
+}
+
+type bookingDetailResponse struct {
+	bookingResponse
+	Items []itemResponse `json:"items"`
 }
