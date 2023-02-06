@@ -72,7 +72,7 @@ func (ch *campHandler) List() echo.HandlerFunc {
 			campResponse[i].Image = res[i].Images[0].ImageURL
 		}
 
-		pagination := paginationResponse{
+		pagination := helper.PaginationResponse{
 			Page:        paginate["page"].(int),
 			Limit:       paginate["limit"].(int),
 			Offset:      paginate["offset"].(int),
@@ -80,7 +80,7 @@ func (ch *campHandler) List() echo.HandlerFunc {
 			TotalPage:   paginate["totalPage"].(int),
 		}
 
-		response := withPagination{
+		response := helper.WithPagination{
 			Pagination: pagination,
 			Data:       campResponse,
 			Message:    "success show list camp",

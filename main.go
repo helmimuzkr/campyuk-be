@@ -90,10 +90,11 @@ func main() {
 	e.DELETE("/items/:id", iHdl.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	e.POST("/bookings", bookingHandler.Create(), middleware.JWT([]byte(config.JWT_KEY)))
-	e.POST("/bookings/callback", bookingHandler.Callback())
+	e.GET("/bookings", bookingHandler.List(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.GET("/bookings/:id", bookingHandler.GetByID(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("bookings/:id/accept", bookingHandler.Accept(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("bookings/:id/cancel", bookingHandler.Cancel(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.POST("/bookings/callback", bookingHandler.Callback())
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())

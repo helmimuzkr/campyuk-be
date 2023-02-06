@@ -46,15 +46,36 @@ func (bc *bookingController) Create() echo.HandlerFunc {
 	}
 }
 
-func (bc *bookingController) Update() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return nil
-	}
-}
-
 func (bc *bookingController) List() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+
+		str := c.QueryParam("page")
+		page, _ := strconv.Atoi(str)
+
+		paginate, res, err := bc.srv.List(token, page)
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		bookingResp := []bookingResponse{}
+		copier.Copy(&bookingResp, &res)
+
+		pagination := helper.PaginationResponse{
+			Page:        paginate["page"].(int),
+			Limit:       paginate["limit"].(int),
+			Offset:      paginate["offset"].(int),
+			TotalRecord: paginate["totalRecord"].(int),
+			TotalPage:   paginate["totalPage"].(int),
+		}
+
+		webResponse := helper.WithPagination{
+			Pagination: pagination,
+			Data:       bookingResp,
+			Message:    "show all transaction success",
+		}
+
+		return c.JSON(200, webResponse)
 	}
 }
 
