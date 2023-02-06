@@ -35,12 +35,14 @@ func (bd *bookingData) GetByID(userID uint, bookingID uint) (booking.Core, error
 }
 
 func (bd *bookingData) Update(userID uint, bookingID uint, status string) error {
+	// role host
 	qry := "UPDATE bookings JOIN camps ON camps.id = bookings.camp_id SET bookings.status = ? WHERE camps.host_id = ? AND bookings.id = ?"
 	tx := bd.db.Exec(qry, status, userID, bookingID)
 	if tx.Error != nil {
 		return tx.Error
 	}
 
+	// role guest
 	qry2 := "UPDATE bookings SET status = ? WHERE user_id = ? AND id = ?"
 	tx = bd.db.Exec(qry2, status, userID, bookingID)
 	if tx.Error != nil {
