@@ -3,6 +3,7 @@ package handler
 import (
 	"campyuk-api/features/booking"
 	"campyuk-api/helper"
+	"log"
 
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
@@ -81,7 +82,7 @@ func (bc *bookingController) Callback() echo.HandlerFunc {
 		if err := c.Bind(&cb); err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
-
+		log.Println(cb)
 		err := bc.srv.Callback(cb.OrderID, cb.TransactionStatus)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
