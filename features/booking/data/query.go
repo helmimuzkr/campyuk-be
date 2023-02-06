@@ -29,18 +29,48 @@ func (bd *bookingData) Create(userID uint, newBooking booking.Core) (booking.Cor
 }
 
 func (bd *bookingData) List(userID uint, role string, limit int, offset int) (int, []booking.Core, error) {
-	model := []BookingCamp{}
-	totalRecord := 0
+	var qryBooking, qryPagination, qryItem string
 
-	if role == "guest" {
-
-	} else if role == "host" {
+	if role == "host" {
+		// Query for host
+		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.total_price, bookings.status, 	bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE camps.host_id = ? ORDER BY bookings.id DESC LIMIT ? OFFSET ?"
+		qryPagination = "SELECT COUNT(bookings.id) FROM bookings JOIN camps ON camps.id = bookings.camp_id WHERE camps.host_id = ?"
+		qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN camps ON camps.id = items.camp_id WHERE camps.host_id = ?"
 
 	} else {
-		return 0, nil, errors.New("access is denied due to invalid credential")
+		// Query for guest
+		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.user_id = ? ORDER BY bookings.id DESC LIMIT ? OFFSET ?"
+		qryPagination = "SELECT COUNT(id) FROM bookings WHERE user_id = ?"
+		qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN bookings ON bookings.id = rent_items.booking_id WHERE bookings.user_id = ?"
 	}
 
-	return totalRecord, ToListCore(model), nil
+	var models []BookingCamp
+	tx := bd.db.Raw(qryBooking, userID, limit, offset).Find(&models)
+	if tx.Error != nil {
+		return 0, nil, tx.Error
+	}
+
+	for i := range models {
+		tx = tx.Raw("SELECT image FROM images WHERE camp_id = ? ORDER BY id ASC", models[i].CampID).First(&models[i].Image)
+		if tx.Error != nil {
+			log.Println(tx.Error)
+		}
+	}
+
+	for i := range models {
+		tx = tx.Raw(qryItem, userID).Find(&models[i].Items)
+		if tx.Error != nil {
+			log.Println(tx.Error)
+		}
+	}
+
+	var totalRecord int64
+	tx = tx.Raw(qryPagination, userID).Find(&totalRecord)
+	if tx.Error != nil {
+		return 0, nil, tx.Error
+	}
+
+	return int(totalRecord), ToListCore(models), nil
 }
 
 func (bd *bookingData) GetByID(userID uint, bookingID uint, role string) (booking.Core, error) {

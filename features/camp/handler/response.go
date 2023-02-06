@@ -33,17 +33,3 @@ type campDetailReponse struct {
 	Images []campImage `json:"images"`
 	Items  []campItem  `json:"items"`
 }
-
-type paginationResponse struct {
-	Page        int `json:"page"`
-	Limit       int `json:"limit"`
-	Offset      int `json:"offset"`
-	TotalRecord int `json:"total_rercord"`
-	TotalPage   int `json:"total_page"`
-}
-
-type withPagination struct {
-	Pagination paginationResponse `json:"pagination"`
-	Data       []campResponse     `json:"data"`
-	Message    string             `json:"message"`
-}

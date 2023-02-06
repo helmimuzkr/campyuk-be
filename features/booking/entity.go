@@ -37,7 +37,6 @@ type Item struct {
 
 type BookingHandler interface {
 	Create() echo.HandlerFunc
-	Update() echo.HandlerFunc
 	List() echo.HandlerFunc
 	GetByID() echo.HandlerFunc
 	Accept() echo.HandlerFunc
@@ -47,7 +46,7 @@ type BookingHandler interface {
 
 type BookingService interface {
 	Create(token interface{}, newBooking Core) (Core, error)
-	List(token interface{}, page int) ([]Core, error)
+	List(token interface{}, page int) (map[string]interface{}, []Core, error)
 	GetByID(token interface{}, bookingID uint) (Core, error)
 	Accept(token interface{}, bookingID uint, status string) error
 	Cancel(token interface{}, bookingID uint, status string) error

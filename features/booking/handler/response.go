@@ -9,11 +9,11 @@ type bookingResponse struct {
 	Longitude     float64 `json:"camp_longitude"`
 	Address       string  `json:"camp_address"`
 	City          string  `json:"camp_city"`
-	CampPrice     string  `json:"camp_price"`
+	CampPrice     string  `json:"camp_price,omitempty"`
 	CheckIn       string  `json:"check_in"`
 	CheckOut      string  `json:"check_out"`
-	Guest         int     `json:"guest"`
-	CampCost      int     `json:"camp_cost"`
+	Guest         int     `json:"guest,omitempty"`
+	CampCost      int     `json:"camp_cost,omitempty"`
 	TotalPrice    int     `json:"total_price"`
 	Status        string  `json:"status"`
 	BookingDate   string  `json:"booking_date"`
@@ -33,3 +33,4 @@ type bookingDetailResponse struct {
 	bookingResponse
 	Items []itemResponse `json:"items"`
 }
+

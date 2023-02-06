@@ -69,9 +69,35 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	return res, nil
 }
 
-func (bs *bookingSrv) List(token interface{}, page int) ([]booking.Core, error) {
+func (bs *bookingSrv) List(token interface{}, page int) (map[string]interface{}, []booking.Core, error) {
+	userID, role := helper.ExtractToken(token)
+	if role != "guest" && role != "host" {
+		return nil, nil, errors.New("access is denied due to invalid credential")
+	}
 
-	return nil, nil
+	if page < 1 {
+		page = 1
+	}
+	limit := 4
+	// Calculate offset
+	offset := (page - 1) * limit
+
+	totalRecord, res, err := bs.qry.List(userID, role, limit, offset)
+	if err != nil {
+		log.Println(err)
+		return nil, nil, errors.New("internal server error")
+	}
+
+	totalPage := totalRecord / limit
+
+	pagination := make(map[string]interface{})
+	pagination["page"] = page
+	pagination["limit"] = limit
+	pagination["offset"] = offset
+	pagination["totalRecord"] = totalRecord
+	pagination["totalPage"] = totalPage
+
+	return pagination, res, nil
 }
 
 func (bs *bookingSrv) GetByID(token interface{}, bookingID uint) (booking.Core, error) {
