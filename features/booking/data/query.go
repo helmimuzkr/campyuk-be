@@ -2,8 +2,6 @@ package data
 
 import (
 	"campyuk-api/features/booking"
-	"errors"
-	"log"
 
 	"gorm.io/gorm"
 )
@@ -37,15 +35,16 @@ func (bd *bookingData) GetByID(userID uint, bookingID uint) (booking.Core, error
 }
 
 func (bd *bookingData) Update(userID uint, bookingID uint, status string) error {
-	err := bd.db.Model(&Booking{}).Where("user_id = ? AND id = ?", userID, bookingID).Update("status", status)
-	if err != nil {
-		return errors.New("failed to update status")
+	qry := "UPDATE bookings JOIN camps ON camps.id = bookings.camp_id SET bookings.status = ? WHERE camps.host_id = ? AND bookings.id = ?"
+	tx := bd.db.Exec(qry, status, userID, bookingID)
+	if tx.Error != nil {
+		return tx.Error
 	}
 
-	affrows := err.RowsAffected
-	if affrows <= 0 {
-		log.Println("no rows affected")
-		return errors.New("no data updated")
+	qry2 := "UPDATE bookings SET status = ? WHERE user_id = ? AND id = ?"
+	tx = bd.db.Exec(qry2, status, userID, bookingID)
+	if tx.Error != nil {
+		return tx.Error
 	}
 
 	return nil
