@@ -97,18 +97,20 @@ func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader,
 		updateData.Password = string(hashed)
 	}
 
-	secureURL, err := helper.UploadFile(&fileData)
-	if err != nil {
-		log.Println(err)
-		var msg string
-		if strings.Contains(err.Error(), "wrong input") {
-			msg = err.Error()
-		} else {
-			msg = "failed to upload image, server error"
+	if fileData.Header != nil {
+		secureURL, err := helper.UploadFile(&fileData)
+		if err != nil {
+			log.Println(err)
+			var msg string
+			if strings.Contains(err.Error(), "wrong input") {
+				msg = err.Error()
+			} else {
+				msg = "failed to upload image, server error"
+			}
+			return user.Core{}, errors.New(msg)
 		}
-		return user.Core{}, errors.New(msg)
+		updateData.UserImage = secureURL
 	}
-	updateData.UserImage = secureURL
 
 	res, err := uuc.qry.Update(uint(id), updateData)
 	if err != nil {
