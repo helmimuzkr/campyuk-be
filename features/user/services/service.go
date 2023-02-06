@@ -54,8 +54,8 @@ func (uuc *userUseCase) Register(newUser user.Core) (user.Core, error) {
 	return res, nil
 }
 
-func (uuc *userUseCase) Login(email, password string) (string, user.Core, error) {
-	res, err := uuc.qry.Login(email)
+func (uuc *userUseCase) Login(username, password string) (string, user.Core, error) {
+	res, err := uuc.qry.Login(username)
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "empty") {
@@ -123,14 +123,6 @@ func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader,
 			msg = "server error"
 		}
 		return user.Core{}, errors.New(msg)
-	}
-
-	if res.UserImage != "" {
-		publicID := helper.GetPublicID(res.UserImage)
-		if err := helper.DestroyFile(publicID); err != nil {
-			log.Println("destroy file", err)
-			return user.Core{}, errors.New("failed to destroy image")
-		}
 	}
 
 	return res, nil
