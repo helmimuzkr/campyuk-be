@@ -81,26 +81,13 @@ func (bs *bookingSrv) GetByID(token interface{}, bookingID uint) (booking.Core, 
 	return booking.Core{}, nil
 }
 
-func (bs *bookingSrv) Callback(ticket string, status string) error {
-	if status == "settlement" {
-		status = "SUCCESS"
-	}
-	err := bs.qry.Callback(ticket, status)
-	if err != nil {
-		log.Println("callback error", err)
-		return errors.New("internal server error")
-	}
-
-	return nil
-}
-
-func (bs *bookingSrv) RequestHost(token interface{}, bookingID uint, status string) error {
-	_, role := helper.ExtractToken(token)
+func (bs *bookingSrv) Accept(token interface{}, bookingID uint, status string) error {
+	id, role := helper.ExtractToken(token)
 	if role != "host" {
 		return errors.New("access is denied due to invalid credential")
 	}
 
-	if err := bs.qry.RequestHost(bookingID, status); err != nil {
+	if err := bs.qry.Update(id, bookingID, status); err != nil {
 		log.Println(err)
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
@@ -109,6 +96,36 @@ func (bs *bookingSrv) RequestHost(token interface{}, bookingID uint, status stri
 			msg = "internal server errorr"
 		}
 		return errors.New(msg)
+	}
+
+	return nil
+}
+
+func (bs *bookingSrv) Cancel(token interface{}, bookingID uint, status string) error {
+	id, _ := helper.ExtractToken(token)
+
+	if err := bs.qry.Update(id, bookingID, status); err != nil {
+		log.Println(err)
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "booking not found"
+		} else {
+			msg = "internal server errorr"
+		}
+		return errors.New(msg)
+	}
+
+	return nil
+}
+
+func (bs *bookingSrv) Callback(ticket string, status string) error {
+	if status == "settlement" {
+		status = "SUCCESS"
+	}
+	err := bs.qry.Callback(ticket, status)
+	if err != nil {
+		log.Println("callback error", err)
+		return errors.New("internal server error")
 	}
 
 	return nil
