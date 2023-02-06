@@ -56,11 +56,16 @@ paths:
                                         type: string
                             example:
                                 message: "success create account"
+                500:
+                    description: "internal server error"
+                    content:
+                        application/json:
+                            schema:
+                                oneOf:
+                                    - $ref: "#/components/schemas/internalServerError"
+
                 400:
                     $ref: "#/components/responses/400"
-                500:
-                    $ref: "#/components/responses/500"
-
     /login:
         post:
             tags:
@@ -271,20 +276,27 @@ paths:
                             example:
                                 message: success add new camp
                 400:
-                    $ref: "#/components/responses/400"
+                    description: bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: field_name input value must be the_condition
                 401:
                     description: unauthorized
                     content:
                         application/json:
                             schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: access is denied due to invalid credential
+                                $ref: "#/components/schemas/credentialError"
                 500:
-                    $ref: "#/components/responses/500"
+                    description: internal server error
+                    content:
+                        application/json:
+                            schema:
+                                oneOf:
+                                    - $ref: "#/components/schemas/internalServerError"
+                                    - $ref: "#/components/schemas/failedUploadError"
         get:
             tags:
                 - "camps"
@@ -321,6 +333,7 @@ paths:
                                       host_name: john
                                       title: Tanakita Camp
                                       price: 100000
+                                      address: Jalan jalan
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
@@ -329,6 +342,7 @@ paths:
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
+                                      address: Jalan jalan
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
@@ -337,6 +351,7 @@ paths:
                                       host_name: doe
                                       title: Tanakita Camp
                                       price: 100000
+                                      address: Jalan jalan
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
@@ -345,6 +360,7 @@ paths:
                                       host_name: john
                                       title: Tanakita Camp
                                       price: 100000
+                                      address: Jalan jalan
                                       city: Gotham City
                                       distance: 100
                                       image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets.pikiran-rakyat.com%2Fcrop%2F0x0%3A0x0%2Fx%2Fphoto%2F2020%2F04%2F04%2F2309824160.jpg&f=1&nofb=1&ipt=40c1a6e95ad3ea4a52e83708d27385d1436ef54e77c3afb84623998a0120f9eb&ipo=images
@@ -409,6 +425,8 @@ paths:
                                                 type: integer
                                             description:
                                                 type: string
+                                            document:
+                                                type: string
                                             images:
                                                 type: array
                                                 items:
@@ -432,6 +450,7 @@ paths:
                                     address: Jl. Spartan No.IV, Gotham city, West Java, 53241 +62 985904
                                     city: Gotham city
                                     distance: 100
+                                    document: "https://res.cloudinary.com/dnji8pgyl/image/upload/v1675626517/file/78768-20230206-024829.pdf"
                                     images:
                                         - image_id: 1
                                           image: https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fdisplay.ub.ac.id%2Fwp-content%2Fuploads%2F2021%2F05%2F055886600_1526867328-20180520-Refleksi-20-Tahun-Reformasi-dalam-Jepretan-Kamera-AFP-1-1024x591.png&f=1&nofb=1&ipt=0255ab3e0e0ec03987a0d34de8ce3fa8a130a0262b5af32372607cb2846334ae&ipo=images
@@ -475,7 +494,7 @@ paths:
                                     message:
                                         type: string
                             example:
-                                message: data camp not found
+                                message: camp not found
                 500:
                     $ref: "#/components/responses/500"
         put:
@@ -519,11 +538,6 @@ paths:
                                     type: string
                                 distance:
                                     type: integer
-                                images:
-                                    type: array
-                                    items:
-                                        type: string
-                                        format: binary
                                 document:
                                     type: string
                                     format: binary
@@ -537,10 +551,6 @@ paths:
                             address: Jl. Spartan No.IV, Gotham city, West Java, 53241 +62 985904
                             city: Gotham city
                             distance: 100
-                            images:
-                                - image.jpg
-                                - image.jpg
-                                - image.jpg
                             document: dokumen-usaha.pdf
             responses:
                 200:
@@ -555,18 +565,17 @@ paths:
                             example:
                                 message: success update camp
                 400:
-                    $ref: "#/components/responses/400"
+                    description: bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/formatUploadError"
                 401:
                     description: unauthorized
                     content:
                         application/json:
                             schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: access is denied due to invalid credential
+                                $ref: "#/components/schemas/credentialError"
                 404:
                     description: data not found
                     content:
@@ -579,7 +588,13 @@ paths:
                             example:
                                 message: data camp not found
                 500:
-                    $ref: "#/components/responses/500"
+                    description: internal server error
+                    content:
+                        application/json:
+                            schema:
+                                oneOf:
+                                    - $ref: "#/components/schemas/internalServerError"
+                                    - $ref: "#/components/schemas/failedUploadError"
         delete:
             tags:
                 - "camps"
@@ -626,7 +641,7 @@ paths:
                                     message:
                                         type: string
                             example:
-                                message: data camp not found
+                                message: camp not found
                 500:
                     description: internal server error
                     content:
@@ -685,7 +700,7 @@ paths:
                                     message:
                                         type: string
                             example:
-                                message: data camp not found
+                                message: camp not found
                 500:
                     $ref: "#/components/responses/500"
     /camps/{id}/decline:
@@ -713,7 +728,7 @@ paths:
                                     message:
                                         type: string
                             example:
-                                message: success decline camp request
+                                message: success reject camp
                 401:
                     description: unauthorized
                     content:
@@ -735,7 +750,7 @@ paths:
                                     message:
                                         type: string
                             example:
-                                message: data camp not found
+                                message: camp not found
                 500:
                     $ref: "#/components/responses/500"
 
@@ -775,7 +790,11 @@ paths:
                             example:
                                 message: success add iamge
                 400:
-                    $ref: "#/components/responses/400"
+                    description: bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/formatUploadError"
                 401:
                     description: unauthorized
                     content:
@@ -788,7 +807,11 @@ paths:
                             example:
                                 message: access is denied due to invalid credential
                 500:
-                    $ref: "#/components/responses/500"
+                    description: internal server errror
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/failedUploadError"
     /images/{id}:
         # put:
         #     tags:
@@ -1087,6 +1110,19 @@ paths:
                                 data:
                                     booking_id: 1
                                 message: "success booking"
+                401:
+                    description: unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/credentialError"
+                500:
+                    description: internal server error
+                    content:
+                        application/json:
+                            schema:
+                                oneOf:
+                                    - $ref: "#/components/schemas/internalServerError"
         get:
             tags:
                 - bookings
@@ -1118,6 +1154,7 @@ paths:
                                             ticket: ACT-34799-XVII-MMDKJF,
                                             camp_title: tanakita,
                                             camp_image: "https://app.s9dh712hunsd1.jpg",
+                                            camp_address: Jalan jalan,
                                             camp_city: sukabumi,
                                             check_in: "01-02-2023",
                                             check_out: "02-02-2023",
@@ -1130,6 +1167,7 @@ paths:
                                             ticket: ABC-27883-XVII-KKDTC,
                                             camp_title: tanakita,
                                             camp_image: "https://app.nd8nd871y2ss.jpg",
+                                            camp_address: Jalan jalan,
                                             camp_city: sukabumi,
                                             check_in: "01-02-2023",
                                             check_out: "03-02-2023",
@@ -1139,8 +1177,12 @@ paths:
                                         },
                                     ]
                                 message: "show all transaction success"
-                400:
-                    $ref: "#/components/responses/400"
+                401:
+                    description: authorization
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/credentialError"
                 500:
                     $ref: "#/components/responses/500"
 
@@ -1214,6 +1256,9 @@ paths:
                                     ticket: ACT-34799-XVII-MMDKJF
                                     camp_title: tanakita
                                     camp_image: "https://app.s9dh712hunsd1.jpg"
+                                    camp_latitude: -6.208987101998694
+                                    camp_longitude: 106.79970296358913
+                                    camp_address: Jalan jalan
                                     camp_city: sukabumi
                                     camp_price: 20000
                                     check_in: "01-02-2023"
@@ -1223,12 +1268,12 @@ paths:
                                     items:
                                         - item_id: 1
                                           name: Tent small
-                                          price: 100000
+                                          rent_price: 100000
                                           quantity: 2
                                           rent_cost: 200000
                                         - item_id: 2
                                           name: Sleeping bag
-                                          price: 200000
+                                          rent_price: 200000
                                           quantity: 2
                                           rent_cost: 400000
                                     total_price: 100000
@@ -1237,8 +1282,20 @@ paths:
                                     virtual_number: "4716239019741"
                                     status: "pending"
                                 message: "success show detail booking"
-                400:
-                    $ref: "#/components/responses/400"
+                401:
+                    description: authorization
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/credentialError"
+                404:
+                    description: booking not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: "booking order not found"
                 500:
                     $ref: "#/components/responses/500"
 
@@ -1267,8 +1324,20 @@ paths:
                                 type: object
                             example:
                                 message: "success accept booking"
-                400:
-                    $ref: "#/components/responses/400"
+                404:
+                    description: booking not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: "booking order not found"
+                401:
+                    description: authorization
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/credentialError"
                 500:
                     $ref: "#/components/responses/500"
 
@@ -1297,8 +1366,20 @@ paths:
                                 type: object
                             example:
                                 message: "success cancel booking"
-                400:
-                    $ref: "#/components/responses/400"
+                404:
+                    description: booking not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: "booking order not found"
+                401:
+                    description: authorization
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/credentialError"
                 500:
                     $ref: "#/components/responses/500"
 
@@ -1306,10 +1387,8 @@ paths:
         post:
             tags:
                 - bookings
-            summary: by user
-            description: add booking for user
-            security:
-                - JWTAuth: []
+            summary: by midtrans
+            description: callback for midtrans
             requestBody:
                 required: true
                 content:
@@ -1340,6 +1419,8 @@ paths:
                                         type: string
                             example:
                                 message: "success update transaction"
+                500:
+                    $ref: "#/components/responses/500"
 
 components:
     securitySchemes:
@@ -1356,6 +1437,35 @@ components:
                     type: object
                 message:
                     type: string
+        errorResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+        internalServerError:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: internal server error
+        credentialError:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: access is denied due to invalid credential
+        failedUploadError:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: failed to upload image because internal server error
+        formatUploadError:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: bad request because of format not pdf, png, jpg, or jpeg
         # responseObjectArr:
         # type: object
         # properties:
