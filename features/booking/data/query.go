@@ -28,10 +28,6 @@ func (bd *bookingData) Create(userID uint, newBooking booking.Core) (booking.Cor
 	return booking.Core{ID: model.ID}, nil
 }
 
-func (bd *bookingData) Update(userID uint, role string, bookingID uint, status string) error {
-	return nil
-}
-
 func (bd *bookingData) List(userID uint, role string, limit int, offset int) (int, []booking.Core, error) {
 	model := []BookingCamp{}
 	totalRecord := 0
@@ -50,16 +46,15 @@ func (bd *bookingData) List(userID uint, role string, limit int, offset int) (in
 func (bd *bookingData) GetByID(userID uint, bookingID uint, role string) (booking.Core, error) {
 	var qryBooking, qryItem string
 
-	if role == "guest" {
-		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, camps.price, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.guest, bookings.camp_cost, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.user_id = ? AND bookings.id = ?"
-		qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN bookings ON bookings.id = rent_items.booking_id WHERE bookings.user_id = ? AND rent_items.booking_id = ? "
-
-	} else if role == "host" {
+	if role == "host" {
+		// Query for host
 		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, camps.price, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.guest, bookings.camp_cost, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE camps.host_id = ? AND bookings.id = ?"
 		qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN camps ON camps.id = items.camp_id WHERE camps.host_id = ? AND rent_items.booking_id = ?"
 
 	} else {
-		return booking.Core{}, errors.New("access is denied due to invalid credential")
+		// Query for guest
+		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, camps.price, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.guest, bookings.camp_cost, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.user_id = ? AND bookings.id = ?"
+		qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN bookings ON bookings.id = rent_items.booking_id WHERE bookings.user_id = ? AND rent_items.booking_id = ? "
 	}
 
 	var model BookingCamp
@@ -90,17 +85,18 @@ func (bd *bookingData) GetByID(userID uint, bookingID uint, role string) (bookin
 	return ToCore(model), nil
 }
 
-func (bd *bookingData) Update(userID uint, bookingID uint, status string) error {
-	// role host
-	qry := "UPDATE bookings JOIN camps ON camps.id = bookings.camp_id SET bookings.status = ? WHERE camps.host_id = ? AND bookings.id = ?"
-	tx := bd.db.Exec(qry, status, userID, bookingID)
-	if tx.Error != nil {
-		return tx.Error
+func (bd *bookingData) Update(userID uint, role string, bookingID uint, status string) error {
+	var qry string
+	if role == "host" {
+		// role host
+		qry = "UPDATE bookings JOIN camps ON camps.id = bookings.camp_id SET bookings.status = ? WHERE camps.host_id = ? AND bookings.id = ?"
+
+	} else if role == "guest" {
+		// role guest
+		qry = "UPDATE bookings SET status = ? WHERE user_id = ? AND id = ?"
 	}
 
-	// role guest
-	qry2 := "UPDATE bookings SET status = ? WHERE user_id = ? AND id = ?"
-	tx = bd.db.Exec(qry2, status, userID, bookingID)
+	tx := bd.db.Exec(qry, status, userID, bookingID)
 	if tx.Error != nil {
 		return tx.Error
 	}
