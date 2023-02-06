@@ -74,7 +74,7 @@ func (bc *bookingController) Accept() echo.HandlerFunc {
 
 		status := "ACCEPTED"
 
-		err := bc.srv.RequestHost(token, uint(bookingID), status)
+		err := bc.srv.Accept(token, uint(bookingID), status)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
@@ -85,7 +85,19 @@ func (bc *bookingController) Accept() echo.HandlerFunc {
 
 func (bc *bookingController) Cancel() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+
+		paramID := c.Param("id")
+		bookingID, _ := strconv.Atoi(paramID)
+
+		status := "CANCELLED"
+
+		err := bc.srv.Cancel(token, uint(bookingID), status)
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "success cancel booking"))
 	}
 }
 
