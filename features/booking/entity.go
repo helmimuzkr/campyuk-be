@@ -47,7 +47,6 @@ type BookingHandler interface {
 
 type BookingService interface {
 	Create(token interface{}, newBooking Core) (Core, error)
-	Update(token interface{}, status string) error
 	List(token interface{}, page int) ([]Core, error)
 	GetByID(token interface{}, bookingID uint) (Core, error)
 	Accept(token interface{}, bookingID uint, status string) error
@@ -60,4 +59,5 @@ type BookingData interface {
 	Update(userID uint, role string, bookingID uint, status string) error
 	List(userID uint, role string, limit int, offset int) (int, []Core, error)
 	GetByID(userID uint, bookingID uint, role string) (Core, error)
+	Callback(ticket string, status string) error
 }
