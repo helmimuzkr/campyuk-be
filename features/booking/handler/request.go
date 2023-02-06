@@ -16,3 +16,9 @@ type itemRequest struct {
 	Quantity int  `json:"quantity" form:"quantity"`
 	RentCost int  `json:"rent_cost" form:"rent_cost"`
 }
+
+type Callback struct {
+	OrderID           string `json:"order_id" form:"order_id"`
+	SettlementTime    string `json:"settlement_time" form:"settlement_time"`
+	TransactionStatus string `json:"transaction_status" form:"transaction_status"`
+}

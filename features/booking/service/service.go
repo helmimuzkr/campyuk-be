@@ -68,7 +68,7 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	return res, nil
 }
 
-func (bs *bookingSrv) Update(token interface{}, status string) error {
+func (bs *bookingSrv) Update(token interface{}, updateBooking booking.Core) error {
 	return nil
 }
 
@@ -78,4 +78,14 @@ func (bs *bookingSrv) List(token interface{}) ([]booking.Core, error) {
 
 func (bs *bookingSrv) GetByID(token interface{}, bookingID uint) (booking.Core, error) {
 	return booking.Core{}, nil
+}
+
+func (bs *bookingSrv) Callback(ticket string, status string) error {
+	err := bs.qry.Callback(ticket, status)
+	if err != nil {
+		log.Println("callback error", err)
+		return errors.New("internal server error")
+	}
+
+	return nil
 }
