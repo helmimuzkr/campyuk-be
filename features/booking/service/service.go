@@ -81,6 +81,9 @@ func (bs *bookingSrv) GetByID(token interface{}, bookingID uint) (booking.Core, 
 }
 
 func (bs *bookingSrv) Callback(ticket string, status string) error {
+	if status == "settlement" {
+		status = "SUCCESS"
+	}
 	err := bs.qry.Callback(ticket, status)
 	if err != nil {
 		log.Println("callback error", err)
