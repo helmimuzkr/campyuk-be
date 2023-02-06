@@ -49,6 +49,7 @@ type BookingService interface {
 	List(token interface{}) ([]Core, error)
 	GetByID(token interface{}, bookingID uint) (Core, error)
 	Callback(ticket string, status string) error
+	RequestHost(token interface{}, bookingID uint, status string) error
 }
 
 type BookingData interface {
@@ -57,4 +58,5 @@ type BookingData interface {
 	List(userID uint) ([]Core, error)
 	GetByID(userID uint, bookingID uint) (Core, error)
 	Callback(ticket string, status string) error
+	RequestHost(bookingID uint, status string) error
 }

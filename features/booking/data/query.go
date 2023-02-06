@@ -2,6 +2,8 @@ package data
 
 import (
 	"campyuk-api/features/booking"
+	"errors"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -42,6 +44,21 @@ func (bd *bookingData) Callback(ticket string, status string) error {
 	err := bd.db.Model(&Booking{}).Where("ticket = ?", ticket).Update("status", status).Error
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (bd *bookingData) RequestHost(bookingID uint, status string) error {
+	err := bd.db.Model(&Booking{}).Where("id = ?", bookingID).Update("status", status)
+	if err != nil {
+		return errors.New("failed to update status")
+	}
+
+	affrows := err.RowsAffected
+	if affrows <= 0 {
+		log.Println("no rows affected")
+		return errors.New("no data updated")
 	}
 
 	return nil

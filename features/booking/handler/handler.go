@@ -4,6 +4,7 @@ import (
 	"campyuk-api/features/booking"
 	"campyuk-api/helper"
 	"log"
+	"strconv"
 
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
@@ -66,7 +67,19 @@ func (bc *bookingController) GetByID() echo.HandlerFunc {
 
 func (bc *bookingController) Accept() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		token := c.Get("user")
+
+		paramID := c.Param("id")
+		bookingID, _ := strconv.Atoi(paramID)
+
+		status := "ACCEPTED"
+
+		err := bc.srv.RequestHost(token, uint(bookingID), status)
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "success accept booking"))
 	}
 }
 
