@@ -78,12 +78,14 @@ func (bc *bookingController) Cancel() echo.HandlerFunc {
 
 func (bc *bookingController) Callback() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		cb := Callback{}
+		cb := map[string]interface{}{}
 		if err := c.Bind(&cb); err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
-		log.Println(cb)
-		err := bc.srv.Callback(cb.OrderID, cb.TransactionStatus)
+		log.Println("ini log callback", cb)
+		ticket := cb["order_id"].(string)
+		status := cb["transaction_status"].(string)
+		err := bc.srv.Callback(ticket, status)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
