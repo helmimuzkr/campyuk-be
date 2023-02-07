@@ -15,12 +15,14 @@ import (
 type campService struct {
 	qry camp.CampData
 	vld *validator.Validate
+	up  helper.Uploader
 }
 
-func New(q camp.CampData, v *validator.Validate) camp.CampService {
+func New(q camp.CampData, v *validator.Validate, u helper.Uploader) camp.CampService {
 	return &campService{
 		qry: q,
 		vld: v,
+		up:  u,
 	}
 }
 
@@ -49,7 +51,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 		}
 	}
 
-	docURL, err := helper.UploadFile(document)
+	docURL, err := cs.up.Upload(document)
 	if err != nil {
 		log.Println(err)
 		var msg string
@@ -63,7 +65,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 
 	imageCore := []camp.Image{}
 	for _, h := range imagesHeader {
-		imageURL, err := helper.UploadFile(h)
+		imageURL, err := cs.up.Upload(h)
 		if err != nil {
 			log.Println(err)
 			var msg string
@@ -76,7 +78,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 			// Hapus image di Cloudinary(terlanjur upload) jika salah satu image gagal diupload
 			for _, v := range imageCore {
 				publicID := helper.GetPublicID(v.ImageURL)
-				if err = helper.DestroyFile(publicID); err != nil {
+				if err = cs.up.Destroy(publicID); err != nil {
 					log.Println(err)
 					return errors.New("failed to upload image because internal server error")
 				}
@@ -167,7 +169,7 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 	}
 
 	if document != nil {
-		docURL, err := helper.UploadFile(document)
+		docURL, err := cs.up.Upload(document)
 		if err != nil {
 			log.Println(err)
 			var msg string
@@ -194,7 +196,7 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 
 	if res.Document != "" {
 		publicID := helper.GetPublicID(res.Document)
-		if err := helper.DestroyFile(publicID); err != nil {
+		if err := cs.up.Destroy(publicID); err != nil {
 			log.Println("destroy file", err)
 			return errors.New("failed to destroy document")
 		}

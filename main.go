@@ -34,7 +34,7 @@ func main() {
 	config.Migrate(db)
 
 	v := validator.New()
-	// cld := config.NewCloudinary(*cfg)
+	cld := helper.NewCloudinary(cfg)
 	coreapiMidtrans := helper.NewCoreMidtrans(cfg)
 
 	config.Migrate(db)
@@ -49,7 +49,7 @@ func main() {
 	iHdl := itmHdl.New(iSrv)
 
 	campData := _campData.New(db)
-	campSrv := _campService.New(campData, v)
+	campSrv := _campService.New(campData, v, cld)
 	campHandler := _campHandler.New(campSrv)
 
 	imageData := _imageData.New(db)
