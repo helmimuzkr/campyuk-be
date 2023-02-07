@@ -78,16 +78,12 @@ func (uc *userControll) Update() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "input format incorrect"})
 		}
 
-		checkFile, _, _ := c.Request().FormFile("user_image")
-		if checkFile != nil {
-			formHeader, err := c.FormFile("user_image")
-			if err != nil {
-				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "Select a file to upload"})
-			}
-			input.FileHeader = *formHeader
+		formHeader, err := c.FormFile("user_image")
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "Select a file to upload"})
 		}
 
-		_, err = uc.srv.Update(c.Get("user"), input.FileHeader, *ReqToCore(input))
+		_, err = uc.srv.Update(c.Get("user"), formHeader, *ReqToCore(input))
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}

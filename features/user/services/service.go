@@ -90,7 +90,7 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 	return res, nil
 }
 
-func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader, updateData user.Core) (user.Core, error) {
+func (uuc *userUseCase) Update(token interface{}, fileData *multipart.FileHeader, updateData user.Core) (user.Core, error) {
 	id, _ := helper.ExtractToken(token)
 	if updateData.Password != "" {
 		hashed, _ := helper.GeneratePassword(updateData.Password)
@@ -98,7 +98,7 @@ func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader,
 	}
 
 	if fileData.Header != nil {
-		secureURL, err := helper.UploadFile(&fileData)
+		secureURL, err := helper.UploadFile(fileData)
 		if err != nil {
 			log.Println(err)
 			var msg string
