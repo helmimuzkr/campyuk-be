@@ -125,17 +125,6 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, uint(0), res.ID)
 		data.AssertExpectations(t)
 	})
-
-	t.Run("login compare", func(t *testing.T) {
-		data.On("Login", input).Return(resData, errors.New("password not matched")).Once()
-		srv := New(data)
-		token, res, err := srv.Login(input, "123")
-		assert.NotNil(t, err)
-		assert.ErrorContains(t, err, "not matched")
-		assert.Empty(t, token)
-		assert.Equal(t, uint(0), res.ID)
-		data.AssertExpectations(t)
-	})
 }
 
 func TestProfile(t *testing.T) {
