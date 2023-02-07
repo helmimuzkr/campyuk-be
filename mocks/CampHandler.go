@@ -44,6 +44,22 @@ func (_m *CampHandler) Add() echo.HandlerFunc {
 	return r0
 }
 
+// Decline provides a mock function with given fields:
+func (_m *CampHandler) Decline() echo.HandlerFunc {
+	ret := _m.Called()
+
+	var r0 echo.HandlerFunc
+	if rf, ok := ret.Get(0).(func() echo.HandlerFunc); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(echo.HandlerFunc)
+		}
+	}
+
+	return r0
+}
+
 // Delete provides a mock function with given fields:
 func (_m *CampHandler) Delete() echo.HandlerFunc {
 	ret := _m.Called()
@@ -78,22 +94,6 @@ func (_m *CampHandler) GetByID() echo.HandlerFunc {
 
 // List provides a mock function with given fields:
 func (_m *CampHandler) List() echo.HandlerFunc {
-	ret := _m.Called()
-
-	var r0 echo.HandlerFunc
-	if rf, ok := ret.Get(0).(func() echo.HandlerFunc); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(echo.HandlerFunc)
-		}
-	}
-
-	return r0
-}
-
-// Reject provides a mock function with given fields:
-func (_m *CampHandler) Reject() echo.HandlerFunc {
 	ret := _m.Called()
 
 	var r0 echo.HandlerFunc
