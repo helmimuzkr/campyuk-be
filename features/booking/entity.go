@@ -14,7 +14,7 @@ type Core struct {
 	Longitude     float64
 	Address       string
 	City          string
-	CampPrice     string
+	CampPrice     int
 	CheckIn       string
 	CheckOut      string
 	BookingDate   string
