@@ -5,6 +5,7 @@ import (
 	"campyuk-api/helper"
 	"errors"
 	"log"
+	"math"
 	"mime/multipart"
 	"strings"
 
@@ -113,7 +114,7 @@ func (cs *campService) List(token interface{}, page int) (map[string]interface{}
 		return nil, nil, errors.New("internal server error")
 	}
 
-	totalPage := totalRecord / limit
+	totalPage := int(math.Ceil(float64(totalRecord) / float64(limit)))
 
 	pagination := make(map[string]interface{})
 	pagination["page"] = page
