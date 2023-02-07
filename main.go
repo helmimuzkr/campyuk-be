@@ -17,6 +17,7 @@ import (
 	usrData "campyuk-api/features/user/data"
 	usrHdl "campyuk-api/features/user/handler"
 	usrSrv "campyuk-api/features/user/services"
+	"campyuk-api/helper"
 	_middlewareCustom "campyuk-api/middleware"
 
 	"log"
@@ -34,7 +35,7 @@ func main() {
 
 	v := validator.New()
 	// cld := config.NewCloudinary(*cfg)
-	coreapiMidtrans := config.NewCoreMidtrans()
+	coreapiMidtrans := helper.NewCoreMidtrans(cfg)
 
 	config.Migrate(db)
 
