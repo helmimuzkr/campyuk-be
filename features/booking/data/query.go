@@ -33,13 +33,13 @@ func (bd *bookingData) List(userID uint, role string, limit int, offset int) (in
 
 	if role == "host" {
 		// Query for host
-		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.total_price, bookings.status, 	bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE camps.host_id = ? ORDER BY bookings.id DESC LIMIT ? OFFSET ?"
+		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title,camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.total_price, bookings.status, 	bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE camps.host_id = ? ORDER BY bookings.id DESC LIMIT ? OFFSET ?"
 		qryPagination = "SELECT COUNT(bookings.id) FROM bookings JOIN camps ON camps.id = bookings.camp_id WHERE camps.host_id = ?"
 		qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN camps ON camps.id = items.camp_id WHERE camps.host_id = ?"
 
 	} else {
 		// Query for guest
-		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.user_id = ? ORDER BY bookings.id DESC LIMIT ? OFFSET ?"
+		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title,camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.user_id = ? ORDER BY bookings.id DESC LIMIT ? OFFSET ?"
 		qryPagination = "SELECT COUNT(id) FROM bookings WHERE user_id = ?"
 		qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN bookings ON bookings.id = rent_items.booking_id WHERE bookings.user_id = ?"
 	}

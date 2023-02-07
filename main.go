@@ -17,6 +17,7 @@ import (
 	usrData "campyuk-api/features/user/data"
 	usrHdl "campyuk-api/features/user/handler"
 	usrSrv "campyuk-api/features/user/services"
+	"campyuk-api/helper"
 	_middlewareCustom "campyuk-api/middleware"
 
 	"log"
@@ -33,14 +34,14 @@ func main() {
 	config.Migrate(db)
 
 	v := validator.New()
-	// cld := config.NewCloudinary(*cfg)
-	coreapiMidtrans := config.NewCoreMidtrans()
+	cld := helper.NewCloudinary(cfg)
+	coreapiMidtrans := helper.NewCoreMidtrans(cfg)
 
 	config.Migrate(db)
 
 	// SETUP DOMAIN
 	uData := usrData.New(db)
-	uSrv := usrSrv.New(uData)
+	uSrv := usrSrv.New(uData, v, cld)
 	uHdl := usrHdl.New(uSrv)
 
 	iData := itmData.New(db)
@@ -48,11 +49,11 @@ func main() {
 	iHdl := itmHdl.New(iSrv)
 
 	campData := _campData.New(db)
-	campSrv := _campService.New(campData, v)
+	campSrv := _campService.New(campData, v, cld)
 	campHandler := _campHandler.New(campSrv)
 
 	imageData := _imageData.New(db)
-	imageSrv := _imageService.New(imageData)
+	imageSrv := _imageService.New(imageData, cld)
 	imageHandler := _imageHandler.New(imageSrv)
 
 	bookingData := _bookingData.New(db)

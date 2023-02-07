@@ -15,42 +15,23 @@ import (
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 )
 
-func NewCloudinary() *cloudinary.Cloudinary {
-	cld, err := cloudinary.NewFromParams(config.CLOUDINARY_CLOUD_NAME, config.CLOUDINARY_API_KEY, config.CLOUDINARY_API_SECRET)
+type Uploader interface {
+	Upload(file *multipart.FileHeader) (string, error)
+	Destroy(publicID string) error
+}
+
+type claudinaryUploader struct {
+	cld *cloudinary.Cloudinary
+}
+
+func NewCloudinary(cfg *config.AppConfig) Uploader {
+	cld, err := cloudinary.NewFromParams(cfg.CLOUDINARY_CLOUD_NAME, cfg.CLOUDINARY_API_KEY, cfg.CLOUDINARY_API_SECRET)
 	if err != nil {
 		log.Println("init cloudinary gagal", err)
 		return nil
 	}
 
-	return cld
-}
-
-func UploadFile(file *multipart.FileHeader) (string, error) {
-	// Format check
-	filename := strings.Split(file.Filename, ".")
-	format := filename[len(filename)-1]
-	if format != "pdf" && format != "png" && format != "jpg" && format != "jpeg" {
-		return "", errors.New("bad request because of format not pdf, png, jpg, or jpeg")
-	}
-
-	src, _ := file.Open()
-	defer src.Close()
-
-	publicID := fmt.Sprintf("%d-%s", int(file.Size), time.Now().Format("20060102-150405")) // Format  "file_size-(YY-MM-DD)-(hh-mm-ss)""
-
-	cld := NewCloudinary()
-	uploadResult, err := cld.Upload.Upload(
-		context.Background(),
-		src,
-		uploader.UploadParams{
-			PublicID: publicID,
-			Folder:   config.CLOUDINARY_UPLOAD_FOLDER,
-		})
-	if err != nil {
-		return "", err
-	}
-
-	return uploadResult.SecureURL, nil
+	return &claudinaryUploader{cld: cld}
 }
 
 func GetPublicID(secureURL string) string {
@@ -64,10 +45,35 @@ func GetPublicID(secureURL string) string {
 	return publicID
 }
 
-func DestroyFile(publicID string) error {
-	// Proses destroy file
-	cld := NewCloudinary()
-	_, err := cld.Upload.Destroy(
+func (cu *claudinaryUploader) Upload(file *multipart.FileHeader) (string, error) {
+	// Format check
+	filename := strings.Split(file.Filename, ".")
+	format := filename[len(filename)-1]
+	if format != "pdf" && format != "png" && format != "jpg" && format != "jpeg" {
+		return "", errors.New("bad request because of format not pdf, png, jpg, or jpeg")
+	}
+
+	src, _ := file.Open()
+	defer src.Close()
+
+	publicID := fmt.Sprintf("%d-%s", int(file.Size), time.Now().Format("20060102-150405")) // Format  "file_size-(YY-MM-DD)-(hh-mm-ss)""
+
+	uploadResult, err := cu.cld.Upload.Upload(
+		context.Background(),
+		src,
+		uploader.UploadParams{
+			PublicID: publicID,
+			Folder:   config.CLOUDINARY_UPLOAD_FOLDER,
+		})
+	if err != nil {
+		return "", err
+	}
+
+	return uploadResult.SecureURL, nil
+}
+
+func (cu *claudinaryUploader) Destroy(publicID string) error {
+	_, err := cu.cld.Upload.Destroy(
 		context.Background(),
 		uploader.DestroyParams{
 			PublicID: publicID,

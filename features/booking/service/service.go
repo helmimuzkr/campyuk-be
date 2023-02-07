@@ -6,22 +6,20 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 	"time"
-
-	"github.com/midtrans/midtrans-go"
-	"github.com/midtrans/midtrans-go/coreapi"
 )
 
 type bookingSrv struct {
-	qry  booking.BookingData
-	core coreapi.Client
+	qry     booking.BookingData
+	payment helper.PaymentGateway
 }
 
-func New(bd booking.BookingData, c coreapi.Client) booking.BookingService {
+func New(bd booking.BookingData, p helper.PaymentGateway) booking.BookingService {
 	return &bookingSrv{
-		qry:  bd,
-		core: c,
+		qry:     bd,
+		payment: p,
 	}
 }
 
@@ -36,35 +34,18 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	newBooking.Status = "PENDING"
 	newBooking.BookingDate = time.Now().Format("02-01-2006")
 
-	// Create charge request for midtrans
-	chargeReq := &coreapi.ChargeReq{
-		PaymentType: coreapi.PaymentTypeBankTransfer,
-		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  newBooking.Ticket,
-			GrossAmt: int64(newBooking.TotalPrice),
-		},
-		BankTransfer: &coreapi.BankTransferDetails{
-			Bank: midtrans.Bank(newBooking.Bank),
-		},
-		CustomExpiry: &coreapi.CustomExpiry{
-			ExpiryDuration: 1,
-			Unit:           "day",
-		},
-	}
 	// Charge transaction to midtrans and get the response
-	response, errMidtrans := bs.core.ChargeTransaction(chargeReq)
+	vaNumber, errMidtrans := bs.payment.ChargeTransaction(newBooking.Ticket, newBooking.TotalPrice, newBooking.Bank)
 	if errMidtrans != nil {
 		log.Println(errMidtrans)
 		return booking.Core{}, errors.New("charge transaction failed due to internal server error")
 	}
-	// Assign the response to new booking
-	newBooking.Bank = response.VaNumbers[0].Bank
-	newBooking.VirtualNumber = response.VaNumbers[0].VANumber
+	newBooking.VirtualNumber = vaNumber
 
 	// Create booking
 	res, err := bs.qry.Create(id, newBooking)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 		return booking.Core{}, errors.New("internal server error")
 	}
 
@@ -90,7 +71,7 @@ func (bs *bookingSrv) List(token interface{}, page int) (map[string]interface{},
 		return nil, nil, errors.New("internal server error")
 	}
 
-	totalPage := totalRecord / limit
+	totalPage := int(math.Ceil(float64(totalRecord) / float64(limit)))
 
 	pagination := make(map[string]interface{})
 	pagination["page"] = page

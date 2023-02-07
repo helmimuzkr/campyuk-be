@@ -41,20 +41,6 @@ func (_m *ImageService) Delete(token interface{}, imageID uint) error {
 	return r0
 }
 
-// Update provides a mock function with given fields: token, imageID, header
-func (_m *ImageService) Update(token interface{}, imageID uint, header *multipart.FileHeader) error {
-	ret := _m.Called(token, imageID, header)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(interface{}, uint, *multipart.FileHeader) error); ok {
-		r0 = rf(token, imageID, header)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
 type mockConstructorTestingTNewImageService interface {
 	mock.TestingT
 	Cleanup(func())

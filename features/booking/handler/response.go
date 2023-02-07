@@ -5,11 +5,11 @@ type bookingResponse struct {
 	Ticket        string  `json:"ticket"`
 	Title         string  `json:"camp_title"`
 	Image         string  `json:"camp_image"`
-	Latitude      float64 `json:"camp_latitude"`
-	Longitude     float64 `json:"camp_longitude"`
+	Latitude      float64 `json:"camp_latitude,omitempty"`
+	Longitude     float64 `json:"camp_longitude,omitempty"`
 	Address       string  `json:"camp_address"`
 	City          string  `json:"camp_city"`
-	CampPrice     string  `json:"camp_price,omitempty"`
+	CampPrice     int     `json:"camp_price,omitempty"`
 	CheckIn       string  `json:"check_in"`
 	CheckOut      string  `json:"check_out"`
 	Guest         int     `json:"guest,omitempty"`
@@ -33,4 +33,3 @@ type bookingDetailResponse struct {
 	bookingResponse
 	Items []itemResponse `json:"items"`
 }
-

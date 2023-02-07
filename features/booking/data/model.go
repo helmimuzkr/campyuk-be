@@ -42,7 +42,7 @@ type BookingCamp struct {
 	Longitude     float64
 	Address       string
 	City          string
-	CampPrice     string `gorm:"column:price"`
+	CampPrice     int `gorm:"column:price"`
 	CheckIn       string
 	CheckOut      string
 	BookingDate   string
