@@ -24,7 +24,7 @@ func TestRegister(t *testing.T) {
 	resData := user.Core{ID: uint(1), Username: "griffin", Fullname: "griffinhenry", Email: "grf29@gmail.com"}
 	srv := New(data)
 
-	t.Run("success creat account", func(t *testing.T) {
+	t.Run("success create account", func(t *testing.T) {
 		data.On("Register", mock.Anything).Return(resData, nil).Once()
 		res, err := srv.Register(input)
 		assert.Nil(t, err)
@@ -59,6 +59,34 @@ func TestRegister(t *testing.T) {
 		assert.ErrorContains(t, err, "already used")
 		data.AssertExpectations(t)
 	})
+
+	t.Run("bcrypt error", func(t *testing.T) {
+		data.On("Register", mock.Anything).Return(user.Core{}, errors.New("password processed error")).Once()
+		res, err := srv.Register(input)
+		assert.NotNil(t, err)
+		assert.Equal(t, uint(0), res.ID)
+		assert.ErrorContains(t, err, "error")
+		data.AssertExpectations(t)
+	})
+
+	// t.Run("minimal 5 character", func(t *testing.T) {
+	// 	inputData := user.Core{Username: "grf", Fullname: "griffinhenry", Email: "grf29@gmail.com", Password: "123"}
+	// 	data.On("Register", mock.Anything).Return(user.Core{}, errors.New("input value must be greater")).Once()
+	// 	res, err := srv.Register(inputData)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, uint(0), res.ID)
+	// 	assert.ErrorContains(t, err, "greater")
+	// 	data.AssertExpectations(t)
+	// })
+
+	// t.Run("format email", func(t *testing.T) {
+	// 	data.On("Register", mock.Anything).Return(user.Core{}, errors.New("input value must be an email")).Once()
+	// 	res, err := srv.Register(input)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, uint(0), res.ID)
+	// 	assert.ErrorContains(t, err, "email")
+	// 	data.AssertExpectations(t)
+	// })
 }
 
 func TestLogin(t *testing.T) {
@@ -98,12 +126,12 @@ func TestLogin(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
-	t.Run("account not registered", func(t *testing.T) {
-		data.On("Login", input).Return(user.Core{}, errors.New("data not found")).Once()
+	t.Run("login compare", func(t *testing.T) {
+		data.On("Login", input).Return(resData, errors.New("password not matched")).Once()
 		srv := New(data)
-		token, res, err := srv.Login(input, "gg123")
+		token, res, err := srv.Login(input, "123")
 		assert.NotNil(t, err)
-		assert.ErrorContains(t, err, "not registered")
+		assert.ErrorContains(t, err, "not matched")
 		assert.Empty(t, token)
 		assert.Equal(t, uint(0), res.ID)
 		data.AssertExpectations(t)
