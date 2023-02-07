@@ -36,7 +36,7 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	newBooking.Status = "PENDING"
 	newBooking.BookingDate = time.Now().Format("02-01-2006")
 
-	// Charge midtrans
+	// Create charge request for midtrans
 	chargeReq := &coreapi.ChargeReq{
 		PaymentType: coreapi.PaymentTypeBankTransfer,
 		TransactionDetails: midtrans.TransactionDetails{
@@ -51,11 +51,13 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 			Unit:           "day",
 		},
 	}
+	// Charge transaction to midtrans and get the response
 	response, errMidtrans := bs.core.ChargeTransaction(chargeReq)
 	if errMidtrans != nil {
 		log.Println(errMidtrans)
 		return booking.Core{}, errors.New("charge transaction failed due to internal server error")
 	}
+	// Assign the response to new booking
 	newBooking.Bank = response.VaNumbers[0].Bank
 	newBooking.VirtualNumber = response.VaNumbers[0].VANumber
 
