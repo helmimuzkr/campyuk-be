@@ -179,4 +179,16 @@ func TestDelete(t *testing.T) {
 		assert.ErrorContains(t, err, "error")
 		data.AssertExpectations(t)
 	})
+
+	t.Run("invalid credential", func(t *testing.T) {
+		data.On("Delete", uint(1), uint(1)).Return(errors.New("access is denied")).Once()
+		srv := New(data)
+		_, token := helper.GenerateJWT(1, "host")
+		useToken := token.(*jwt.Token)
+		useToken.Valid = true
+		err := srv.Delete(useToken, uint(1))
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "denied")
+		data.AssertExpectations(t)
+	})
 }
