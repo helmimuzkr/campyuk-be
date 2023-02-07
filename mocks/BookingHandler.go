@@ -28,6 +28,22 @@ func (_m *BookingHandler) Accept() echo.HandlerFunc {
 	return r0
 }
 
+// Callback provides a mock function with given fields:
+func (_m *BookingHandler) Callback() echo.HandlerFunc {
+	ret := _m.Called()
+
+	var r0 echo.HandlerFunc
+	if rf, ok := ret.Get(0).(func() echo.HandlerFunc); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(echo.HandlerFunc)
+		}
+	}
+
+	return r0
+}
+
 // Cancel provides a mock function with given fields:
 func (_m *BookingHandler) Cancel() echo.HandlerFunc {
 	ret := _m.Called()
@@ -78,22 +94,6 @@ func (_m *BookingHandler) GetByID() echo.HandlerFunc {
 
 // List provides a mock function with given fields:
 func (_m *BookingHandler) List() echo.HandlerFunc {
-	ret := _m.Called()
-
-	var r0 echo.HandlerFunc
-	if rf, ok := ret.Get(0).(func() echo.HandlerFunc); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(echo.HandlerFunc)
-		}
-	}
-
-	return r0
-}
-
-// Update provides a mock function with given fields:
-func (_m *BookingHandler) Update() echo.HandlerFunc {
 	ret := _m.Called()
 
 	var r0 echo.HandlerFunc

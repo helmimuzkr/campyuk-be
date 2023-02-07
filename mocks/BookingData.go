@@ -13,20 +13,34 @@ type BookingData struct {
 	mock.Mock
 }
 
-// Cancel provides a mock function with given fields: userID, bookingID
-func (_m *BookingData) Cancel(userID uint, bookingID uint) (booking.Core, error) {
-	ret := _m.Called(userID, bookingID)
+// Callback provides a mock function with given fields: ticket, status
+func (_m *BookingData) Callback(ticket string, status string) error {
+	ret := _m.Called(ticket, status)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(ticket, status)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Create provides a mock function with given fields: userID, newBooking
+func (_m *BookingData) Create(userID uint, newBooking booking.Core) (booking.Core, error) {
+	ret := _m.Called(userID, newBooking)
 
 	var r0 booking.Core
-	if rf, ok := ret.Get(0).(func(uint, uint) booking.Core); ok {
-		r0 = rf(userID, bookingID)
+	if rf, ok := ret.Get(0).(func(uint, booking.Core) booking.Core); ok {
+		r0 = rf(userID, newBooking)
 	} else {
 		r0 = ret.Get(0).(booking.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
-		r1 = rf(userID, bookingID)
+	if rf, ok := ret.Get(1).(func(uint, booking.Core) error); ok {
+		r1 = rf(userID, newBooking)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -34,20 +48,20 @@ func (_m *BookingData) Cancel(userID uint, bookingID uint) (booking.Core, error)
 	return r0, r1
 }
 
-// Create provides a mock function with given fields: userID, virtualNumber
-func (_m *BookingData) Create(userID uint, virtualNumber string) (booking.Core, error) {
-	ret := _m.Called(userID, virtualNumber)
+// GetByID provides a mock function with given fields: userID, bookingID, role
+func (_m *BookingData) GetByID(userID uint, bookingID uint, role string) (booking.Core, error) {
+	ret := _m.Called(userID, bookingID, role)
 
 	var r0 booking.Core
-	if rf, ok := ret.Get(0).(func(uint, string) booking.Core); ok {
-		r0 = rf(userID, virtualNumber)
+	if rf, ok := ret.Get(0).(func(uint, uint, string) booking.Core); ok {
+		r0 = rf(userID, bookingID, role)
 	} else {
 		r0 = ret.Get(0).(booking.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
-		r1 = rf(userID, virtualNumber)
+	if rf, ok := ret.Get(1).(func(uint, uint, string) error); ok {
+		r1 = rf(userID, bookingID, role)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -55,69 +69,48 @@ func (_m *BookingData) Create(userID uint, virtualNumber string) (booking.Core, 
 	return r0, r1
 }
 
-// GetByID provides a mock function with given fields: userID, bookingID
-func (_m *BookingData) GetByID(userID uint, bookingID uint) (booking.Core, error) {
-	ret := _m.Called(userID, bookingID)
+// List provides a mock function with given fields: userID, role, limit, offset
+func (_m *BookingData) List(userID uint, role string, limit int, offset int) (int, []booking.Core, error) {
+	ret := _m.Called(userID, role, limit, offset)
 
-	var r0 booking.Core
-	if rf, ok := ret.Get(0).(func(uint, uint) booking.Core); ok {
-		r0 = rf(userID, bookingID)
+	var r0 int
+	if rf, ok := ret.Get(0).(func(uint, string, int, int) int); ok {
+		r0 = rf(userID, role, limit, offset)
 	} else {
-		r0 = ret.Get(0).(booking.Core)
+		r0 = ret.Get(0).(int)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
-		r1 = rf(userID, bookingID)
+	var r1 []booking.Core
+	if rf, ok := ret.Get(1).(func(uint, string, int, int) []booking.Core); ok {
+		r1 = rf(userID, role, limit, offset)
 	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// List provides a mock function with given fields: userID
-func (_m *BookingData) List(userID uint) ([]booking.Core, error) {
-	ret := _m.Called(userID)
-
-	var r0 []booking.Core
-	if rf, ok := ret.Get(0).(func(uint) []booking.Core); ok {
-		r0 = rf(userID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]booking.Core)
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).([]booking.Core)
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(userID)
+	var r2 error
+	if rf, ok := ret.Get(2).(func(uint, string, int, int) error); ok {
+		r2 = rf(userID, role, limit, offset)
 	} else {
-		r1 = ret.Error(1)
+		r2 = ret.Error(2)
 	}
 
-	return r0, r1
+	return r0, r1, r2
 }
 
-// Update provides a mock function with given fields: bookingID
-func (_m *BookingData) Update(bookingID uint) (booking.Core, error) {
-	ret := _m.Called(bookingID)
+// Update provides a mock function with given fields: userID, role, bookingID, status
+func (_m *BookingData) Update(userID uint, role string, bookingID uint, status string) error {
+	ret := _m.Called(userID, role, bookingID, status)
 
-	var r0 booking.Core
-	if rf, ok := ret.Get(0).(func(uint) booking.Core); ok {
-		r0 = rf(bookingID)
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, string, uint, string) error); ok {
+		r0 = rf(userID, role, bookingID, status)
 	} else {
-		r0 = ret.Get(0).(booking.Core)
+		r0 = ret.Error(0)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(bookingID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 type mockConstructorTestingTNewBookingData interface {
