@@ -120,6 +120,10 @@ func (bd *bookingData) Update(userID uint, role string, bookingID uint, status s
 	if role == "host" {
 		// role host
 		qry = "UPDATE bookings JOIN camps ON camps.id = bookings.camp_id SET bookings.status = ? WHERE camps.host_id = ? AND bookings.id = ?"
+		err := bd.decrementStock(bookingID)
+		if err != nil {
+			return err
+		}
 
 	} else if role == "guest" {
 		// role guest
@@ -135,9 +139,44 @@ func (bd *bookingData) Update(userID uint, role string, bookingID uint, status s
 }
 
 func (bd *bookingData) Callback(ticket string, status string) error {
-	err := bd.db.Model(&Booking{}).Where("ticket = ?", ticket).Update("status", status).Error
-	if err != nil {
-		return err
+	tx := bd.db.Model(&Booking{}).Where("ticket = ?", ticket).Update("status", status)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	if status == "SUCCESS" {
+		var bookingID uint
+		tx = bd.db.Raw("SELECT id FROM bookings WHERE ticket = ?").First(&bookingID)
+		if tx.Error != nil {
+			return tx.Error
+		}
+		err := bd.decrementStock(bookingID)
+		if err != nil {
+			return err
+		}
+	}
+
+	tx.Commit()
+	return nil
+}
+
+func (bd *bookingData) decrementStock(bookingID uint) error {
+	itm := []RentItem{}
+	tx := bd.db.Where("booking_id = ?", bookingID).Find(&itm)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	for _, v := range itm {
+		var stock int
+		tx = bd.db.Raw("SELECT stock FROM items WHERE id = ?", v.ItemID).First(&stock)
+		if stock < v.Quantity {
+			return errors.New("stock not available")
+		}
+		tx = bd.db.Exec("UPDATE items SET stock = stock - ? WHERE id = ?", v.Quantity, v.ItemID)
+		if tx.Error != nil {
+			return tx.Error
+		}
 	}
 
 	return nil
