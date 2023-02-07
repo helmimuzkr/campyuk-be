@@ -32,20 +32,6 @@ func (id *imageData) Add(userID uint, core image.Core) error {
 	return nil
 }
 
-func (id *imageData) Update(userID uint, imageID uint, core image.Core) error {
-	if !id.checkOwner(userID, imageID) {
-		return errors.New("access is denied due to invalid credential")
-	}
-
-	model := ToData(core)
-	tx := id.db.Where("image_id = ?", imageID).Updates(&model)
-	if tx.Error != nil {
-		return tx.Error
-	}
-
-	return nil
-}
-
 func (id *imageData) Delete(userID uint, imageID uint) error {
 	if !id.checkOwner(userID, imageID) {
 		return errors.New("access is denied due to invalid credential")
