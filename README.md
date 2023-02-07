@@ -6,8 +6,7 @@
 ```
 $ sh test.sh
 ```
-### Minus user dan image, karena ada perubahan kode di dependency injection, jadi error service_test dan tidak terbaca pada saat test cover. 
-sebelumnya user 82% dan image 68%, kalau digabungin mungkin bisa sentuh 85%+
+Minus user dan image, karena ada perubahan kode di dependency injection yang membuat service_test menjadi error dan tidak terbaca pada saat test cover. sebelumnya user 82% dan image 68%, kalau digabungin mungkin bisa sentuh 85%+
 ![unit-test](https://github.com/Capstone-campyuk/campyuk-be/blob/main/docs/test_overall_2023-02-08_01-49-17.png)
 
 ## 📘 Dokumentasi API
