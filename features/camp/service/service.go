@@ -34,6 +34,20 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 		return errors.New(msg)
 	}
 
+	filedoc := strings.Split(document.Filename, ".")
+	format := filedoc[len(filedoc)-1]
+	if format != "pdf" {
+		return errors.New("bad request because of format not pdf")
+	}
+
+	for _, img := range imagesHeader {
+		fileimg := strings.Split(img.Filename, ".")
+		format := fileimg[len(fileimg)-1]
+		if format != "png" && format != "jpg" && format != "jpeg" {
+			return errors.New("bad request because of format not png, jpg, or jpeg")
+		}
+	}
+
 	docURL, err := helper.UploadFile(document)
 	if err != nil {
 		log.Println(err)
