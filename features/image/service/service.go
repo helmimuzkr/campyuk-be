@@ -11,10 +11,14 @@ import (
 
 type imageService struct {
 	qry image.ImageData
+	up  helper.Uploader
 }
 
-func New(repo image.ImageData) image.ImageService {
-	return &imageService{qry: repo}
+func New(repo image.ImageData, u helper.Uploader) image.ImageService {
+	return &imageService{
+		qry: repo,
+		up:  u,
+	}
 }
 
 func (is *imageService) Add(token interface{}, campID uint, header *multipart.FileHeader) error {
@@ -23,7 +27,7 @@ func (is *imageService) Add(token interface{}, campID uint, header *multipart.Fi
 		return errors.New("access is denied due to invalid credential")
 	}
 
-	imageURL, err := helper.UploadFile(header)
+	imageURL, err := is.up.Upload(header)
 	if err != nil {
 		log.Println(err)
 		var msg string

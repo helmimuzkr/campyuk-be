@@ -14,12 +14,14 @@ import (
 type userUseCase struct {
 	qry user.UserData
 	vld *validator.Validate
+	up  helper.Uploader
 }
 
-func New(ud user.UserData) user.UserService {
+func New(ud user.UserData, vld *validator.Validate, u helper.Uploader) user.UserService {
 	return &userUseCase{
 		qry: ud,
-		vld: validator.New(),
+		vld: vld,
+		up:  u,
 	}
 }
 
@@ -98,7 +100,7 @@ func (uuc *userUseCase) Update(token interface{}, fileData *multipart.FileHeader
 	}
 
 	if fileData.Header != nil {
-		secureURL, err := helper.UploadFile(fileData)
+		secureURL, err := uuc.up.Upload(fileData)
 		if err != nil {
 			log.Println(err)
 			var msg string
