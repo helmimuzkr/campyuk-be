@@ -100,18 +100,18 @@ func (_m *UserService) Register(newUser user.Core) (user.Core, error) {
 }
 
 // Update provides a mock function with given fields: token, fileData, updateData
-func (_m *UserService) Update(token interface{}, fileData multipart.FileHeader, updateData user.Core) (user.Core, error) {
+func (_m *UserService) Update(token interface{}, fileData *multipart.FileHeader, updateData user.Core) (user.Core, error) {
 	ret := _m.Called(token, fileData, updateData)
 
 	var r0 user.Core
-	if rf, ok := ret.Get(0).(func(interface{}, multipart.FileHeader, user.Core) user.Core); ok {
+	if rf, ok := ret.Get(0).(func(interface{}, *multipart.FileHeader, user.Core) user.Core); ok {
 		r0 = rf(token, fileData, updateData)
 	} else {
 		r0 = ret.Get(0).(user.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}, multipart.FileHeader, user.Core) error); ok {
+	if rf, ok := ret.Get(1).(func(interface{}, *multipart.FileHeader, user.Core) error); ok {
 		r1 = rf(token, fileData, updateData)
 	} else {
 		r1 = ret.Error(1)

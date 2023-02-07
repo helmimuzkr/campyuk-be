@@ -41,7 +41,7 @@ func main() {
 
 	// SETUP DOMAIN
 	uData := usrData.New(db)
-	uSrv := usrSrv.New(uData)
+	uSrv := usrSrv.New(uData, v, cld)
 	uHdl := usrHdl.New(uSrv)
 
 	iData := itmData.New(db)
@@ -53,7 +53,7 @@ func main() {
 	campHandler := _campHandler.New(campSrv)
 
 	imageData := _imageData.New(db)
-	imageSrv := _imageService.New(imageData)
+	imageSrv := _imageService.New(imageData, cld)
 	imageHandler := _imageHandler.New(imageSrv)
 
 	bookingData := _bookingData.New(db)

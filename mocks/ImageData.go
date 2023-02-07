@@ -41,20 +41,6 @@ func (_m *ImageData) Delete(usesrID uint, imageID uint) error {
 	return r0
 }
 
-// Update provides a mock function with given fields: usesrID, imageID, core
-func (_m *ImageData) Update(usesrID uint, imageID uint, core image.Core) error {
-	ret := _m.Called(usesrID, imageID, core)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(uint, uint, image.Core) error); ok {
-		r0 = rf(usesrID, imageID, core)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
 type mockConstructorTestingTNewImageData interface {
 	mock.TestingT
 	Cleanup(func())
