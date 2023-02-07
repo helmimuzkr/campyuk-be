@@ -50,10 +50,6 @@ func (is *imageService) Add(token interface{}, campID uint, header *multipart.Fi
 	return nil
 }
 
-func (is *imageService) Update(token interface{}, imageID uint, header *multipart.FileHeader) error {
-	return nil
-}
-
 func (is *imageService) Delete(token interface{}, imageID uint) error {
 	userID, role := helper.ExtractToken(token)
 	if role != "host" {

@@ -105,7 +105,7 @@ func (bc *bookingController) Accept() echo.HandlerFunc {
 		paramID := c.Param("id")
 		bookingID, _ := strconv.Atoi(paramID)
 
-		status := "ACCEPTED"
+		status := "SUCCESS"
 
 		err := bc.srv.Accept(token, uint(bookingID), status)
 		if err != nil {

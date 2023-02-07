@@ -35,11 +35,7 @@ func (ih *imageHandler) Add() echo.HandlerFunc {
 		return c.JSON(helper.SuccessResponse(200, "success add new image"))
 	}
 }
-func (ih *imageHandler) Update() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return nil
-	}
-}
+
 func (ih *imageHandler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")

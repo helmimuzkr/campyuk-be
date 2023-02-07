@@ -135,6 +135,8 @@ func (bs *bookingSrv) Accept(token interface{}, bookingID uint, status string) e
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
 			msg = "booking not found"
+		} else if strings.Contains(err.Error(), "stock") {
+			msg = err.Error()
 		} else {
 			msg = "internal server errorr"
 		}

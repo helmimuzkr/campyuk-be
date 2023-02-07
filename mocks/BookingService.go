@@ -13,41 +13,62 @@ type BookingService struct {
 	mock.Mock
 }
 
-// Cancel provides a mock function with given fields: token, bookingID
-func (_m *BookingService) Cancel(token interface{}, bookingID uint) (booking.Core, error) {
-	ret := _m.Called(token, bookingID)
+// Accept provides a mock function with given fields: token, bookingID, status
+func (_m *BookingService) Accept(token interface{}, bookingID uint, status string) error {
+	ret := _m.Called(token, bookingID, status)
 
-	var r0 booking.Core
-	if rf, ok := ret.Get(0).(func(interface{}, uint) booking.Core); ok {
-		r0 = rf(token, bookingID)
+	var r0 error
+	if rf, ok := ret.Get(0).(func(interface{}, uint, string) error); ok {
+		r0 = rf(token, bookingID, status)
 	} else {
-		r0 = ret.Get(0).(booking.Core)
+		r0 = ret.Error(0)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}, uint) error); ok {
-		r1 = rf(token, bookingID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
-// Create provides a mock function with given fields: token
-func (_m *BookingService) Create(token interface{}) (booking.Core, error) {
-	ret := _m.Called(token)
+// Callback provides a mock function with given fields: ticket, status
+func (_m *BookingService) Callback(ticket string, status string) error {
+	ret := _m.Called(ticket, status)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(ticket, status)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Cancel provides a mock function with given fields: token, bookingID, status
+func (_m *BookingService) Cancel(token interface{}, bookingID uint, status string) error {
+	ret := _m.Called(token, bookingID, status)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(interface{}, uint, string) error); ok {
+		r0 = rf(token, bookingID, status)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Create provides a mock function with given fields: token, newBooking
+func (_m *BookingService) Create(token interface{}, newBooking booking.Core) (booking.Core, error) {
+	ret := _m.Called(token, newBooking)
 
 	var r0 booking.Core
-	if rf, ok := ret.Get(0).(func(interface{}) booking.Core); ok {
-		r0 = rf(token)
+	if rf, ok := ret.Get(0).(func(interface{}, booking.Core) booking.Core); ok {
+		r0 = rf(token, newBooking)
 	} else {
 		r0 = ret.Get(0).(booking.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}) error); ok {
-		r1 = rf(token)
+	if rf, ok := ret.Get(1).(func(interface{}, booking.Core) error); ok {
+		r1 = rf(token, newBooking)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -76,48 +97,36 @@ func (_m *BookingService) GetByID(token interface{}, bookingID uint) (booking.Co
 	return r0, r1
 }
 
-// List provides a mock function with given fields: token
-func (_m *BookingService) List(token interface{}) ([]booking.Core, error) {
-	ret := _m.Called(token)
+// List provides a mock function with given fields: token, page
+func (_m *BookingService) List(token interface{}, page int) (map[string]interface{}, []booking.Core, error) {
+	ret := _m.Called(token, page)
 
-	var r0 []booking.Core
-	if rf, ok := ret.Get(0).(func(interface{}) []booking.Core); ok {
-		r0 = rf(token)
+	var r0 map[string]interface{}
+	if rf, ok := ret.Get(0).(func(interface{}, int) map[string]interface{}); ok {
+		r0 = rf(token, page)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]booking.Core)
+			r0 = ret.Get(0).(map[string]interface{})
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}) error); ok {
-		r1 = rf(token)
+	var r1 []booking.Core
+	if rf, ok := ret.Get(1).(func(interface{}, int) []booking.Core); ok {
+		r1 = rf(token, page)
 	} else {
-		r1 = ret.Error(1)
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).([]booking.Core)
+		}
 	}
 
-	return r0, r1
-}
-
-// Update provides a mock function with given fields: token
-func (_m *BookingService) Update(token interface{}) (booking.Core, error) {
-	ret := _m.Called(token)
-
-	var r0 booking.Core
-	if rf, ok := ret.Get(0).(func(interface{}) booking.Core); ok {
-		r0 = rf(token)
+	var r2 error
+	if rf, ok := ret.Get(2).(func(interface{}, int) error); ok {
+		r2 = rf(token, page)
 	} else {
-		r0 = ret.Get(0).(booking.Core)
+		r2 = ret.Error(2)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}) error); ok {
-		r1 = rf(token)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0, r1, r2
 }
 
 type mockConstructorTestingTNewBookingService interface {
