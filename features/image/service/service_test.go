@@ -108,6 +108,51 @@ func TestAdd(t *testing.T) {
 		assert.ErrorContains(t, err, "server")
 	})
 
+	t.Run("access is denied", func(t *testing.T) {
+		f, err := os.Open("/mnt/c/project/campyuk/docs/erd.jpg")
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		defer f.Close()
+
+		// prepare request body
+		// reserve a form field with 'file' as key
+		// then assign the file content to field using 'io.Copy'
+		// create a http post request, set content type to multipart-form
+		// read the 'file' field using 'req.FormFile'
+
+		body := &bytes.Buffer{}
+		writer := multipart.NewWriter(body)
+		part, err := writer.CreateFormFile("file", "/mnt/c/project/campyuk/docs/erd.jpg")
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		_, err = io.Copy(part, f)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		writer.Close()
+
+		req, _ := http.NewRequest("POST", "/upload", body)
+		req.Header.Set("Content-Type", writer.FormDataContentType())
+
+		_, header, _ := req.FormFile("file")
+
+		_, token := helper.GenerateJWT(1, "user")
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		err = srv.Add(pToken, uint(1), header)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "denied")
+	})
+
 	t.Run("format not allowed", func(t *testing.T) {
 		f, err := os.Open("/mnt/c/project/campyuk/test.sh")
 		if err != nil {
