@@ -54,13 +54,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 	docURL, err := cs.up.Upload(document)
 	if err != nil {
 		log.Println(err)
-		var msg string
-		if strings.Contains(err.Error(), "bad request") {
-			msg = err.Error()
-		} else {
-			msg = "failed to upload document because internal server error"
-		}
-		return errors.New(msg)
+		return errors.New("failed to upload document because internal server error")
 	}
 
 	imageCore := []camp.Image{}
@@ -68,13 +62,6 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 		imageURL, err := cs.up.Upload(h)
 		if err != nil {
 			log.Println(err)
-			var msg string
-			if strings.Contains(err.Error(), "bad request") {
-				msg = err.Error()
-			} else {
-				msg = "failed to upload image because internal server error"
-			}
-
 			// Hapus image di Cloudinary(terlanjur upload) jika salah satu image gagal diupload
 			for _, v := range imageCore {
 				publicID := helper.GetPublicID(v.ImageURL)
@@ -83,7 +70,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 					return errors.New("failed to upload image because internal server error")
 				}
 			}
-			return errors.New(msg)
+			return errors.New("failed to upload image because internal server error")
 		}
 
 		imageCore = append(imageCore, camp.Image{ImageURL: imageURL})
@@ -156,6 +143,12 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 		return errors.New("access is denied due to invalid credential")
 	}
 
+	filedoc := strings.Split(document.Filename, ".")
+	format := filedoc[len(filedoc)-1]
+	if format != "pdf" {
+		return errors.New("bad request because of format not pdf")
+	}
+
 	res, err := cs.qry.GetByID(userID, campID)
 	if err != nil {
 		log.Println(err)
@@ -172,13 +165,7 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 		docURL, err := cs.up.Upload(document)
 		if err != nil {
 			log.Println(err)
-			var msg string
-			if strings.Contains(err.Error(), "bad request") {
-				msg = err.Error()
-			} else {
-				msg = "failed to upload document because internal server error"
-			}
-			return errors.New(msg)
+			return errors.New("failed to upload document because internal server error")
 		}
 		updateCamp.Document = docURL
 	}
