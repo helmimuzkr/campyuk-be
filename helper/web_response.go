@@ -56,6 +56,8 @@ func ErrorResponse(msg string) (int, interface{}) {
 		code = http.StatusConflict
 	case strings.Contains(msg, "input invalid"):
 		code = http.StatusBadRequest
+	case strings.Contains(msg, "input value"):
+		code = http.StatusBadRequest
 	case strings.Contains(msg, "validation"):
 		code = http.StatusBadRequest
 	case strings.Contains(msg, "unmarshal"):
