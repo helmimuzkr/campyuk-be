@@ -87,7 +87,7 @@ func (cd *campData) List(userID uint, role string, limit int, offset int) (int, 
 
 func (cd *campData) GetByID(userID uint, campID uint) (camp.Core, error) {
 	c := CampModel{}
-	qc := "SELECT camps.id, camps.verification_status, users.fullname, camps.title, camps.price, camps.description, camps.latitude, camps.longitude, camps.distance, camps.address, camps.city, camps.document FROM camps JOIN users ON users.id = camps.host_id WHERE camps.id = ? AND camps.deleted_at IS NULL"
+	qc := "SELECT camps.id, camps.host_id, camps.verification_status, users.fullname, camps.title, camps.price, camps.description, camps.latitude, camps.longitude, camps.distance, camps.address, camps.city, camps.document FROM camps JOIN users ON users.id = camps.host_id WHERE camps.id = ? AND camps.deleted_at IS NULL"
 	tx := cd.db.Raw(qc, campID).First(&c)
 	if tx.Error != nil {
 		return camp.Core{}, tx.Error
@@ -96,15 +96,18 @@ func (cd *campData) GetByID(userID uint, campID uint) (camp.Core, error) {
 	images := []ImageModel{}
 	tx = tx.Raw("SELECT * FROM images WHERE camp_id = ? AND deleted_at IS NULL", campID).Find(&images)
 	if tx.Error != nil {
-		log.Println(tx.Error)
-		log.Println("no image found in camp")
+		log.Println("no image found in camp: ", tx.Error)
+	}
+
+	stockNotZero := ""
+	if c.HostID != userID {
+		stockNotZero = "AND stock > 0"
 	}
 
 	items := []CampItemModel{}
-	tx = tx.Raw("SELECT * FROM items WHERE camp_id = ? AND deleted_at IS NULL", campID).Find(&items)
+	tx = tx.Raw("SELECT * FROM items WHERE camp_id = ? AND deleted_at IS NULL "+stockNotZero, campID).Find(&items)
 	if tx.Error != nil {
-		log.Println(tx.Error)
-		log.Println("no item found in camp")
+		log.Println("no item found in camp: ", tx.Error)
 	}
 
 	c.Images = images
@@ -128,7 +131,7 @@ func (cd *campData) Delete(userID uint, campID uint) error {
 	qry := cd.db.Where("host_id = ?", userID).Delete(&data, campID)
 	affrows := qry.RowsAffected
 	if affrows <= 0 {
-		log.Println("no rows affected")
+		log.Println("no rows affected at delete camp")
 		return errors.New("no camp deleted")
 	}
 
@@ -141,7 +144,7 @@ func (cd *campData) RequestAdmin(campID uint, status string) error {
 		return tx.Error
 	}
 	if tx.RowsAffected <= 0 {
-		log.Println("no rows affected")
+		log.Println("no rows affected at request admin")
 		return errors.New("status update failed")
 	}
 
