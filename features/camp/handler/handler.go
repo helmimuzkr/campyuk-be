@@ -3,6 +3,7 @@ package handler
 import (
 	"campyuk-api/features/camp"
 	"campyuk-api/helper"
+	"log"
 	"strconv"
 
 	"github.com/golang-jwt/jwt"
@@ -41,7 +42,10 @@ func (ch *campHandler) Add() echo.HandlerFunc {
 		}
 
 		newCamp := camp.Core{}
-		copier.Copy(&newCamp, &cr)
+		if err := copier.Copy(&newCamp, &cr); err != nil {
+			log.Println("handler add camp:", err)
+			return c.JSON(helper.ErrorResponse("failed to unmarshall request"))
+		}
 
 		if err := ch.srv.Add(token, newCamp, documentHeader[0], imagesHeader); err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
@@ -67,7 +71,11 @@ func (ch *campHandler) List() echo.HandlerFunc {
 		}
 
 		campResponse := []campResponse{}
-		copier.Copy(&campResponse, &res)
+		if err := copier.Copy(&campResponse, &res); err != nil {
+			log.Println("handler camp list:", err)
+			return c.JSON(helper.ErrorResponse("failed to unmarshall request"))
+		}
+
 		for i := range res {
 			campResponse[i].Image = res[i].Images[0].ImageURL
 		}
@@ -98,7 +106,11 @@ func (ch *campHandler) GetByID() echo.HandlerFunc {
 		}
 
 		str := c.Param("id")
-		campID, _ := strconv.Atoi(str)
+		campID, err := strconv.Atoi(str)
+		if err != nil {
+			log.Println("handler get camp", err)
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		res, err := ch.srv.GetByID(token, uint(campID))
 		if err != nil {
@@ -106,7 +118,10 @@ func (ch *campHandler) GetByID() echo.HandlerFunc {
 		}
 
 		response := campDetailReponse{}
-		copier.Copy(&response, &res)
+		if err := copier.Copy(&response, &res); err != nil {
+			log.Println("handler get camp:", err)
+			return c.JSON(helper.ErrorResponse("failed to unmarshall request"))
+		}
 
 		return c.JSON(helper.SuccessResponse(200, "success show detail camp", response))
 	}
@@ -117,17 +132,25 @@ func (ch *campHandler) Update() echo.HandlerFunc {
 		token := c.Get("user")
 
 		str := c.Param("id")
-		campID, _ := strconv.Atoi(str)
+		campID, err := strconv.Atoi(str)
+		if err != nil {
+			log.Println("handler update camp:", err)
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		cr := campRequest{}
 		if err := c.Bind(&cr); err != nil {
+			log.Println(err)
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
 		document, _ := c.FormFile("document")
 
 		updateCamp := camp.Core{}
-		copier.Copy(&updateCamp, &cr)
+		if err := copier.Copy(&updateCamp, &cr); err != nil {
+			log.Println("handler update camp:", err)
+			return c.JSON(helper.ErrorResponse("failed to unmarshall request"))
+		}
 
 		if err := ch.srv.Update(token, uint(campID), updateCamp, document); err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
@@ -141,9 +164,13 @@ func (ch *campHandler) Delete() echo.HandlerFunc {
 		token := c.Get("user")
 
 		paramID := c.Param("id")
-		campID, _ := strconv.Atoi(paramID)
+		campID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("handler update camp:", err)
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
-		err := ch.srv.Delete(token, uint(campID))
+		err = ch.srv.Delete(token, uint(campID))
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
@@ -157,11 +184,15 @@ func (ch *campHandler) Accept() echo.HandlerFunc {
 		token := c.Get("user")
 
 		paramID := c.Param("id")
-		campID, _ := strconv.Atoi(paramID)
+		campID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("handler update camp:", err)
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		status := "ACCEPTED"
 
-		err := ch.srv.RequestAdmin(token, uint(campID), status)
+		err = ch.srv.RequestAdmin(token, uint(campID), status)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
@@ -175,11 +206,15 @@ func (ch *campHandler) Decline() echo.HandlerFunc {
 		token := c.Get("user")
 
 		paramID := c.Param("id")
-		campID, _ := strconv.Atoi(paramID)
+		campID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("handler update camp:", err)
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		status := "REJECTED"
 
-		err := ch.srv.RequestAdmin(token, uint(campID), status)
+		err = ch.srv.RequestAdmin(token, uint(campID), status)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
