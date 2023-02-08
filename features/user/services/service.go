@@ -99,12 +99,12 @@ func (uuc *userUseCase) Update(token interface{}, fileData *multipart.FileHeader
 		updateData.Password = string(hashed)
 	}
 
-	if fileData.Header != nil {
+	if fileData != nil {
 		secureURL, err := uuc.up.Upload(fileData)
 		if err != nil {
 			log.Println(err)
 			var msg string
-			if strings.Contains(err.Error(), "wrong input") {
+			if strings.Contains(err.Error(), "bad request") {
 				msg = err.Error()
 			} else {
 				msg = "failed to upload image, server error"
