@@ -34,6 +34,10 @@ func (id *itemData) checkOwner(hostID uint, itemID uint) bool {
 }
 
 func (id *itemData) Add(userID uint, campID uint, addItem item.Core) (item.Core, error) {
+	if addItem.Stock < 0 {
+		return item.Core{}, errors.New("can't filled stock less than zero")
+	}
+
 	cnv := CoreToData(addItem)
 	cnv.CampID = campID
 	tx := id.db.Create(&cnv)
@@ -56,6 +60,11 @@ func (id *itemData) Add(userID uint, campID uint, addItem item.Core) (item.Core,
 func (id *itemData) Update(userID uint, itemID uint, updateData item.Core) (item.Core, error) {
 	if !id.checkOwner(userID, itemID) {
 		return item.Core{}, errors.New("access is denied due to invalid credential")
+	}
+
+	if updateData.Stock < 0 {
+		log.Println("can't filled stock less than zero")
+		return item.Core{}, errors.New("no item updated")
 	}
 
 	cnv := CoreToData(updateData)
