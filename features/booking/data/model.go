@@ -2,6 +2,7 @@ package data
 
 import (
 	"campyuk-api/features/booking"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -111,7 +112,7 @@ func ToCore(data BookingCamp) booking.Core {
 		Guest:         data.Guest,
 		CampCost:      data.CampCost,
 		TotalPrice:    data.TotalPrice,
-		Status:        data.Status,
+		Status:        strings.ToUpper(data.Status),
 		Bank:          data.Bank,
 		VirtualNumber: data.VirtualNumber,
 		Items:         ToItemsCore(data.Items),
