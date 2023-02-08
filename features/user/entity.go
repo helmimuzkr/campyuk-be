@@ -12,7 +12,7 @@ type Core struct {
 	Fullname  string
 	Email     string `validate:"omitempty,email"`
 	UserImage string
-	Password  string `validate:"min=5,omitempty"`
+	Password  string `validate:"min=5"`
 	Role      string
 }
 
