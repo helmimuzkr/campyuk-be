@@ -13,7 +13,7 @@ type Core struct {
 	Email     string `validate:"required,email"`
 	UserImage string
 	Password  string `validate:"min=5"`
-	Role      string
+	Role      string `validate:"min=4"`
 }
 
 type UserHandler interface {
