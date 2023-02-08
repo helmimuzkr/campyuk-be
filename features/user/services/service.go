@@ -44,7 +44,7 @@ func (uuc *userUseCase) Register(newUser user.Core) (user.Core, error) {
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "duplicated") {
-			msg = "data already used"
+			msg = "data already used or duplicated"
 		} else if strings.Contains(err.Error(), "empty") {
 			msg = "username not allowed empty"
 		} else {
