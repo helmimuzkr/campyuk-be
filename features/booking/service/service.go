@@ -151,6 +151,9 @@ func (bs *bookingSrv) Callback(ticket string, status string) error {
 	if status == "settlement" {
 		status = "SUCCESS"
 	}
+
+	status = strings.ToUpper(status)
+
 	err := bs.qry.Callback(ticket, status)
 	if err != nil {
 		log.Println("callback error", err)
