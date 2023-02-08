@@ -57,10 +57,6 @@ func (bc *bookingController) List() echo.HandlerFunc {
 
 		str := c.QueryParam("page")
 		page, err := strconv.Atoi(str)
-		if err != nil {
-			log.Println("convert id error", err.Error())
-			return c.JSON(helper.ErrorResponse(err.Error()))
-		}
 
 		paginate, res, err := bc.srv.List(token, page)
 		if err != nil {
