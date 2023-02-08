@@ -36,6 +36,16 @@ func TestAdd(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
+	t.Run("access is denied", func(t *testing.T) {
+		_, token := helper.GenerateJWT(1, "guest")
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		err := srv.Add(pToken, uint(1), &multipart.FileHeader{Filename: "image.jpg"})
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "access is denied due to invalid credential")
+	})
+
 	t.Run("failed to upload image", func(t *testing.T) {
 		up.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("", errors.New("failed to upload image")).Once()
 
@@ -65,140 +75,34 @@ func TestAdd(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
-	// t.Run("internal server error", func(t *testing.T) {
-	// 	f, err := os.Open("/mnt/c/project/campyuk/docs/erd.jpg")
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-	// 	defer f.Close()
+	t.Run("not the owner", func(t *testing.T) {
+		up.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("www.cloudinary.com/image.jpg", nil).Once()
 
-	// 	// prepare request body
-	// 	// reserve a form field with 'file' as key
-	// 	// then assign the file content to field using 'io.Copy'
-	// 	// create a http post request, set content type to multipart-form
-	// 	// read the 'file' field using 'req.FormFile'
+		data.On("Add", uint(1), input).Return(errors.New("access is denied due to invalid credential")).Once()
+		_, token := helper.GenerateJWT(1, "host")
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
 
-	// 	body := &bytes.Buffer{}
-	// 	writer := multipart.NewWriter(body)
-	// 	part, err := writer.CreateFormFile("file", "/mnt/c/project/campyuk/docs/erd.jpg")
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
+		err := srv.Add(pToken, uint(1), &multipart.FileHeader{Filename: "image.jpg"})
+		assert.ErrorContains(t, err, "access is denied")
+		up.AssertExpectations(t)
+		data.AssertExpectations(t)
+	})
 
-	// 	_, err = io.Copy(part, f)
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
+	t.Run("error in database", func(t *testing.T) {
+		up.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("www.cloudinary.com/image.jpg", nil).Once()
 
-	// 	writer.Close()
+		data.On("Add", uint(1), input).Return(errors.New("query error")).Once()
+		_, token := helper.GenerateJWT(1, "host")
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
 
-	// 	req, _ := http.NewRequest("POST", "/upload", body)
-	// 	req.Header.Set("Content-Type", writer.FormDataContentType())
+		err := srv.Add(pToken, uint(1), &multipart.FileHeader{Filename: "image.jpg"})
+		assert.ErrorContains(t, err, "internal server error")
+		up.AssertExpectations(t)
+		data.AssertExpectations(t)
+	})
 
-	// 	_, header, _ := req.FormFile("file")
-
-	// 	_, token := helper.GenerateJWT(1, "host")
-	// 	pToken := token.(*jwt.Token)
-	// 	pToken.Valid = true
-
-	// 	err = srv.Add(pToken, uint(1), header)
-	// 	if err != nil {
-	// 		log.Println(err.Error())
-	// 	}
-
-	// 	assert.NotNil(t, err)
-	// 	assert.ErrorContains(t, err, "server")
-	// })
-
-	// t.Run("access is denied", func(t *testing.T) {
-	// 	f, err := os.Open("/mnt/c/project/campyuk/docs/erd.jpg")
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-	// 	defer f.Close()
-
-	// 	// prepare request body
-	// 	// reserve a form field with 'file' as key
-	// 	// then assign the file content to field using 'io.Copy'
-	// 	// create a http post request, set content type to multipart-form
-	// 	// read the 'file' field using 'req.FormFile'
-
-	// 	body := &bytes.Buffer{}
-	// 	writer := multipart.NewWriter(body)
-	// 	part, err := writer.CreateFormFile("file", "/mnt/c/project/campyuk/docs/erd.jpg")
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-
-	// 	_, err = io.Copy(part, f)
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-
-	// 	writer.Close()
-
-	// 	req, _ := http.NewRequest("POST", "/upload", body)
-	// 	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	// 	_, header, _ := req.FormFile("file")
-
-	// 	_, token := helper.GenerateJWT(1, "user")
-	// 	pToken := token.(*jwt.Token)
-	// 	pToken.Valid = true
-
-	// 	err = srv.Add(pToken, uint(1), header)
-	// 	if err != nil {
-	// 		log.Println(err.Error())
-	// 	}
-
-	// 	assert.NotNil(t, err)
-	// 	assert.ErrorContains(t, err, "denied")
-	// })
-
-	// t.Run("format not allowed", func(t *testing.T) {
-	// 	f, err := os.Open("/mnt/c/project/campyuk/test.sh")
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-	// 	defer f.Close()
-
-	// 	// prepare request body
-	// 	// reserve a form field with 'file' as key
-	// 	// then assign the file content to field using 'io.Copy'
-	// 	// create a http post request, set content type to multipart-form
-	// 	// read the 'file' field using 'req.FormFile'
-
-	// 	body := &bytes.Buffer{}
-	// 	writer := multipart.NewWriter(body)
-	// 	part, err := writer.CreateFormFile("file", "/mnt/c/project/campyuk/test.sh")
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-
-	// 	_, err = io.Copy(part, f)
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-
-	// 	writer.Close()
-
-	// 	req, _ := http.NewRequest("POST", "/upload", body)
-	// 	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	// 	_, header, _ := req.FormFile("file")
-
-	// 	_, token := helper.GenerateJWT(1, "host")
-	// 	pToken := token.(*jwt.Token)
-	// 	pToken.Valid = true
-
-	// 	err = srv.Add(pToken, uint(1), header)
-	// 	if err != nil {
-	// 		log.Println(err.Error())
-	// 	}
-
-	// 	assert.NotNil(t, err)
-	// 	assert.ErrorContains(t, err, "format")
-	// })
 }
 
 func TestDelete(t *testing.T) {

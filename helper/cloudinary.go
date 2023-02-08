@@ -2,7 +2,6 @@ package helper
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"mime/multipart"
@@ -46,13 +45,6 @@ func GetPublicID(secureURL string) string {
 }
 
 func (cu *claudinaryUploader) Upload(file *multipart.FileHeader) (string, error) {
-	// Format check
-	filename := strings.Split(file.Filename, ".")
-	format := filename[len(filename)-1]
-	if format != "pdf" && format != "png" && format != "jpg" && format != "jpeg" {
-		return "", errors.New("bad request because of format not pdf, png, jpg, or jpeg")
-	}
-
 	src, _ := file.Open()
 	defer src.Close()
 

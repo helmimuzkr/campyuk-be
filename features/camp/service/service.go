@@ -181,14 +181,12 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 		return errors.New(msg)
 	}
 
-	if document == nil && res.Document == "" {
-		return nil
-	}
-
-	publicID := helper.GetPublicID(res.Document)
-	if err := cs.up.Destroy(publicID); err != nil {
-		log.Println("destroy file", err)
-		return errors.New("failed to destroy document")
+	if document != nil && res.Document != "" {
+		publicID := helper.GetPublicID(res.Document)
+		if err := cs.up.Destroy(publicID); err != nil {
+			log.Println("destroy file", err)
+			return errors.New("failed to destroy document")
+		}
 	}
 
 	return nil
