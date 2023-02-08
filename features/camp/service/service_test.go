@@ -276,10 +276,11 @@ func TestUpdate(t *testing.T) {
 	resData.Items = []camp.CampItem{{ID: uint(1), Name: "Tenda", Stock: 5, RentPrice: 10000}}
 
 	t.Run("Success update camp", func(t *testing.T) {
-		upload.On("Upload", &multipart.FileHeader{Filename: "document.pdf"}).Return("www.cloudinary.com/document.pdf", nil).Once()
-
 		oldData := camp.Core{Document: ""}
 		data.On("GetByID", uint(1), uint(1)).Return(oldData, nil).Once()
+
+		upload.On("Upload", &multipart.FileHeader{Filename: "document.pdf"}).Return("www.cloudinary.com/document.pdf", nil).Once()
+
 		inData.Document = "www.cloudinary.com/document.pdf"
 		data.On("Update", uint(1), uint(1), inData).Return(nil).Once()
 
@@ -306,6 +307,9 @@ func TestUpdate(t *testing.T) {
 	})
 
 	t.Run("not pdf", func(t *testing.T) {
+		oldData := camp.Core{Document: ""}
+		data.On("GetByID", uint(1), uint(1)).Return(oldData, nil).Once()
+
 		_, tkn := helper.GenerateJWT(1, "host")
 		token := tkn.(*jwt.Token)
 		token.Valid = true
