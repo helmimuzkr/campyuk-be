@@ -31,6 +31,10 @@ func (bc *bookingController) Create() echo.HandlerFunc {
 
 		newBooking := booking.Core{}
 		copier.Copy(&newBooking, &br)
+		if err := copier.Copy(&newBooking, &br); err != nil {
+			log.Println("create booking", err)
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		res, err := bc.srv.Create(token, newBooking)
 		if err != nil {
