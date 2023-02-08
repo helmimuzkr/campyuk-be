@@ -3,6 +3,7 @@ package handler
 import (
 	"campyuk-api/features/booking"
 	"campyuk-api/helper"
+	"log"
 	"strconv"
 
 	"github.com/jinzhu/copier"
@@ -51,7 +52,11 @@ func (bc *bookingController) List() echo.HandlerFunc {
 		token := c.Get("user")
 
 		str := c.QueryParam("page")
-		page, _ := strconv.Atoi(str)
+		page, err := strconv.Atoi(str)
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		paginate, res, err := bc.srv.List(token, page)
 		if err != nil {
@@ -84,7 +89,11 @@ func (bc *bookingController) GetByID() echo.HandlerFunc {
 		token := c.Get("user")
 
 		str := c.Param("id")
-		bookingID, _ := strconv.Atoi(str)
+		bookingID, err := strconv.Atoi(str)
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		res, err := bc.srv.GetByID(token, uint(bookingID))
 		if err != nil {
@@ -103,11 +112,15 @@ func (bc *bookingController) Accept() echo.HandlerFunc {
 		token := c.Get("user")
 
 		paramID := c.Param("id")
-		bookingID, _ := strconv.Atoi(paramID)
+		bookingID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		status := "SUCCESS"
 
-		err := bc.srv.Accept(token, uint(bookingID), status)
+		err = bc.srv.Accept(token, uint(bookingID), status)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
@@ -121,11 +134,15 @@ func (bc *bookingController) Cancel() echo.HandlerFunc {
 		token := c.Get("user")
 
 		paramID := c.Param("id")
-		bookingID, _ := strconv.Atoi(paramID)
+		bookingID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		status := "CANCELLED"
 
-		err := bc.srv.Cancel(token, uint(bookingID), status)
+		err = bc.srv.Cancel(token, uint(bookingID), status)
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}

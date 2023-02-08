@@ -40,9 +40,14 @@ func (ih *itemHandler) Add() echo.HandlerFunc {
 func (ih *itemHandler) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		paramID := c.Param("id")
-		itemID, _ := strconv.Atoi(paramID)
+		itemID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
 		input := UpdateItemRequest{}
-		err := c.Bind(&input)
+		err = c.Bind(&input)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "wrong input format"})
 		}
@@ -59,8 +64,13 @@ func (ih *itemHandler) Update() echo.HandlerFunc {
 func (ih *itemHandler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		paramID := c.Param("id")
-		itemID, _ := strconv.Atoi(paramID)
-		err := ih.srv.Delete(c.Get("user"), uint(itemID))
+		itemID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		err = ih.srv.Delete(c.Get("user"), uint(itemID))
 		if err != nil {
 			log.Println("trouble :  ", err.Error())
 			return c.JSON(helper.ErrorResponse(err.Error()))
