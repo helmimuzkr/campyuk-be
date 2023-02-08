@@ -18,7 +18,7 @@ func TestRegister(t *testing.T) {
 	data := mocks.NewUserData(t)
 	v := validator.New()
 	up := mocks.NewUploader(t)
-	input := user.Core{Username: "griffin", Fullname: "griffinhenry", Email: "grf29@gmail.com", Password: "gg123"}
+	input := user.Core{Username: "griffin", Fullname: "griffinhenry", Email: "grf29@gmail.com", Password: "gg123", Role: "guest"}
 	resData := user.Core{ID: uint(1), Username: "griffin", Fullname: "griffinhenry", Email: "grf29@gmail.com"}
 	srv := New(data, v, up)
 
@@ -67,24 +67,15 @@ func TestRegister(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
-	// t.Run("minimal 5 character", func(t *testing.T) {
-	// 	inputData := user.Core{Username: "grf", Fullname: "griffinhenry", Email: "grf29@gmail.com", Password: "123"}
-	// 	data.On("Register", mock.Anything).Return(user.Core{}, errors.New("input value must be greater")).Once()
-	// 	res, err := srv.Register(inputData)
-	// 	assert.NotNil(t, err)
-	// 	assert.Equal(t, uint(0), res.ID)
-	// 	assert.ErrorContains(t, err, "greater")
-	// 	data.AssertExpectations(t)
-	// })
+	t.Run("minimal 5 character", func(t *testing.T) {
+		inputData := user.Core{Username: "grf", Fullname: "griffinhenry", Email: "grf29@gmail.com", Password: "1234566", Role: "guest"}
 
-	// t.Run("format email", func(t *testing.T) {
-	// 	data.On("Register", mock.Anything).Return(user.Core{}, errors.New("input value must be an email")).Once()
-	// 	res, err := srv.Register(input)
-	// 	assert.NotNil(t, err)
-	// 	assert.Equal(t, uint(0), res.ID)
-	// 	assert.ErrorContains(t, err, "email")
-	// 	data.AssertExpectations(t)
-	// })
+		res, err := srv.Register(inputData)
+		assert.NotNil(t, err)
+		assert.Equal(t, uint(0), res.ID)
+		assert.ErrorContains(t, err, "input value must be ") // greater juga bisa
+	})
+
 }
 
 func TestLogin(t *testing.T) {
@@ -105,6 +96,15 @@ func TestLogin(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
+	t.Run("password not matched", func(t *testing.T) {
+		data.On("Login", input).Return(resData, nil).Once()
+		token, res, err := srv.Login(input, "gg123")
+		assert.Nil(t, err)
+		assert.NotEmpty(t, token)
+		assert.Equal(t, resData.Username, res.Username)
+		data.AssertExpectations(t)
+	})
+
 	t.Run("internal server error", func(t *testing.T) {
 		data.On("Login", input).Return(user.Core{}, errors.New("server error")).Once()
 		_, res, err := srv.Login(input, "gg123")
@@ -116,10 +116,13 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("username or password empty", func(t *testing.T) {
-		data.On("Login", input).Return(user.Core{}, errors.New("username or password not allowed empty")).Once()
-		_, res, err := srv.Login(input, "")
+		wrong, _ := helper.GeneratePassword("woooow123")
+
+		data.On("Login", input).Return(user.Core{Password: wrong}, nil).Once()
+
+		_, res, err := srv.Login(input, "grf123")
 		assert.NotNil(t, err)
-		assert.ErrorContains(t, err, "empty")
+		assert.ErrorContains(t, err, "password not matched")
 		assert.Equal(t, uint(0), res.ID)
 		data.AssertExpectations(t)
 	})
