@@ -14,12 +14,14 @@ import (
 type bookingSrv struct {
 	qry     booking.BookingData
 	payment helper.PaymentGateway
+	oauth   helper.GoogleAPI
 }
 
-func New(bd booking.BookingData, p helper.PaymentGateway) booking.BookingService {
+func New(bd booking.BookingData, p helper.PaymentGateway, o helper.GoogleAPI) booking.BookingService {
 	return &bookingSrv{
 		qry:     bd,
 		payment: p,
+		oauth:   o,
 	}
 }
 
@@ -158,6 +160,38 @@ func (bs *bookingSrv) Callback(ticket string, status string) error {
 	if err != nil {
 		log.Println("callback error", err)
 		return errors.New("internal server error")
+	}
+
+	return nil
+}
+func (bs *bookingSrv) CreateEvent(code string, bookingID uint) error {
+	token, err := bs.oauth.GetToken(code)
+	if err != nil {
+		return errors.New("failed to create event in calendar")
+	}
+
+	res, err := bs.qry.CreateEvent(bookingID)
+	if err != nil {
+		log.Println(err)
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "booking not found"
+		} else {
+			msg = "internal server errorr"
+		}
+		return errors.New(msg)
+	}
+
+	detailCal := helper.CalendarDetail{
+		Summay:   "Camping",
+		Location: res.Address,
+		Emails:   []string{"campyukuser@gmail.com"}, // nanti diisi email guest dan host
+	}
+
+	err = bs.oauth.CreateCalendar(token, detailCal)
+	if err != nil {
+		log.Println("failed create event", err.Error())
+		return errors.New("failed to create event in calendar")
 	}
 
 	return nil

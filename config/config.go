@@ -33,6 +33,9 @@ type AppConfig struct {
 	MERCHANT_ID              string
 	CLIENT_ID                string
 	SERVER_KEY               string
+	GOOGLE_REDIRECT_CALLBACK string
+	GOOGLE_CLIENT_ID         string
+	GOOGLE_CLIENT_SECRET     string
 }
 
 func InitConfig() *AppConfig {
@@ -94,6 +97,18 @@ func ReadEnv() *AppConfig {
 	}
 	if val, found := os.LookupEnv("SERVER_KEY"); found {
 		app.SERVER_KEY = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("GOOGLE_REDIRECT_CALLBACK"); found {
+		app.GOOGLE_REDIRECT_CALLBACK = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("GOOGLE_CLIENT_ID"); found {
+		app.GOOGLE_CLIENT_SECRET = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("GOOGLE_CLIENT_SECRET"); found {
+		app.GOOGLE_CLIENT_SECRET = val
 		isRead = false
 	}
 
