@@ -10,7 +10,7 @@ type Core struct {
 	ID        uint
 	Username  string `validate:"min=5,omitempty"`
 	Fullname  string
-	Email     string `validate:"omitempty,email"`
+	Email     string `validate:"required,email"`
 	UserImage string
 	Password  string `validate:"min=5"`
 	Role      string
