@@ -143,12 +143,6 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 		return errors.New("access is denied due to invalid credential")
 	}
 
-	filedoc := strings.Split(document.Filename, ".")
-	format := filedoc[len(filedoc)-1]
-	if format != "pdf" {
-		return errors.New("bad request because of format not pdf")
-	}
-
 	res, err := cs.qry.GetByID(userID, campID)
 	if err != nil {
 		log.Println(err)
@@ -162,6 +156,12 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 	}
 
 	if document != nil {
+		filedoc := strings.Split(document.Filename, ".")
+		format := filedoc[len(filedoc)-1]
+		if format != "pdf" {
+			return errors.New("bad request because of format not pdf")
+		}
+
 		docURL, err := cs.up.Upload(document)
 		if err != nil {
 			log.Println(err)
@@ -181,12 +181,14 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 		return errors.New(msg)
 	}
 
-	if res.Document != "" {
-		publicID := helper.GetPublicID(res.Document)
-		if err := cs.up.Destroy(publicID); err != nil {
-			log.Println("destroy file", err)
-			return errors.New("failed to destroy document")
-		}
+	if document == nil && res.Document == "" {
+		return nil
+	}
+
+	publicID := helper.GetPublicID(res.Document)
+	if err := cs.up.Destroy(publicID); err != nil {
+		log.Println("destroy file", err)
+		return errors.New("failed to destroy document")
 	}
 
 	return nil
