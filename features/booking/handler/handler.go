@@ -13,14 +13,14 @@ import (
 )
 
 type bookingController struct {
-	srv   booking.BookingService
-	oauth helper.GoogleAPI
+	srv       booking.BookingService
+	googleApi helper.GoogleAPI
 }
 
-func New(bs booking.BookingService, o helper.GoogleAPI) booking.BookingHandler {
+func New(bs booking.BookingService, g helper.GoogleAPI) booking.BookingHandler {
 	return &bookingController{
-		srv:   bs,
-		oauth: o,
+		srv:       bs,
+		googleApi: g,
 	}
 }
 
@@ -189,7 +189,7 @@ func (bc *bookingController) Oauth() echo.HandlerFunc {
 		cookieBookingID.Value = c.Param("id")
 		c.SetCookie(cookieBookingID)
 
-		return c.Redirect(http.StatusTemporaryRedirect, bc.oauth.GetUrlAuth(state))
+		return c.Redirect(http.StatusTemporaryRedirect, bc.googleApi.GetUrlAuth(state))
 	}
 }
 

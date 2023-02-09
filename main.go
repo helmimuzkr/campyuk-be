@@ -36,7 +36,7 @@ func main() {
 	v := validator.New()
 	cld := helper.NewCloudinary(cfg)
 	coreapiMidtrans := helper.NewCoreMidtrans(cfg)
-	googleAPI := helper.NewOauth(cfg)
+	googleAPI := helper.NewGoogleApi(cfg)
 
 	config.Migrate(db)
 
@@ -96,8 +96,8 @@ func main() {
 	e.GET("/bookings/:id", bookingHandler.GetByID(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("bookings/:id/accept", bookingHandler.Accept(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("bookings/:id/cancel", bookingHandler.Cancel(), middleware.JWT([]byte(config.JWT_KEY)))
-	e.GET("/bookings/:id/oauth", bookingHandler.Oauth())
 	e.POST("/bookings/callback", bookingHandler.Callback())
+	e.GET("/bookings/:id/oauth", bookingHandler.Oauth())
 	e.GET("/bookings/oauth/callback", bookingHandler.OauthCallback())
 
 	if err := e.Start(":8000"); err != nil {
