@@ -162,7 +162,7 @@ func (bd *bookingData) Callback(ticket string, status string) error {
 
 func (bd *bookingData) CreateEvent(bookingID uint) (booking.Core, error) {
 	model := BookingCamp{}
-	query := "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.guest FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.id = ?"
+	query := "SELECT bookings.id, users.email, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.guest FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.id = ?"
 	tx := bd.db.Raw(query, bookingID).First(&model)
 	if tx.Error != nil {
 		return booking.Core{}, tx.Error
