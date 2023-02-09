@@ -3,7 +3,6 @@ package helper
 import (
 	"campyuk-api/config"
 	"context"
-	"time"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -29,7 +28,7 @@ type googleAPI struct {
 	conf *oauth2.Config
 }
 
-func NewOauth(cfg *config.AppConfig) GoogleAPI {
+func NewGoogleApi(cfg *config.AppConfig) GoogleAPI {
 	conf := &oauth2.Config{
 		RedirectURL:  cfg.GOOGLE_REDIRECT_CALLBACK,
 		ClientID:     cfg.GOOGLE_CLIENT_ID,
@@ -55,7 +54,7 @@ func (ga *googleAPI) GetToken(code string) (*oauth2.Token, error) {
 }
 
 func (ga *googleAPI) CreateCalendar(token *oauth2.Token, detail CalendarDetail) error {
-	calendarService, err := calendar.NewService(oauth2.NoContext, option.WithTokenSource(ga.conf.TokenSource(oauth2.NoContext, token)))
+	calendarService, err := calendar.NewService(context.Background(), option.WithTokenSource(ga.conf.TokenSource(context.Background(), token)))
 	if err != nil {
 		return err
 	}
@@ -70,21 +69,18 @@ func (ga *googleAPI) CreateCalendar(token *oauth2.Token, detail CalendarDetail) 
 		Summary:  detail.Summay,
 		Location: detail.Location,
 		Start: &calendar.EventDateTime{
-			DateTime: time.Now().Format(time.RFC3339), // Wajib format RFC3339
+			DateTime: detail.Start, // Wajib format RFC3339
 			TimeZone: "Asia/Jakarta",
 		},
 		End: &calendar.EventDateTime{
 			// DateTime: time.Date(2023, 02, 10, 13, 20, 10, 10, time.Local).Format(time.RFC3339), // artinya YYYY-MM-DD HH-MM-SS-NS Location
-			DateTime: time.Now().Add(24 * time.Hour).Format(time.RFC3339),
+			DateTime: detail.End,
 			TimeZone: "Asia/Jakarta",
 		},
 		Attendees: attendees,
 	}
 
-	event, err = calendarService.Events.Insert("primary", event).SendUpdates("all").Do()
-	if err != nil {
-		return err
-	}
+	calendarService.Events.Insert("primary", event).SendUpdates("all").Do()
 
 	return nil
 }
