@@ -164,9 +164,11 @@ func (bs *bookingSrv) Callback(ticket string, status string) error {
 
 	return nil
 }
+
 func (bs *bookingSrv) CreateEvent(code string, bookingID uint) error {
 	token, err := bs.googleApi.GetToken(code)
 	if err != nil {
+		log.Println("get token in create event error: ", err)
 		return errors.New("failed to create event in calendar")
 	}
 
