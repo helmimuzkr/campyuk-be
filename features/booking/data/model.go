@@ -35,12 +35,13 @@ type RentItem struct {
 type BookingCamp struct {
 	ID            uint
 	Ticket        string
-	UserID        uint // Guest
+	UserID        uint   // Guest
+	Email         string // Guest
 	CampID        uint
 	Title         string
 	Image         string
-	Latitude      complex64
-	Longitude     complex64
+	Latitude      float64
+	Longitude     float64
 	Address       string
 	City          string
 	CampPrice     int `gorm:"column:price"`
@@ -98,6 +99,7 @@ func ToCore(data BookingCamp) booking.Core {
 	return booking.Core{
 		ID:            data.ID,
 		GuestID:       data.UserID,
+		Email:         data.Email,
 		Ticket:        data.Ticket,
 		Title:         data.Title,
 		Image:         data.Image,

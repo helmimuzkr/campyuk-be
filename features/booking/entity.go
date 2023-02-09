@@ -1,6 +1,8 @@
 package booking
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+)
 
 type Core struct {
 	ID            uint
@@ -10,8 +12,8 @@ type Core struct {
 	CampID        uint
 	Title         string
 	Image         string
-	Latitude      complex64
-	Longitude     complex64
+	Latitude      float64
+	Longitude     float64
 	Address       string
 	City          string
 	CampPrice     int
@@ -42,6 +44,8 @@ type BookingHandler interface {
 	Accept() echo.HandlerFunc
 	Cancel() echo.HandlerFunc
 	Callback() echo.HandlerFunc
+	Oauth() echo.HandlerFunc
+	OauthCallback() echo.HandlerFunc
 }
 
 type BookingService interface {
@@ -51,6 +55,7 @@ type BookingService interface {
 	Accept(token interface{}, bookingID uint, status string) error
 	Cancel(token interface{}, bookingID uint, status string) error
 	Callback(ticket string, status string) error
+	CreateEvent(code string, bookingID uint) error
 }
 
 type BookingData interface {
@@ -59,4 +64,5 @@ type BookingData interface {
 	List(userID uint, role string, limit int, offset int) (int, []Core, error)
 	GetByID(userID uint, bookingID uint, role string) (Core, error)
 	Callback(ticket string, status string) error
+	CreateEvent(bookingID uint) (Core, error)
 }

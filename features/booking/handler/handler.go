@@ -4,19 +4,23 @@ import (
 	"campyuk-api/features/booking"
 	"campyuk-api/helper"
 	"log"
+	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 )
 
 type bookingController struct {
-	srv booking.BookingService
+	srv       booking.BookingService
+	googleApi helper.GoogleAPI
 }
 
-func New(bs booking.BookingService) booking.BookingHandler {
+func New(bs booking.BookingService, g helper.GoogleAPI) booking.BookingHandler {
 	return &bookingController{
-		srv: bs,
+		srv:       bs,
+		googleApi: g,
 	}
 }
 
@@ -164,5 +168,59 @@ func (bc *bookingController) Callback() echo.HandlerFunc {
 		}
 
 		return c.JSON(helper.SuccessResponse(200, "success update transaction"))
+	}
+}
+
+func (bc *bookingController) Oauth() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		state := "random"
+
+		cookieState := new(http.Cookie)
+		cookieState.Path = "/"
+		cookieState.Expires = time.Now().Add(5 * time.Minute)
+		cookieState.Name = "state"
+		cookieState.Value = state
+		c.SetCookie(cookieState)
+
+		cookieBookingID := new(http.Cookie)
+		cookieBookingID.Path = "/"
+		cookieBookingID.Expires = time.Now().Add(5 * time.Minute)
+		cookieBookingID.Name = "bookingID"
+		cookieBookingID.Value = c.Param("id")
+		c.SetCookie(cookieBookingID)
+
+		return c.Redirect(http.StatusTemporaryRedirect, bc.googleApi.GetUrlAuth(state))
+	}
+}
+
+func (bc *bookingController) OauthCallback() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cookies := c.Cookies()
+
+		state := ""
+		bookingID := ""
+		for _, cookie := range cookies {
+			if cookie.Name == "state" {
+				state = cookie.Value
+			}
+			if cookie.Name == "bookingID" {
+				bookingID = cookie.Value
+			}
+		}
+
+		if state != c.QueryParam("state") {
+			log.Println("state is not valid")
+			return c.JSON(helper.ErrorResponse("Unauthorized"))
+		}
+
+		code := c.QueryParam("code")
+
+		id, _ := strconv.Atoi(bookingID)
+
+		if err := bc.srv.CreateEvent(code, uint(id)); err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "success create event in google calendar"))
 	}
 }

@@ -36,6 +36,7 @@ func main() {
 	v := validator.New()
 	cld := helper.NewCloudinary(cfg)
 	coreapiMidtrans := helper.NewCoreMidtrans(cfg)
+	googleAPI := helper.NewGoogleApi(cfg)
 
 	config.Migrate(db)
 
@@ -57,8 +58,8 @@ func main() {
 	imageHandler := _imageHandler.New(imageSrv)
 
 	bookingData := _bookingData.New(db)
-	bookingSrv := _bookingService.New(bookingData, coreapiMidtrans)
-	bookingHandler := _bookingHandler.New(bookingSrv)
+	bookingSrv := _bookingService.New(bookingData, coreapiMidtrans, googleAPI)
+	bookingHandler := _bookingHandler.New(bookingSrv, googleAPI)
 
 	// MIDDLEWARE
 	e.Pre(middleware.RemoveTrailingSlash())
@@ -96,6 +97,8 @@ func main() {
 	e.PUT("bookings/:id/accept", bookingHandler.Accept(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("bookings/:id/cancel", bookingHandler.Cancel(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.POST("/bookings/callback", bookingHandler.Callback())
+	e.GET("/bookings/:id/oauth", bookingHandler.Oauth())
+	e.GET("/bookings/oauth/callback", bookingHandler.OauthCallback())
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())

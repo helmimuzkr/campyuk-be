@@ -160,6 +160,17 @@ func (bd *bookingData) Callback(ticket string, status string) error {
 	return nil
 }
 
+func (bd *bookingData) CreateEvent(bookingID uint) (booking.Core, error) {
+	model := BookingCamp{}
+	query := "SELECT bookings.id, users.email, bookings.ticket, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.guest FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.id = ?"
+	tx := bd.db.Raw(query, bookingID).First(&model)
+	if tx.Error != nil {
+		return booking.Core{}, tx.Error
+	}
+
+	return ToCore(model), nil
+}
+
 func (bd *bookingData) decrementStock(bookingID uint) error {
 	itm := []RentItem{}
 	tx := bd.db.Where("booking_id = ?", bookingID).Find(&itm)
@@ -170,6 +181,10 @@ func (bd *bookingData) decrementStock(bookingID uint) error {
 	for _, v := range itm {
 		var stock int
 		tx = bd.db.Raw("SELECT stock FROM items WHERE id = ?", v.ItemID).First(&stock)
+		if tx.Error != nil {
+			return tx.Error
+		}
+
 		if stock < v.Quantity {
 			return errors.New("stock not available")
 		}

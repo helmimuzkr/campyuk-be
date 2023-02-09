@@ -12,14 +12,16 @@ import (
 )
 
 type bookingSrv struct {
-	qry     booking.BookingData
-	payment helper.PaymentGateway
+	qry       booking.BookingData
+	payment   helper.PaymentGateway
+	googleApi helper.GoogleAPI
 }
 
-func New(bd booking.BookingData, p helper.PaymentGateway) booking.BookingService {
+func New(bd booking.BookingData, p helper.PaymentGateway, g helper.GoogleAPI) booking.BookingService {
 	return &bookingSrv{
-		qry:     bd,
-		payment: p,
+		qry:       bd,
+		payment:   p,
+		googleApi: g,
 	}
 }
 
@@ -32,7 +34,7 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	// Assign some default transactions
 	newBooking.Ticket = fmt.Sprintf("INV-%d-%s", id, time.Now().Format("20060102-150405"))
 	newBooking.Status = "PENDING"
-	newBooking.BookingDate = time.Now().Format("02-01-2006")
+	newBooking.BookingDate = time.Now().Format("2006-01-02")
 
 	// Charge transaction to midtrans and get the response
 	vaNumber, errMidtrans := bs.payment.ChargeTransaction(newBooking.Ticket, newBooking.TotalPrice, newBooking.Bank)
@@ -158,6 +160,54 @@ func (bs *bookingSrv) Callback(ticket string, status string) error {
 	if err != nil {
 		log.Println("callback error", err)
 		return errors.New("internal server error")
+	}
+
+	return nil
+}
+func (bs *bookingSrv) CreateEvent(code string, bookingID uint) error {
+	token, err := bs.googleApi.GetToken(code)
+	if err != nil {
+		return errors.New("failed to create event in calendar")
+	}
+
+	res, err := bs.qry.CreateEvent(bookingID)
+	if err != nil {
+		log.Println(err)
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "booking not found"
+		} else {
+			msg = "internal server errorr"
+		}
+		return errors.New(msg)
+	}
+
+	startTime, err := time.Parse("2006-01-02", res.CheckIn)
+	if err != nil {
+		log.Println("error parsing time in create event service: ", err)
+		return errors.New("failed to create event in calendar")
+	}
+	endTime, err := time.Parse("2006-01-02", res.CheckOut)
+	if err != nil {
+		log.Println("error parsing time in create event service: ", err)
+		return errors.New("failed to create event in calendar")
+	}
+	startRFC := startTime.Format(time.RFC3339)
+	endRFC := endTime.Format(time.RFC3339)
+
+	detailCal := helper.CalendarDetail{
+		Summay:   "Camping",
+		Location: res.Address,
+		Start:    startRFC,
+		End:      endRFC,
+		// nanti diisi email guest dan host
+		Emails: []string{res.Email}, // email guest
+	}
+
+	err = bs.googleApi.CreateCalendar(token, detailCal)
+	if err != nil {
+		log.Println("failed create event", err.Error())
+		return errors.New("failed to create event in calendar")
 	}
 
 	return nil
