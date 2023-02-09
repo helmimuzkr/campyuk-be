@@ -38,7 +38,7 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	vaNumber, errMidtrans := bs.payment.ChargeTransaction(newBooking.Ticket, newBooking.TotalPrice, newBooking.Bank)
 	if errMidtrans != nil {
 		log.Println(errMidtrans)
-		return booking.Core{}, errors.New("charge transaction failed due to internal server error")
+		return booking.Core{}, errors.New("charge transaction failed due to internal server error, please try again")
 	}
 	newBooking.VirtualNumber = vaNumber
 
