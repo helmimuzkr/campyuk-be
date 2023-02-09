@@ -480,7 +480,35 @@ func TestCreateEvent(t *testing.T) {
 		google.AssertExpectations(t)
 	})
 
-	t.Run("database error", func(t *testing.T) {
+	t.Run("parsing start time error", func(t *testing.T) {
+		google.On("GetToken", "code").Return(resGoogle, nil).Once()
+
+		resData.CheckIn = ""
+		data.On("CreateEvent", resData.ID).Return(resData, nil).Once()
+
+		err := srv.CreateEvent("code", resData.ID)
+
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "failed to create event in calendar")
+		data.AssertExpectations(t)
+		google.AssertExpectations(t)
+	})
+
+	t.Run("parsing ebd time error", func(t *testing.T) {
+		google.On("GetToken", "code").Return(resGoogle, nil).Once()
+
+		resData.CheckOut = ""
+		data.On("CreateEvent", resData.ID).Return(resData, nil).Once()
+
+		err := srv.CreateEvent("code", resData.ID)
+
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "failed to create event in calendar")
+		data.AssertExpectations(t)
+		google.AssertExpectations(t)
+	})
+
+	t.Run("create calendar failed", func(t *testing.T) {
 		google.On("GetToken", "code").Return(resGoogle, nil).Once()
 		data.On("CreateEvent", resData.ID).Return(resData, nil).Once()
 		google.On("CreateCalendar", resGoogle, detailCal).Return(errors.New("failed to create")).Once()
