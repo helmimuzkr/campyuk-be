@@ -80,7 +80,7 @@ func (uc *userControll) Update() echo.HandlerFunc {
 
 		formHeader, err := c.FormFile("user_image")
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "Select a file to upload"})
+			log.Println(err)
 		}
 
 		_, err = uc.srv.Update(c.Get("user"), formHeader, *ReqToCore(input))
