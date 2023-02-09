@@ -40,8 +40,8 @@ type BookingCamp struct {
 	CampID        uint
 	Title         string
 	Image         string
-	Latitude      complex64
-	Longitude     complex64
+	Latitude      float64
+	Longitude     float64
 	Address       string
 	City          string
 	CampPrice     int `gorm:"column:price"`
