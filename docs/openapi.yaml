@@ -161,7 +161,7 @@ paths:
         get:
             tags:
                 - users
-            summary: get data user
+            summary: profile
             description: getting data user
             security:
                 - JWTAuth: []
@@ -221,7 +221,7 @@ paths:
                                     type: string
                                     format: password
                         example:
-                            name: "griffin"
+                            username: "griffin"
                             fullname: "griffinhenry"
                             email: "grf@gmail.com"
                             password: "123"
@@ -396,7 +396,7 @@ paths:
         get:
             tags:
                 - "camps"
-            summary: Get all list camp (guest/users/host/admin)
+            summary: Get all list camp (guest/host/admin)
             description: Get all list camp
             security:
                 - JWTAuth: []
@@ -490,7 +490,7 @@ paths:
         get:
             tags:
                 - "camps"
-            summary: Detail camp (guest/user/host/admin)
+            summary: Detail camp (guest/host/admin)
             description: Get detail camp
             security:
                 - JWTAuth: []
@@ -598,7 +598,7 @@ paths:
         put:
             tags:
                 - "camps"
-            summary: Add new camp (host)
+            summary: Edit camp (host)
             description: Get all list camp
             security:
                 - JWTAuth: []
@@ -1120,8 +1120,8 @@ paths:
         post:
             tags:
                 - bookings
-            summary: by user
-            description: add booking for user
+            summary: by guest
+            description: add booking for guest
             security:
                 - JWTAuth: []
             requestBody:
@@ -1196,8 +1196,8 @@ paths:
         get:
             tags:
                 - bookings
-            summary: by user & host
-            description: get booking data for user
+            summary: by guest & host
+            description: get booking data
             security:
                 - JWTAuth: []
             responses:
@@ -1270,7 +1270,7 @@ paths:
         get:
             tags:
                 - bookings
-            summary: "by user & host"
+            summary: "by guest & host"
             description: get detail booking
             security:
                 - JWTAuth: []
@@ -1377,8 +1377,13 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: booking not found
+                            examples:
+                                notFound:
+                                    value:
+                                        message: booking not found
+                                outOfStock:
+                                    value:
+                                        message: stock not available
                 500:
                     description: "internal server error"
                     content:
@@ -1393,7 +1398,7 @@ paths:
         put:
             tags:
                 - bookings
-            summary: "by user & host"
+            summary: "by guest & host"
             description: update status booking
             security:
                 - JWTAuth: []
@@ -1470,8 +1475,70 @@ paths:
                                         type: string
                             example:
                                 message: "success update transaction"
+                404:
+                    description: "not found"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: stock not available
                 500:
                     $ref: "#/components/responses/500"
+
+    /bookings/{id}/oauth:
+        get:
+            tags:
+              - bookings
+            summary: "by guest"
+            description: update status booking
+            parameters:
+                - name: id
+                  description: booking_id
+                  required: true
+                  in: path
+                  schema:
+                      type: string
+                      example: 1
+            responses:
+                204:
+                    description: ""
+
+    /bookings/oauth/callback:
+        get:
+            tags:
+              - bookings
+            summary: "by guest"
+            description: update status booking
+            responses:
+                401:
+                    description: "Authorized"
+                    content:
+                         application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                    message: unauthorized
+                404:
+                    description: "not found"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: booking not found
+                500:
+                    description: "internal server error"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: failed to create event in calendar
+
 
 components:
     securitySchemes:
