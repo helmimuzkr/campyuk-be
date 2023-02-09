@@ -76,6 +76,20 @@ func (_m *BookingService) Create(token interface{}, newBooking booking.Core) (bo
 	return r0, r1
 }
 
+// CreateEvent provides a mock function with given fields: code, bookingID
+func (_m *BookingService) CreateEvent(code string, bookingID uint) error {
+	ret := _m.Called(code, bookingID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, uint) error); ok {
+		r0 = rf(code, bookingID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetByID provides a mock function with given fields: token, bookingID
 func (_m *BookingService) GetByID(token interface{}, bookingID uint) (booking.Core, error) {
 	ret := _m.Called(token, bookingID)

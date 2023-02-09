@@ -48,6 +48,27 @@ func (_m *BookingData) Create(userID uint, newBooking booking.Core) (booking.Cor
 	return r0, r1
 }
 
+// CreateEvent provides a mock function with given fields: bookingID
+func (_m *BookingData) CreateEvent(bookingID uint) (booking.Core, error) {
+	ret := _m.Called(bookingID)
+
+	var r0 booking.Core
+	if rf, ok := ret.Get(0).(func(uint) booking.Core); ok {
+		r0 = rf(bookingID)
+	} else {
+		r0 = ret.Get(0).(booking.Core)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(bookingID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetByID provides a mock function with given fields: userID, bookingID, role
 func (_m *BookingData) GetByID(userID uint, bookingID uint, role string) (booking.Core, error) {
 	ret := _m.Called(userID, bookingID, role)
