@@ -104,7 +104,7 @@ func ReadEnv() *AppConfig {
 		isRead = false
 	}
 	if val, found := os.LookupEnv("GOOGLE_CLIENT_ID"); found {
-		app.GOOGLE_CLIENT_SECRET = val
+		app.GOOGLE_CLIENT_ID = val
 		isRead = false
 	}
 	if val, found := os.LookupEnv("GOOGLE_CLIENT_SECRET"); found {
