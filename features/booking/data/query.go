@@ -168,8 +168,6 @@ func (bd *bookingData) CreateEvent(bookingID uint) (booking.Core, error) {
 		return booking.Core{}, tx.Error
 	}
 
-	log.Fatal(model)
-
 	return ToCore(model), nil
 }
 
