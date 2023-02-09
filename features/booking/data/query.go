@@ -181,6 +181,10 @@ func (bd *bookingData) decrementStock(bookingID uint) error {
 	for _, v := range itm {
 		var stock int
 		tx = bd.db.Raw("SELECT stock FROM items WHERE id = ?", v.ItemID).First(&stock)
+		if tx.Error != nil {
+			return tx.Error
+		}
+
 		if stock < v.Quantity {
 			return errors.New("stock not available")
 		}
