@@ -47,6 +47,6 @@ func (ih *imageHandler) Delete() echo.HandlerFunc {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		return c.JSON(helper.SuccessResponse(200, "success delete image"))
+		return c.NoContent(204)
 	}
 }
