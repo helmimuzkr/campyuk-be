@@ -9,19 +9,23 @@ import (
 	"math"
 	"strings"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type bookingSrv struct {
 	qry       booking.BookingData
 	payment   helper.PaymentGateway
 	googleApi helper.GoogleAPI
+	vld       *validator.Validate
 }
 
-func New(bd booking.BookingData, p helper.PaymentGateway, g helper.GoogleAPI) booking.BookingService {
+func New(bd booking.BookingData, p helper.PaymentGateway, g helper.GoogleAPI, vld *validator.Validate) booking.BookingService {
 	return &bookingSrv{
 		qry:       bd,
 		payment:   p,
 		googleApi: g,
+		vld:       vld,
 	}
 }
 
@@ -29,6 +33,13 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 	id, role := helper.ExtractToken(token)
 	if role != "guest" {
 		return booking.Core{}, errors.New("access is denied due to invalid credential")
+	}
+
+	err := bs.vld.Struct(&newBooking)
+	if err != nil {
+		log.Println("err", err)
+		msg := helper.ValidationErrorHandle(err)
+		return booking.Core{}, errors.New(msg)
 	}
 
 	// Assign some default transactions
