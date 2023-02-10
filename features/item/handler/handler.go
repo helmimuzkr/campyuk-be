@@ -76,6 +76,6 @@ func (ih *itemHandler) Delete() echo.HandlerFunc {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		return c.JSON(helper.SuccessResponse(http.StatusOK, "success delete item"))
+		return c.NoContent(204)
 	}
 }

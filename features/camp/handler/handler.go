@@ -175,7 +175,7 @@ func (ch *campHandler) Delete() echo.HandlerFunc {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		return c.JSON(helper.SuccessResponse(200, "success delete camp"))
+		return c.NoContent(204)
 	}
 }
 

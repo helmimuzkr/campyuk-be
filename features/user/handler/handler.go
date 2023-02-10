@@ -100,8 +100,6 @@ func (uc *userControll) Delete() echo.HandlerFunc {
 				"message": "internal server error",
 			})
 		}
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "success delete profile",
-		})
+		return c.NoContent(204)
 	}
 }
