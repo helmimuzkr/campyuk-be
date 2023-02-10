@@ -4,9 +4,9 @@ import "github.com/labstack/echo/v4"
 
 type Core struct {
 	ID     uint
-	Name   string `validation:"required"`
-	Stock  int    `validation:"required"`
-	Price  int    `validation:"required"`
+	Name   string `validate:"required"`
+	Stock  int    `validate:"required"`
+	Price  int    `validate:"required"`
 	CampID int
 }
 
