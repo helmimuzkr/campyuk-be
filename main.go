@@ -46,7 +46,7 @@ func main() {
 	uHdl := usrHdl.New(uSrv)
 
 	iData := itmData.New(db)
-	iSrv := itmSrv.New(iData)
+	iSrv := itmSrv.New(iData, v)
 	iHdl := itmHdl.New(iSrv)
 
 	campData := _campData.New(db)
@@ -58,7 +58,7 @@ func main() {
 	imageHandler := _imageHandler.New(imageSrv)
 
 	bookingData := _bookingData.New(db)
-	bookingSrv := _bookingService.New(bookingData, coreapiMidtrans, googleAPI)
+	bookingSrv := _bookingService.New(bookingData, coreapiMidtrans, googleAPI, v)
 	bookingHandler := _bookingHandler.New(bookingSrv, googleAPI)
 
 	// MIDDLEWARE

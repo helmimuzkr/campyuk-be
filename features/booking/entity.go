@@ -17,15 +17,15 @@ type Core struct {
 	Address       string
 	City          string
 	CampPrice     int
-	CheckIn       string
-	CheckOut      string
+	CheckIn       string `validate:"required"`
+	CheckOut      string `validate:"required"`
 	BookingDate   string
-	Guest         int
+	Guest         int `validate:"required"`
 	CampCost      int
 	Items         []Item
-	TotalPrice    int
+	TotalPrice    int `validate:"required"`
 	Status        string
-	Bank          string
+	Bank          string `validate:"required"`
 	VirtualNumber string
 }
 

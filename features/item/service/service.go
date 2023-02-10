@@ -6,15 +6,19 @@ import (
 	"errors"
 	"log"
 	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type itemSrv struct {
 	qry item.ItemData
+	vld *validator.Validate
 }
 
-func New(id item.ItemData) item.ItemService {
+func New(id item.ItemData, vld *validator.Validate) item.ItemService {
 	return &itemSrv{
 		qry: id,
+		vld: vld,
 	}
 }
 
@@ -22,6 +26,13 @@ func (is *itemSrv) Add(token interface{}, campID uint, newItem item.Core) (item.
 	userID, _ := helper.ExtractToken(token)
 	if userID <= 0 {
 		return item.Core{}, errors.New("data not found")
+	}
+
+	err := is.vld.Struct(&newItem)
+	if err != nil {
+		log.Println("err", err)
+		msg := helper.ValidationErrorHandle(err)
+		return item.Core{}, errors.New(msg)
 	}
 
 	res, err := is.qry.Add(userID, campID, newItem)

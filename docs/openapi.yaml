@@ -68,7 +68,6 @@ paths:
                                 bcryptErr:
                                     value:
                                         message: password process error
-
                 400:
                     description: "bad request"
                     content:
@@ -84,6 +83,8 @@ paths:
                                         message: username not allowed empty
                                 validation:
                                     $ref: "#/components/examples/validationError"
+                404:
+                    $ref: "#/components/responses/404"
 
     /login:
         post:
@@ -141,13 +142,21 @@ paths:
                                     value:
                                         message: password not matched
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: data not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                dataNotFound:
+                                    description: data user not found
+                                    value:
+                                        message: data not found
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
                 500:
                     description: "internal server error"
                     content:
@@ -161,7 +170,7 @@ paths:
         get:
             tags:
                 - users
-            summary: get data user
+            summary: profile
             description: getting data user
             security:
                 - JWTAuth: []
@@ -181,13 +190,21 @@ paths:
                                         user_image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
                                     message: "success show profile"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: data not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                dataNotFound:
+                                    description: data user not found
+                                    value:
+                                        message: data not found
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
                 500:
                     description: "internal server error"
                     content:
@@ -221,7 +238,7 @@ paths:
                                     type: string
                                     format: password
                         example:
-                            name: "griffin"
+                            username: "griffin"
                             fullname: "griffinhenry"
                             email: "grf@gmail.com"
                             password: "123"
@@ -244,13 +261,21 @@ paths:
                             example:
                                 message: "success update profile"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: data not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                dataNotFound:
+                                    description: data user not found
+                                    value:
+                                        message: data not found
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
                 500:
                     description: "internal server error"
                     content:
@@ -281,6 +306,8 @@ paths:
                                 type: object
                                 example:
                                     message: "success delete profile"
+                404:
+                    $ref: "#/components/responses/404"
                 500:
                     description: "internal server error"
                     content:
@@ -378,6 +405,8 @@ paths:
                                     $ref: "#/components/examples/formatUploadError"
                 401:
                     $ref: "#/components/responses/401"
+                404:
+                    $ref: "#/components/responses/404"
                 500:
                     description: "internal server error"
                     content:
@@ -396,7 +425,7 @@ paths:
         get:
             tags:
                 - "camps"
-            summary: Get all list camp (guest/users/host/admin)
+            summary: Get all list camp (guest/host/admin)
             description: Get all list camp
             security:
                 - JWTAuth: []
@@ -470,13 +499,21 @@ paths:
                 401:
                     $ref: "#/components/responses/401"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: camp not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                campNotFound:
+                                    description: data camp not found
+                                    value:
+                                        message: camp not found
                 500:
                     description: "internal server error"
                     content:
@@ -490,7 +527,7 @@ paths:
         get:
             tags:
                 - "camps"
-            summary: Detail camp (guest/user/host/admin)
+            summary: Detail camp (guest/host/admin)
             description: Get detail camp
             security:
                 - JWTAuth: []
@@ -581,9 +618,8 @@ paths:
                                           stock: 3
                                           rent_price: 300000
                                 message: success show detail camp
-
                 404:
-                    description: data not found
+                    description: not found
                     content:
                         application/json:
                             schema:
@@ -591,14 +627,19 @@ paths:
                                 properties:
                                     message:
                                         type: string
-                            example:
-                                message: camp not found
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                campNotFound:
+                                    description: data camp not found
+                                    value:
+                                        message: camp not found
                 500:
                     $ref: "#/components/responses/500"
         put:
             tags:
                 - "camps"
-            summary: Add new camp (host)
+            summary: Edit camp (host)
             description: Get all list camp
             security:
                 - JWTAuth: []
@@ -673,13 +714,21 @@ paths:
                 401:
                     $ref: "#/components/responses/401"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: camp not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                campNotFound:
+                                    description: data camp not found
+                                    value:
+                                        message: camp not found
                 500:
                     description: "internal server error"
                     content:
@@ -720,13 +769,21 @@ paths:
                 401:
                     $ref: "#/components/responses/401"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: camp not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                campNotFound:
+                                    description: data camp not found
+                                    value:
+                                        message: camp not found
                 500:
                     description: "internal server error"
                     content:
@@ -754,13 +811,21 @@ paths:
                 401:
                     $ref: "#/components/responses/401"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: camp not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                campNotFound:
+                                    description: data camp not found
+                                    value:
+                                        message: camp not found
                 500:
                     description: "internal server error"
                     content:
@@ -799,13 +864,21 @@ paths:
                 401:
                     $ref: "#/components/responses/401"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: camp not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                campNotFound:
+                                    description: data camp not found
+                                    value:
+                                        message: camp not found
                 500:
                     description: "internal server error"
                     content:
@@ -861,6 +934,8 @@ paths:
                                     $ref: "#/components/examples/formatUploadError"
                 401:
                     $ref: "#/components/responses/401"
+                404:
+                    $ref: "#/components/responses/404"
                 500:
                     description: "internal server error"
                     content:
@@ -953,6 +1028,8 @@ paths:
                                 message: success delete iamge
                 401:
                     $ref: "#/components/responses/401"
+                404:
+                    $ref: "#/components/responses/404"
                 500:
                     description: "internal server error"
                     content:
@@ -1013,14 +1090,34 @@ paths:
                                         type: string
                             example:
                                 message: "success add new item"
-                404:
-                    description: "not found"
+                400:
+                    description: bad request
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: data not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                validationError:
+                                    $ref: "#/components/examples/validationError"
+                404:
+                    description: not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                itemNotFound:
+                                    description: data item not found
+                                    value:
+                                        message: item not found
                 500:
                     description: "internal server error"
                     content:
@@ -1113,6 +1210,8 @@ paths:
                                     message: "success delete item"
                 400:
                     $ref: "#/components/responses/400"
+                404:
+                    $ref: "#/components/responses/404"
                 500:
                     $ref: "#/components/responses/500"
 
@@ -1120,8 +1219,8 @@ paths:
         post:
             tags:
                 - bookings
-            summary: by user
-            description: add booking for user
+            summary: by guest
+            description: add booking for guest
             security:
                 - JWTAuth: []
             requestBody:
@@ -1179,8 +1278,22 @@ paths:
                                 data:
                                     booking_id: 1
                                 message: "success booking"
+                400:
+                    description: bad request
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                validationError:
+                                    $ref: "#/components/examples/validationError"
                 401:
                     $ref: "#/components/responses/401"
+                404:
+                    $ref: "#/components/responses/404"
                 500:
                     description: "internal server error"
                     content:
@@ -1190,14 +1303,14 @@ paths:
                             examples:
                                 chargeMidtrans:
                                     value:
-                                        message: charge transaction failed due to internal server
+                                        message: charge transaction failed due to internal server error, please try again
                                 database:
                                     $ref: "#/components/examples/internalServerError"
         get:
             tags:
                 - bookings
-            summary: by user & host
-            description: get booking data for user
+            summary: by guest & host
+            description: get booking data
             security:
                 - JWTAuth: []
             responses:
@@ -1250,13 +1363,21 @@ paths:
                 401:
                     $ref: "#/components/responses/401"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: booking order not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                bookingNotFound:
+                                    description: data booking not found
+                                    value:
+                                        message: booking order not found
                 500:
                     description: "internal server error"
                     content:
@@ -1270,7 +1391,7 @@ paths:
         get:
             tags:
                 - bookings
-            summary: "by user & host"
+            summary: "by guest & host"
             description: get detail booking
             security:
                 - JWTAuth: []
@@ -1327,13 +1448,21 @@ paths:
                 401:
                     $ref: "#/components/responses/401"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: booking order not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                                bookingNotFound:
+                                    description: data booking not found
+                                    value:
+                                        message: booking order not found
                 500:
                     description: "internal server error"
                     content:
@@ -1377,8 +1506,16 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: booking not found
+                            examples:
+                                notFound:
+                                    description: data booking not found
+                                    value:
+                                        message: booking not found
+                                outOfStock:
+                                    value:
+                                        message: stock not available
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
                 500:
                     description: "internal server error"
                     content:
@@ -1393,7 +1530,7 @@ paths:
         put:
             tags:
                 - bookings
-            summary: "by user & host"
+            summary: "by guest & host"
             description: update status booking
             security:
                 - JWTAuth: []
@@ -1417,13 +1554,21 @@ paths:
                 401:
                     $ref: "#/components/responses/401"
                 404:
-                    description: "not found"
+                    description: not found
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: booking not found
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                NotFound:
+                                    description: data booking not found
+                                    value:
+                                        message: booking not found
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
                 500:
                     description: "internal server error"
                     content:
@@ -1470,8 +1615,88 @@ paths:
                                         type: string
                             example:
                                 message: "success update transaction"
+                404:
+                    description: not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                outOfStock:
+                                    description: out of stock item
+                                    value:
+                                        message: stock not available
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
                 500:
                     $ref: "#/components/responses/500"
+
+    /bookings/{id}/oauth:
+        get:
+            tags:
+              - bookings
+            summary: "by guest"
+            description: update status booking
+            parameters:
+                - name: id
+                  description: booking_id
+                  required: true
+                  in: path
+                  schema:
+                      type: string
+                      example: 1
+            responses:
+                204:
+                    description: ""
+                404:
+                    $ref: "#/components/responses/404"
+
+    /bookings/oauth/callback:
+        get:
+            tags:
+              - bookings
+            summary: "by guest"
+            description: update status booking
+            responses:
+                401:
+                    description: "Authorized"
+                    content:
+                         application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            example:
+                                    message: unauthorized
+                404:
+                    description: not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                            examples:
+                                NotFound:
+                                    description: data booking not found
+                                    value:
+                                        message: booking not found
+                                pathNotFound:
+                                    $ref: "#/components/examples/pathNotFound"
+                500:
+                    description: "internal server error"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: failed to create event in calendar
+
 
 components:
     securitySchemes:
@@ -1509,6 +1734,10 @@ components:
         internalServerError:
             value:
                 message: internal server error
+        pathNotFound:
+            description: url path not found
+            value:
+                message: not found
 
             # responseObjectArr:
             # type: object
@@ -1553,3 +1782,11 @@ components:
                                 type: string
                     example:
                         message: "internal server error"
+        404:
+                    description: "url path not found"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/errorResponse"
+                            example:
+                                message: not found
