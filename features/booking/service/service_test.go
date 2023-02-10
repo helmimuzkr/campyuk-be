@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/oauth2"
@@ -18,7 +19,8 @@ func setupTest(t *testing.T) (*mocks.PaymentGateway, *mocks.BookingData, booking
 	midtrans := mocks.NewPaymentGateway(t)
 	data := mocks.NewBookingData(t)
 	google := mocks.NewGoogleAPI(t)
-	srv := New(data, midtrans, google)
+	v := validator.New()
+	srv := New(data, midtrans, google, v)
 
 	return midtrans, data, srv, google
 }
@@ -75,7 +77,6 @@ func TestCreateBooking(t *testing.T) {
 
 	t.Run("Succress create new order", func(t *testing.T) {
 		midtrans.On("ChargeTransaction", inData.Ticket, inData.TotalPrice, inData.Bank).Return("90316950939", nil).Once()
-
 		data.On("Create", uint(1), inData).Return(booking.Core{ID: uint(1)}, nil).Once()
 
 		_, tkn := helper.GenerateJWT(1, "guest")
@@ -98,6 +99,20 @@ func TestCreateBooking(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "access is denied due to invalid credential")
+		assert.Empty(t, actual)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("validation error, value is required", func(t *testing.T) {
+		_, tkn := helper.GenerateJWT(1, "guest")
+		token := tkn.(*jwt.Token)
+		token.Valid = true
+
+		inData := booking.Core{}
+		actual, err := srv.Create(token, inData)
+
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "value is required")
 		assert.Empty(t, actual)
 		data.AssertExpectations(t)
 	})
@@ -205,7 +220,7 @@ func TestGetByID(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
-	t.Run("Error access is denied", func(t *testing.T) {
+	t.Run("error credential", func(t *testing.T) {
 		_, tkn := helper.GenerateJWT(1, "")
 		token := tkn.(*jwt.Token)
 		token.Valid = false
@@ -443,21 +458,17 @@ func TestCreateEvent(t *testing.T) {
 	})
 	t.Run("Failed to get token", func(t *testing.T) {
 		google.On("GetToken", "code").Return(nil, errors.New("failed")).Once()
-		// data.On("CreateEvent", resData.ID).Return(resData, nil).Once()
-		// google.On("CreateCalendar", resGoogle, detailCal).Return(nil).Once()
 
 		err := srv.CreateEvent("code", resData.ID)
 
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "failed to create event in calendar")
-		data.AssertExpectations(t)
 		google.AssertExpectations(t)
 	})
 
 	t.Run("booking not found", func(t *testing.T) {
 		google.On("GetToken", "code").Return(resGoogle, nil).Once()
 		data.On("CreateEvent", resData.ID).Return(booking.Core{}, errors.New("not found")).Once()
-		// google.On("CreateCalendar", resGoogle, detailCal).Return(nil).Once()
 
 		err := srv.CreateEvent("code", resData.ID)
 
@@ -470,7 +481,6 @@ func TestCreateEvent(t *testing.T) {
 	t.Run("database error", func(t *testing.T) {
 		google.On("GetToken", "code").Return(resGoogle, nil).Once()
 		data.On("CreateEvent", resData.ID).Return(booking.Core{}, errors.New("query error")).Once()
-		// google.On("CreateCalendar", resGoogle, detailCal).Return(nil).Once()
 
 		err := srv.CreateEvent("code", resData.ID)
 
@@ -483,8 +493,7 @@ func TestCreateEvent(t *testing.T) {
 	t.Run("parsing start time error", func(t *testing.T) {
 		google.On("GetToken", "code").Return(resGoogle, nil).Once()
 
-		resData.CheckIn = ""
-		data.On("CreateEvent", resData.ID).Return(resData, nil).Once()
+		data.On("CreateEvent", resData.ID).Return(booking.Core{CheckIn: "21-10-1999"}, nil).Once()
 
 		err := srv.CreateEvent("code", resData.ID)
 
@@ -494,11 +503,10 @@ func TestCreateEvent(t *testing.T) {
 		google.AssertExpectations(t)
 	})
 
-	t.Run("parsing ebd time error", func(t *testing.T) {
+	t.Run("parsing end time error", func(t *testing.T) {
 		google.On("GetToken", "code").Return(resGoogle, nil).Once()
 
-		resData.CheckOut = ""
-		data.On("CreateEvent", resData.ID).Return(resData, nil).Once()
+		data.On("CreateEvent", resData.ID).Return(booking.Core{CheckIn: resData.CheckIn, CheckOut: "21-10-1999"}, nil).Once()
 
 		err := srv.CreateEvent("code", resData.ID)
 
