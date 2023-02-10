@@ -62,14 +62,6 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 		imageURL, err := cs.up.Upload(h)
 		if err != nil {
 			log.Println(err)
-			// Hapus image di Cloudinary(terlanjur upload) jika salah satu image gagal diupload
-			for _, v := range imageCore {
-				publicID := helper.GetPublicID(v.ImageURL)
-				if err = cs.up.Destroy(publicID); err != nil {
-					log.Println(err)
-					return errors.New("failed to upload image because internal server error")
-				}
-			}
 			return errors.New("failed to upload image because internal server error")
 		}
 

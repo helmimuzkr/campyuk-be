@@ -148,16 +148,13 @@ func TestProfile(t *testing.T) {
 	})
 
 	t.Run("data not found", func(t *testing.T) {
-		data.On("Profile", uint(1)).Return(user.Core{}, errors.New("query error, problem with server")).Once()
-
 		_, token := helper.GenerateJWT(1, "guest")
 		useToken := token.(*jwt.Token)
-		useToken.Valid = true
+		useToken.Valid = false
 		res, err := srv.Profile(useToken)
 		assert.NotNil(t, err)
-		assert.ErrorContains(t, err, "server")
+		assert.ErrorContains(t, err, "data not found")
 		assert.Equal(t, user.Core{}, res)
-		data.AssertExpectations(t)
 	})
 
 	t.Run("internal server error", func(t *testing.T) {
@@ -182,23 +179,21 @@ func TestUpdate(t *testing.T) {
 	resData := user.Core{ID: uint(1), Username: "griffinh", Fullname: "griffinnn", Email: "grif@gmail.com", UserImage: "www.cloudinary.com/image.jpg"}
 	srv := New(data, v, up)
 
-	t.Run("success add image", func(t *testing.T) {
+	t.Run("success update account", func(t *testing.T) {
 		up.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("www.cloudinary.com/image.jpg", nil).Once()
 
 		data.On("Update", uint(1), inputData).Return(resData, nil).Once()
 		_, token := helper.GenerateJWT(1, "guest")
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
-
 		res, err := srv.Update(pToken, &multipart.FileHeader{Filename: "image.jpg"}, inputData)
 		assert.Nil(t, err)
 		assert.Equal(t, resData.ID, res.ID)
-		up.AssertExpectations(t)
 		data.AssertExpectations(t)
 	})
 
 	t.Run("failed to upload image", func(t *testing.T) {
-		up.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("", errors.New("failed to upload image because internal server error")).Once()
+		up.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("", errors.New("failed to upload image, server error")).Once()
 
 		_, token := helper.GenerateJWT(1, "guest")
 		pToken := token.(*jwt.Token)
@@ -222,64 +217,6 @@ func TestUpdate(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "format")
 		up.AssertExpectations(t)
-		data.AssertExpectations(t)
-	})
-
-	// t.Run("failed to upload image", func(t *testing.T) {
-	// 	f, err := os.Open("/mnt/c/project/campyuk/docs/erd.jpg")
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-	// 	defer f.Close()
-
-	// 	// prepare request body
-	// 	// reserve a form field with 'file' as key
-	// 	// then assign the file content to field using 'io.Copy'
-	// 	// create a http post request, set content type to multipart-form
-	// 	// read the 'file' field using 'req.FormFile'
-
-	// 	body := &bytes.Buffer{}
-	// 	writer := multipart.NewWriter(body)
-	// 	part, err := writer.CreateFormFile("file", "/mnt/c/project/campyuk/docs/erd.jpg")
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-
-	// 	_, err = io.Copy(part, f)
-	// 	if err != nil {
-	// 		log.Fatal(err.Error())
-	// 	}
-
-	// 	writer.Close()
-
-	// 	req, _ := http.NewRequest("POST", "/upload", body)
-	// 	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	// 	_, header, _ := req.FormFile("file")
-
-	// 	_, token := helper.GenerateJWT(1, "host")
-	// 	pToken := token.(*jwt.Token)
-	// 	pToken.Valid = true
-
-	// 	_, err = srv.Update(pToken, header, inputData)
-	// 	if err != nil {
-	// 		log.Println(err.Error())
-	// 	}
-
-	// 	assert.NotNil(t, err)
-	// 	assert.ErrorContains(t, err, "server")
-	// })
-
-	t.Run("success update account", func(t *testing.T) {
-		up.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("www.cloudinary.com/image.jpg", nil).Once()
-
-		data.On("Update", uint(1), inputData).Return(resData, nil).Once()
-		_, token := helper.GenerateJWT(1, "guest")
-		pToken := token.(*jwt.Token)
-		pToken.Valid = true
-		res, err := srv.Update(pToken, &multipart.FileHeader{Filename: "image.jpg"}, inputData)
-		assert.Nil(t, err)
-		assert.Equal(t, resData.ID, res.ID)
 		data.AssertExpectations(t)
 	})
 

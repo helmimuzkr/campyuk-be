@@ -120,6 +120,16 @@ func TestDelete(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
+	t.Run("invalid credential", func(t *testing.T) {
+		_, token := helper.GenerateJWT(1, "guest")
+		useToken := token.(*jwt.Token)
+		useToken.Valid = true
+		err := srv.Delete(useToken, uint(1))
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "denied")
+		data.AssertExpectations(t)
+	})
+
 	t.Run("internal server error", func(t *testing.T) {
 		data.On("Delete", uint(1), uint(1)).Return(errors.New("server error")).Once()
 		_, token := helper.GenerateJWT(1, "host")
@@ -131,7 +141,7 @@ func TestDelete(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
-	t.Run("invalid credential", func(t *testing.T) {
+	t.Run("access denied", func(t *testing.T) {
 		data.On("Delete", uint(1), uint(1)).Return(errors.New("access is denied")).Once()
 		_, token := helper.GenerateJWT(1, "host")
 		useToken := token.(*jwt.Token)

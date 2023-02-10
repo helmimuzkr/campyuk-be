@@ -139,22 +139,6 @@ func TestAdd(t *testing.T) {
 		upload.AssertExpectations(t)
 	})
 
-	// t.Run("failed to destroy image", func(t *testing.T) {
-	// 	upload.On("Upload", &multipart.FileHeader{Filename: "document.pdf"}).Return("www.cloudinary.com/document.pdf", nil).Once()
-	// 	upload.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("", errors.New("failed to upload image because internal server error")).Once()
-	// 	upload.On("Destroy", "file/image").Return(errors.New("failed to upload document because internal server error")).Once()
-
-	// 	_, tkn := helper.GenerateJWT(1, "host")
-	// 	token := tkn.(*jwt.Token)
-	// 	token.Valid = true
-
-	// 	err := srv.Add(token, inData, &multipart.FileHeader{Filename: "document.pdf"}, []*multipart.FileHeader{{Filename: "image.jpg"}})
-
-	// 	assert.NotNil(t, err)
-	// 	assert.ErrorContains(t, err, "failed to upload image")
-	// 	upload.AssertExpectations(t)
-	// })
-
 	t.Run("internal server error", func(t *testing.T) {
 		upload.On("Upload", &multipart.FileHeader{Filename: "document.pdf"}).Return("www.cloudinary.com/document.pdf", nil).Once()
 		upload.On("Upload", &multipart.FileHeader{Filename: "image.jpg"}).Return("www.cloudinary.com/image.jpg", nil).Once()

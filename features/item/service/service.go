@@ -23,11 +23,10 @@ func New(id item.ItemData, vld *validator.Validate) item.ItemService {
 }
 
 func (is *itemSrv) Add(token interface{}, campID uint, newItem item.Core) (item.Core, error) {
-	userID, _ := helper.ExtractToken(token)
-	if userID <= 0 {
-		return item.Core{}, errors.New("data not found")
+	userID, role := helper.ExtractToken(token)
+	if role != "host" {
+		return item.Core{}, errors.New("access is denied due to invalid credential")
 	}
-
 	err := is.vld.Struct(&newItem)
 	if err != nil {
 		log.Println("err", err)
@@ -53,11 +52,10 @@ func (is *itemSrv) Add(token interface{}, campID uint, newItem item.Core) (item.
 }
 
 func (is *itemSrv) Update(token interface{}, itemID uint, updateData item.Core) (item.Core, error) {
-	userID, _ := helper.ExtractToken(token)
-	if userID <= 0 {
-		return item.Core{}, errors.New("data not found")
+	userID, role := helper.ExtractToken(token)
+	if role != "host" {
+		return item.Core{}, errors.New("access is denied due to invalid credential")
 	}
-
 	res, err := is.qry.Update(userID, itemID, updateData)
 	if err != nil {
 		msg := ""
@@ -76,9 +74,9 @@ func (is *itemSrv) Update(token interface{}, itemID uint, updateData item.Core) 
 }
 
 func (is *itemSrv) Delete(token interface{}, itemID uint) error {
-	userID, _ := helper.ExtractToken(token)
-	if userID <= 0 {
-		return errors.New("data not found")
+	userID, role := helper.ExtractToken(token)
+	if role != "host" {
+		return errors.New("access is denied due to invalid credential")
 	}
 
 	err := is.qry.Delete(userID, itemID)

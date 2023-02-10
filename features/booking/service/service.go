@@ -35,9 +35,8 @@ func (bs *bookingSrv) Create(token interface{}, newBooking booking.Core) (bookin
 		return booking.Core{}, errors.New("access is denied due to invalid credential")
 	}
 
-	err := bs.vld.Struct(&newBooking)
-	if err != nil {
-		log.Println("err", err)
+	if err := bs.vld.Struct(newBooking); err != nil {
+		log.Println("validation err", err)
 		msg := helper.ValidationErrorHandle(err)
 		return booking.Core{}, errors.New(msg)
 	}
@@ -105,9 +104,6 @@ func (bs *bookingSrv) GetByID(token interface{}, bookingID uint) (booking.Core, 
 	res, err := bs.qry.GetByID(userID, bookingID, role)
 	if err != nil {
 		log.Println(err)
-		if strings.Contains(err.Error(), "access is denied") {
-			return booking.Core{}, err
-		}
 		if strings.Contains(err.Error(), "not found") {
 			return booking.Core{}, errors.New("booking order not found")
 		}
@@ -200,6 +196,7 @@ func (bs *bookingSrv) CreateEvent(code string, bookingID uint) error {
 		log.Println("error parsing time in create event service: ", err)
 		return errors.New("failed to create event in calendar")
 	}
+
 	endTime, err := time.Parse("2006-01-02", res.CheckOut)
 	if err != nil {
 		log.Println("error parsing time in create event service: ", err)
