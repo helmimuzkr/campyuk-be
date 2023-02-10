@@ -3,6 +3,7 @@ package handler
 import (
 	"campyuk-api/features/booking"
 	"campyuk-api/helper"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -221,6 +222,9 @@ func (bc *bookingController) OauthCallback() echo.HandlerFunc {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		return c.JSON(helper.SuccessResponse(200, "success create event in google calendar"))
+		baseURL := "https://campyuk.vercel.app"
+		html := fmt.Sprintf("<script>window.location.replace('%s/camplist');alert('Success create event in google calendar');</script>", baseURL)
+
+		return c.HTML(http.StatusTemporaryRedirect, html)
 	}
 }

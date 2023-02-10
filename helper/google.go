@@ -80,7 +80,10 @@ func (ga *googleAPI) CreateCalendar(token *oauth2.Token, detail CalendarDetail) 
 		Attendees: attendees,
 	}
 
-	calendarService.Events.Insert("primary", event).SendUpdates("all").Do()
+	_, err = calendarService.Events.Insert("primary", event).SendUpdates("all").Do()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
