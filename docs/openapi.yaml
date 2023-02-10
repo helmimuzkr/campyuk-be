@@ -307,7 +307,7 @@ paths:
                                 example:
                                     message: "success delete profile"
                 404:
-                    $ref: "#components/responses/404"
+                    $ref: "#/components/responses/404"
                 500:
                     description: "internal server error"
                     content:
@@ -1652,7 +1652,7 @@ paths:
                 204:
                     description: ""
                 404:
-                    $ref: "#components/responses/404"
+                    $ref: "#/components/responses/404"
 
     /bookings/oauth/callback:
         get:
