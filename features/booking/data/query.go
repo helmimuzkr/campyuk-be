@@ -156,7 +156,6 @@ func (bd *bookingData) Callback(ticket string, status string) error {
 		}
 	}
 
-	tx.Commit()
 	return nil
 }
 

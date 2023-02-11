@@ -73,7 +73,7 @@ func (ch *campHandler) List() echo.HandlerFunc {
 		campResponse := []campResponse{}
 		if err := copier.Copy(&campResponse, &res); err != nil {
 			log.Println("handler camp list:", err)
-			return c.JSON(helper.ErrorResponse("failed to unmarshall request"))
+			return c.JSON(helper.ErrorResponse("failed to marshall response"))
 		}
 
 		for i := range res {

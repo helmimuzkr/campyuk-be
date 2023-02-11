@@ -17,7 +17,7 @@ type GoogleAPI interface {
 }
 
 type CalendarDetail struct {
-	Summay   string
+	Summary  string
 	Location string
 	Start    string
 	End      string
@@ -66,7 +66,7 @@ func (ga *googleAPI) CreateCalendar(token *oauth2.Token, detail CalendarDetail) 
 	}
 
 	event := &calendar.Event{
-		Summary:  detail.Summay,
+		Summary:  detail.Summary,
 		Location: detail.Location,
 		Start: &calendar.EventDateTime{
 			DateTime: detail.Start, // Wajib format RFC3339

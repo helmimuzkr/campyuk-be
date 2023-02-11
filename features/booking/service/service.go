@@ -206,7 +206,7 @@ func (bs *bookingSrv) CreateEvent(code string, bookingID uint) error {
 	endRFC := endTime.Format(time.RFC3339)
 
 	detailCal := helper.CalendarDetail{
-		Summay:   "Camping",
+		Summary:  "Camping",
 		Location: res.Address,
 		Start:    startRFC,
 		End:      endRFC,

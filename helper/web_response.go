@@ -9,7 +9,7 @@ type PaginationResponse struct {
 	Page        int `json:"page"`
 	Limit       int `json:"limit"`
 	Offset      int `json:"offset"`
-	TotalRecord int `json:"total_rercord"`
+	TotalRecord int `json:"total_record"`
 	TotalPage   int `json:"total_page"`
 }
 
@@ -54,6 +54,9 @@ func ErrorResponse(msg string) (int, interface{}) {
 		code = http.StatusConflict
 	case strings.Contains(msg, "duplicated"):
 		code = http.StatusConflict
+	case strings.Contains(msg, "syntax"):
+		code = http.StatusNotFound
+		resp["message"] = "not found"
 	case strings.Contains(msg, "input invalid"):
 		code = http.StatusBadRequest
 	case strings.Contains(msg, "input value"):
