@@ -75,7 +75,7 @@ func TestCreateBooking(t *testing.T) {
 	midtrans, data, srv, _ := setupTest(t)
 	inData, resData := dataSample()
 
-	t.Run("Succress create new order", func(t *testing.T) {
+	t.Run("Success create new order", func(t *testing.T) {
 		midtrans.On("ChargeTransaction", inData.Ticket, inData.TotalPrice, inData.Bank).Return("90316950939", nil).Once()
 		data.On("Create", uint(1), inData).Return(booking.Core{ID: uint(1)}, nil).Once()
 
@@ -156,7 +156,7 @@ func TestList(t *testing.T) {
 	listData[0].ID = 1
 	listData[1].ID = 2
 
-	t.Run("Succress display order list", func(t *testing.T) {
+	t.Run("Success display order list", func(t *testing.T) {
 		data.On("List", uint(1), "guest", 4, 0).Return(2, listData, nil).Once()
 
 		_, tkn := helper.GenerateJWT(1, "guest")
@@ -205,7 +205,7 @@ func TestGetByID(t *testing.T) {
 	_, data, srv, _ := setupTest(t)
 	_, resData := dataSample()
 
-	t.Run("Succress show booking detail", func(t *testing.T) {
+	t.Run("Success show booking detail", func(t *testing.T) {
 		data.On("GetByID", uint(1), uint(1), "guest").Return(resData, nil).Once()
 
 		_, tkn := helper.GenerateJWT(1, "guest")
@@ -269,7 +269,7 @@ func TestGetByID(t *testing.T) {
 func TestAccept(t *testing.T) {
 	_, data, srv, _ := setupTest(t)
 
-	t.Run("Succress accept order", func(t *testing.T) {
+	t.Run("Success accept order", func(t *testing.T) {
 		data.On("Update", uint(1), "host", uint(1), "SUCCESS").Return(nil).Once()
 
 		_, tkn := helper.GenerateJWT(1, "host")
@@ -339,7 +339,7 @@ func TestAccept(t *testing.T) {
 func TestCancel(t *testing.T) {
 	_, data, srv, _ := setupTest(t)
 
-	t.Run("Succress cancel order", func(t *testing.T) {
+	t.Run("Success cancel order", func(t *testing.T) {
 		data.On("Update", uint(1), "host", uint(1), "CANCEL").Return(nil).Once()
 
 		_, tkn := helper.GenerateJWT(1, "host")
@@ -396,7 +396,7 @@ func TestCallback(t *testing.T) {
 	_, data, srv, _ := setupTest(t)
 	inData, _ := dataSample()
 
-	t.Run("Succress callback ", func(t *testing.T) {
+	t.Run("Success callback ", func(t *testing.T) {
 		data.On("Callback", inData.Ticket, "SUCCESS").Return(nil).Once()
 
 		_, tkn := helper.GenerateJWT(1, "host")
@@ -437,7 +437,7 @@ func TestCreateEvent(t *testing.T) {
 
 	resGoogle := &oauth2.Token{}
 	detailCal := helper.CalendarDetail{
-		Summay:   "Camping",
+		Summary:  "Camping",
 		Location: resData.Address,
 		Start:    startRFC,
 		End:      endRFC,

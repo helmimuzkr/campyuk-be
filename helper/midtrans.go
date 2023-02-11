@@ -25,7 +25,6 @@ func NewCoreMidtrans(cfg *config.AppConfig) PaymentGateway {
 }
 
 func (c midtransCore) ChargeTransaction(orderID string, grossAmt int, bank string) (string, error) {
-
 	chargeReq := &coreapi.ChargeReq{
 		PaymentType: coreapi.PaymentTypeBankTransfer,
 		TransactionDetails: midtrans.TransactionDetails{
