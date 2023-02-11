@@ -63,11 +63,7 @@ func (ch *campHandler) List() echo.HandlerFunc {
 		}
 
 		str := c.QueryParam("page")
-		page, err := strconv.Atoi(str)
-		if err != nil {
-			log.Println("Error in method list", err.Error())
-			return c.JSON(helper.ErrorResponse(err.Error()))
-		}
+		page, _ := strconv.Atoi(str)
 
 		paginate, res, err := ch.srv.List(token, page)
 		if err != nil {
