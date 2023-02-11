@@ -1,7 +1,6 @@
 <div id="top"></div>
 
 <!-- PROJECT LOGO -->
-<br/>
 <div align="center">
 <!--  mengarah ke repo  -->
   <a href="https://abiasa.site/">
@@ -11,10 +10,9 @@
   <p align="center">
     Final Project Capstone Program Immersive Alterra Academy
   </p>
-  <a href="https://abiasa.site/"><h3 style="font-weight:bold">Go to API »</h3></a>
+  <a href="https://abiasa.site/">Go to API »</a>
 
 </div>
-<br />
 
 # Campyuk App Project
 
@@ -26,7 +24,7 @@ Campyuk is a platform that provides places for people who want to go camping | T
 </div>
 
 <div>
-<h2>Features</h2>
+<h3>Features</h3>
 <details><summary>👤User</summary>
 <p>
 In this feature the user can login and register as a guest (cutomer) or host (camp owner)
@@ -103,13 +101,10 @@ In this feature, the guest can view their booking list. Then, the host can view 
 
 </div>
 
-<br/>
 
 # API Documentation
 
 [![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)](https://app.swaggerhub.com/apis-docs/GRIFFINHENRY07_1/campyuk/1.0.0) [![Postman Collection](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)](https://www.postman.com/blue-rocket-532366/workspace/task-alta/collection/19389812-c3aa7b0b-cff6-4edf-abfa-e53778dbb602?action=share&creator=19389812)
-
-<br/>
 
 # Tech Stack
 
@@ -117,7 +112,6 @@ In this feature, the guest can view their booking list. Then, the host can view 
     <img src="docs/images/tech-stack.jpg">
 </div>
 
-<br/>
 
 # Run Locally
 
@@ -147,13 +141,11 @@ In this feature, the guest can view their booking list. Then, the host can view 
     ```
 8. Enjoy
 
-<br/>
 
 # ERD
 
 ![erd drawio](https://user-images.githubusercontent.com/119381998/218243585-ab437b99-8b89-4a24-bd2b-10f4c9844036.png)
 
-<br/>
 
 # Unit Test
 
@@ -165,7 +157,6 @@ $ sh test.sh
     <img src="docs/test_overall_2023-02-10_21-44-51.png" >
 </div>
 
-<br/>
 
 # Authors
 
