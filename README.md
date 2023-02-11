@@ -4,18 +4,18 @@
 <div align="center">
 <!--  mengarah ke repo  -->
   <a href="https://abiasa.site/">
-    <img src="docs/images/logo-with-frame.png" width="365" height="110">
+    <img src="docs/images/logo-with-frame.png" width="499" height="140">
   </a>
-
-  <p align="center">
-    Final Project Capstone Program Immersive Alterra Academy
-  </p>
+  <br/>
+    <a href="https://www.codacy.com/gh/helmimuzkr/campyuk-be/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=helmimuzkr/campyuk-be&amp;utm_campaign=Badge_Grade">
+    <img src="https://app.codacy.com/project/badge/Grade/b9f0f1ea963747dc909dd8860c61c14c">
+  </a>
+  <br/>
+  <br/>
   <a href="https://abiasa.site/">Go to API »</a>
-
 </div>
 
 # Campyuk App Project
-
 <div>
 <p>
 Campyuk is a platform that provides places for people who want to go camping | This project was developed using GO Language based on Clean Architecture.
