@@ -3,6 +3,7 @@ package handler
 import (
 	"campyuk-api/features/image"
 	"campyuk-api/helper"
+	"log"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -26,7 +27,11 @@ func (ih *imageHandler) Add() echo.HandlerFunc {
 		}
 
 		str := c.FormValue("camp_id")
-		campID, _ := strconv.Atoi(str)
+		campID, err := strconv.Atoi(str)
+		if err != nil {
+			log.Println("Error in handler add", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		if err := ih.srv.Add(token, uint(campID), header); err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
@@ -41,7 +46,11 @@ func (ih *imageHandler) Delete() echo.HandlerFunc {
 		token := c.Get("user")
 
 		str := c.Param("id")
-		imageID, _ := strconv.Atoi(str)
+		imageID, err := strconv.Atoi(str)
+		if err != nil {
+			log.Println("Error in handler delete", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		if err := ih.srv.Delete(token, uint(imageID)); err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))

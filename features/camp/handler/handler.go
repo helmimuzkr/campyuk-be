@@ -63,7 +63,11 @@ func (ch *campHandler) List() echo.HandlerFunc {
 		}
 
 		str := c.QueryParam("page")
-		page, _ := strconv.Atoi(str)
+		page, err := strconv.Atoi(str)
+		if err != nil {
+			log.Println("Error in method list", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
 
 		paginate, res, err := ch.srv.List(token, page)
 		if err != nil {
@@ -166,7 +170,7 @@ func (ch *campHandler) Delete() echo.HandlerFunc {
 		paramID := c.Param("id")
 		campID, err := strconv.Atoi(paramID)
 		if err != nil {
-			log.Println("handler update camp:", err)
+			log.Println("handler delete camp:", err)
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
@@ -186,7 +190,7 @@ func (ch *campHandler) Accept() echo.HandlerFunc {
 		paramID := c.Param("id")
 		campID, err := strconv.Atoi(paramID)
 		if err != nil {
-			log.Println("handler update camp:", err)
+			log.Println("handler accept camp:", err)
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
@@ -208,7 +212,7 @@ func (ch *campHandler) Decline() echo.HandlerFunc {
 		paramID := c.Param("id")
 		campID, err := strconv.Atoi(paramID)
 		if err != nil {
-			log.Println("handler update camp:", err)
+			log.Println("handler decline camp:", err)
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
