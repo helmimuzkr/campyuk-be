@@ -11,18 +11,23 @@
   <p align="center">
     Final Project Capstone Program Immersive Alterra Academy
   </p>
+  <a href="https://abiasa.site/"><h3 style="font-weight:bold">Go to API »</h3></a>
 
 </div>
 <br />
 
 # Campyuk App Project
 
+<div>
+<p>
 Campyuk is a platform that provides places for people who want to go camping | This project was developed using GO Language based on Clean Architecture.
-<a href="https://abiasa.site/"><h3 style="font-weight:bold">Go to API »</h3></a>
+</p>
+
+</div>
 
 <div>
-
-<details><summary>👤User</sumarry>
+<h2>Features</h2>
+<details><summary>👤User</summary>
 <p>
 In this feature the user can login and register as a guest (cutomer) or host (camp owner)
 
@@ -37,7 +42,7 @@ In this feature the user can login and register as a guest (cutomer) or host (ca
 </p>
 </details>
 
-<details><summary>🏕️Camp</sumarry>
+<details><summary>🏕️Camp</summary>
 <p>
 In this feature, the host can manage the campground, and the admin can confirm the campground submitted by the host.
 
@@ -54,7 +59,7 @@ In this feature, the host can manage the campground, and the admin can confirm t
 </p>
 </details>
 
-<details><summary>🖼️Image</sumarry>
+<details><summary>🖼️Image</summary>
 <p>
 In this feature, the host can manage the pictures in the campground, such as adding and deleting pictures.
 
@@ -66,7 +71,7 @@ In this feature, the host can manage the pictures in the campground, such as add
 </p>
 </details>
 
-<details><summary>⛺Item</sumarry>
+<details><summary>⛺Item</summary>
 <p>
 In this feature, the host can manage the items in the campground, such as adding and deleting items.
 
@@ -78,7 +83,7 @@ In this feature, the host can manage the items in the campground, such as adding
 </p>
 </details>
 
-<details><summary>🎫Booking</sumarry>
+<details><summary>🎫Booking</summary>
 <p>
 In this feature, the guest can view their booking list. Then, the host can view the booking list in their camp. The guest can cancel the transaction if they haven't made the payment. The host can accept and cancel the transaction.
 
