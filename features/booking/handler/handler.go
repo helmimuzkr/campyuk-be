@@ -60,12 +60,8 @@ func (bc *bookingController) List() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
 
-		str := c.QueryParam("page")
-		page, err := strconv.Atoi(str)
-		if err != nil {
-			log.Println("Error in method list", err.Error())
-			return c.JSON(helper.ErrorResponse(err.Error()))
-		}
+		pageStr := c.QueryParam("page")
+		page, _ := strconv.Atoi(pageStr)
 
 		paginate, res, err := bc.srv.List(token, page)
 		if err != nil {
