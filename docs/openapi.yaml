@@ -1594,13 +1594,10 @@ paths:
                             properties:
                                 order_id:
                                     type: string
-                                settlement_time:
-                                    type: string
                                 transaction_status:
                                     type: string
                         example:
-                            order_id: ACT-34799-XVII-MMDKJF
-                            settlement_time: "2023-01-30 03:17:20"
+                            order_id: INV-1-20230212-060002
                             transaction_status: settlement
 
             responses:
@@ -1637,7 +1634,7 @@ paths:
     /bookings/{id}/oauth:
         get:
             tags:
-              - bookings
+                - bookings
             summary: "by guest"
             description: update status booking
             parameters:
@@ -1657,21 +1654,21 @@ paths:
     /bookings/oauth/callback:
         get:
             tags:
-              - bookings
-            summary: "by guest"
+                - bookings
+            summary: "by google oauth"
             description: update status booking
             responses:
                 401:
                     description: "Authorized"
                     content:
-                         application/json:
+                        application/json:
                             schema:
                                 type: object
                                 properties:
                                     message:
                                         type: string
                             example:
-                                    message: unauthorized
+                                message: unauthorized
                 404:
                     description: not found
                     content:
@@ -1696,7 +1693,6 @@ paths:
                                 $ref: "#/components/schemas/errorResponse"
                             example:
                                 message: failed to create event in calendar
-
 
 components:
     securitySchemes:
@@ -1737,7 +1733,7 @@ components:
         pathNotFound:
             description: url path not found
             value:
-                message: not found
+                message: Not Found
 
             # responseObjectArr:
             # type: object
@@ -1783,10 +1779,10 @@ components:
                     example:
                         message: "internal server error"
         404:
-                    description: "url path not found"
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/errorResponse"
-                            example:
-                                message: not found
+            description: "url path not found"
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/errorResponse"
+                    example:
+                        message: not found
