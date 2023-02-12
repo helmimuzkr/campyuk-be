@@ -118,8 +118,9 @@ func ErrorPage(msg string) (int, string) {
 		code = http.StatusUnauthorized
 	}
 
+	baseURL := "https://campyuk.vercel.app"
 	css := "margin:auto; position:relative; text-align:center ;top:20%; width:100%; color:#D9D9D9; font-size:40px;"
-	html := fmt.Sprintf("<body style='background:#1E3231'><div style ='%s'><h1>ERROR %d</h1><p>%s</p></div></body>", css, code, msg)
+	html := fmt.Sprintf("<meta http-equiv='refresh' content='3;url=%s/camplist' /><body style='background:#1E3231'><div style ='%s'><h1>ERROR %d</h1><p>%s</p></div></body>", baseURL, css, code, msg)
 
 	return code, html
 }
