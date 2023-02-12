@@ -135,6 +135,10 @@ func (bd *bookingData) Update(userID uint, role string, bookingID uint, status s
 		return tx.Error
 	}
 
+	if tx.RowsAffected <= 0 {
+		return errors.New("booking not found")
+	}
+
 	return nil
 }
 
@@ -142,6 +146,10 @@ func (bd *bookingData) Callback(ticket string, status string) error {
 	tx := bd.db.Model(&Booking{}).Where("ticket = ?", ticket).Update("status", status)
 	if tx.Error != nil {
 		return tx.Error
+	}
+
+	if tx.RowsAffected <= 0 {
+		return errors.New("booking not found")
 	}
 
 	if status == "SUCCESS" {
@@ -190,6 +198,10 @@ func (bd *bookingData) decrementStock(bookingID uint) error {
 		tx = bd.db.Exec("UPDATE items SET stock = stock - ? WHERE id = ?", v.Quantity, v.ItemID)
 		if tx.Error != nil {
 			return tx.Error
+		}
+
+		if tx.RowsAffected <= 0 {
+			return errors.New("update stock failed")
 		}
 	}
 
