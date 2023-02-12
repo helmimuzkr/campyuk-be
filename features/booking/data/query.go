@@ -199,10 +199,6 @@ func (bd *bookingData) decrementStock(bookingID uint) error {
 		if tx.Error != nil {
 			return tx.Error
 		}
-
-		if tx.RowsAffected <= 0 {
-			return errors.New("update stock failed")
-		}
 	}
 
 	return nil
