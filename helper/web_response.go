@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -73,7 +74,52 @@ func ErrorResponse(msg string) (int, interface{}) {
 	case strings.Contains(msg, "jwt"):
 		msg = "access is denied due to invalid credential"
 		code = http.StatusUnauthorized
+	case strings.Contains(msg, "Unauthorized"):
+		code = http.StatusUnauthorized
 	}
 
 	return code, resp
+}
+
+func ErrorPage(msg string) (int, string) {
+	code := http.StatusInternalServerError
+
+	switch true {
+	case strings.Contains(msg, "server"):
+		code = http.StatusInternalServerError
+	case strings.Contains(msg, "format"):
+		code = http.StatusBadRequest
+	case strings.Contains(msg, "not found"):
+		code = http.StatusNotFound
+	case strings.Contains(msg, "conflict"):
+		code = http.StatusConflict
+	case strings.Contains(msg, "duplicated"):
+		code = http.StatusConflict
+	case strings.Contains(msg, "syntax"):
+		code = http.StatusNotFound
+		msg = "not found"
+	case strings.Contains(msg, "input invalid"):
+		code = http.StatusBadRequest
+	case strings.Contains(msg, "input value"):
+		code = http.StatusBadRequest
+	case strings.Contains(msg, "validation"):
+		code = http.StatusBadRequest
+	case strings.Contains(msg, "unmarshal"):
+		msg = "failed to unmarshal json"
+		code = http.StatusBadRequest
+	case strings.Contains(msg, "upload"):
+		code = http.StatusInternalServerError
+	case strings.Contains(msg, "denied"):
+		code = http.StatusUnauthorized
+	case strings.Contains(msg, "jwt"):
+		msg = "access is denied due to invalid credential"
+		code = http.StatusUnauthorized
+	case strings.Contains(msg, "Unauthorized"):
+		code = http.StatusUnauthorized
+	}
+
+	css := "margin:auto; position:relative; text-align:center ;top:20%; width:100%; color:#D9D9D9; font-size:40px;"
+	html := fmt.Sprintf("<body style='background:#1E3231'><div style ='%s'><h1>ERROR %d</h1><p>%s</p></div></body>", css, code, msg)
+
+	return code, html
 }

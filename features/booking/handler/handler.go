@@ -211,7 +211,7 @@ func (bc *bookingController) OauthCallback() echo.HandlerFunc {
 
 		if state != c.QueryParam("state") {
 			log.Println("state is not valid")
-			return c.JSON(helper.ErrorResponse("Unauthorized"))
+			return c.HTML(helper.ErrorPage("Unauthorized"))
 		}
 
 		code := c.QueryParam("code")
@@ -219,7 +219,7 @@ func (bc *bookingController) OauthCallback() echo.HandlerFunc {
 		id, _ := strconv.Atoi(bookingID)
 
 		if err := bc.srv.CreateEvent(code, uint(id)); err != nil {
-			return c.JSON(helper.ErrorResponse(err.Error()))
+			return c.HTML(helper.ErrorPage(err.Error()))
 		}
 
 		baseURL := "https://campyuk.vercel.app"
