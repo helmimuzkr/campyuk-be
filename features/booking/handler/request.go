@@ -19,6 +19,5 @@ type itemRequest struct {
 
 type Callback struct {
 	OrderID           string `json:"order_id" form:"order_id"`
-	SettlementTime    string `json:"settlement_time" form:"settlement_time"`
 	TransactionStatus string `json:"transaction_status" form:"transaction_status"`
 }

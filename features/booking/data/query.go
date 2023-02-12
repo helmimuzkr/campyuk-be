@@ -154,7 +154,7 @@ func (bd *bookingData) Callback(ticket string, status string) error {
 
 	if status == "SUCCESS" {
 		var bookingID uint
-		tx = bd.db.Raw("SELECT id FROM bookings WHERE ticket = ?").First(&bookingID)
+		tx = bd.db.Raw("SELECT id FROM bookings WHERE ticket = ?", ticket).First(&bookingID)
 		if tx.Error != nil {
 			return tx.Error
 		}
