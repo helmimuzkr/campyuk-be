@@ -392,7 +392,7 @@ func TestCancel(t *testing.T) {
 	})
 }
 
-func TestCallback(t *testing.T) {
+func TestCallbackMidtrans(t *testing.T) {
 	_, data, srv, _ := setupTest(t)
 	inData, _ := dataSample()
 
@@ -409,6 +409,19 @@ func TestCallback(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 
+	t.Run("booking not found", func(t *testing.T) {
+		data.On("Callback", inData.Ticket, "SUCCESS").Return(errors.New("booking not found")).Once()
+
+		_, tkn := helper.GenerateJWT(1, "host")
+		token := tkn.(*jwt.Token)
+		token.Valid = true
+
+		err := srv.Callback(inData.Ticket, "settlement")
+
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		data.AssertExpectations(t)
+	})
 	t.Run("Database error", func(t *testing.T) {
 		data.On("Callback", inData.Ticket, "SUCCESS").Return(errors.New("query error")).Once()
 
