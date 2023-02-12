@@ -164,12 +164,14 @@ func (bs *bookingSrv) Callback(ticket string, status string) error {
 	status = strings.ToUpper(status)
 
 	err := bs.qry.Callback(ticket, status)
-	if err != nil {
-		log.Println("callback error", err)
-		return errors.New("internal server error")
+	log.Println(err)
+	msg := ""
+	if strings.Contains(err.Error(), "not found") {
+		msg = "booking not found"
+	} else {
+		msg = "internal server errorr"
 	}
-
-	return nil
+	return errors.New(msg)
 }
 
 func (bs *bookingSrv) CreateEvent(code string, bookingID uint) error {
