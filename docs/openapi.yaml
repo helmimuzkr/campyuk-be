@@ -656,8 +656,6 @@ paths:
                         schema:
                             type: object
                             properties:
-                                host_id:
-                                    type: integer
                                 title:
                                     type: string
                                 price:
@@ -681,7 +679,6 @@ paths:
                                     type: string
                                     format: binary
                         example:
-                            host_id: 1
                             title: Tanakita Camp
                             price: 100000
                             description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi molestie tempus purus, at tristique justo vehicula id.

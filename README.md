@@ -16,6 +16,7 @@
 </div>
 
 # Campyuk App Project
+
 <div>
 <p>
 Campyuk is a platform that provides places for people who want to go camping | This project was developed using GO Language based on Clean Architecture.
@@ -101,7 +102,6 @@ In this feature, the guest can view their booking list. Then, the host can view 
 
 </div>
 
-
 # API Documentation
 
 [![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)](https://app.swaggerhub.com/apis-docs/GRIFFINHENRY07_1/campyuk/1.0.0) [![Postman Collection](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)](https://www.postman.com/blue-rocket-532366/workspace/task-alta/collection/19389812-c3aa7b0b-cff6-4edf-abfa-e53778dbb602?action=share&creator=19389812)
@@ -111,7 +111,6 @@ In this feature, the guest can view their booking list. Then, the host can view 
 <div align="center">
     <img src="docs/images/tech-stack.jpg">
 </div>
-
 
 # Run Locally
 
@@ -141,11 +140,9 @@ In this feature, the guest can view their booking list. Then, the host can view 
     ```
 8. Enjoy
 
-
 # ERD
 
 ![erd drawio](https://user-images.githubusercontent.com/119381998/218296627-19bc3601-ae98-458d-ae31-ab5bb75e5b2d.png)
-
 
 # Unit Test
 
@@ -156,7 +153,6 @@ $ sh test.sh
 <div align="center">
     <img src="docs/test_overall_2023-02-10_21-44-51.png" >
 </div>
-
 
 # Authors
 
