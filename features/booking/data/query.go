@@ -51,7 +51,7 @@ func (bd *bookingData) List(userID uint, role string, limit int, offset int) (in
 	}
 
 	for i := range models {
-		tx = tx.Raw("SELECT image FROM images WHERE camp_id = ? ORDER BY id DESC", models[i].CampID).First(&models[i].Image)
+		tx = tx.Raw("SELECT image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id DESC", models[i].CampID).First(&models[i].Image)
 		if tx.Error != nil {
 			log.Println(tx.Error)
 		}
@@ -98,7 +98,7 @@ func (bd *bookingData) GetByID(userID uint, bookingID uint, role string) (bookin
 	}
 
 	var image string
-	tx = tx.Raw("SELECT image FROM images WHERE camp_id = ? ORDER BY id DESC", model.CampID).First(&image)
+	tx = tx.Raw("SELECT image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id DESC", model.CampID).First(&image)
 	if tx.Error != nil {
 		log.Println(tx.Error)
 	}
