@@ -142,7 +142,9 @@ In this feature, the guest can view their booking list. Then, the host can view 
 
 # ERD
 
-![erd drawio](https://user-images.githubusercontent.com/119381998/218296627-19bc3601-ae98-458d-ae31-ab5bb75e5b2d.png)
+<div align="center">
+    <img src="docs/erd.png">
+</div>
 
 # Unit Test
 
