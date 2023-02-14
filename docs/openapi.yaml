@@ -298,14 +298,8 @@ paths:
             security:
                 - JWTAuth: []
             responses:
-                200:
-                    description: deleted user success
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                example:
-                                    message: "success delete profile"
+                204:
+                    description: delete user success but no content
                 404:
                     $ref: "#/components/responses/404"
                 500:
@@ -752,17 +746,8 @@ paths:
                   schema:
                       type: integer
             responses:
-                200:
-                    description: success delete camp
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: success delete camp
+                204:
+                    description: delete camp success but no response body
                 401:
                     $ref: "#/components/responses/401"
                 404:
@@ -795,7 +780,7 @@ paths:
             tags:
                 - "camps"
             summary: Accept camp request from host (admin)
-            description: Delete camp
+            description: Accept camp
             security:
                 - JWTAuth: []
             parameters:
@@ -837,7 +822,7 @@ paths:
             tags:
                 - "camps"
             summary: decline camp request from host (admin)
-            description: Delete camp
+            description: Reject camp
             security:
                 - JWTAuth: []
             parameters:
@@ -1012,17 +997,8 @@ paths:
                   schema:
                       type: integer
             responses:
-                200:
-                    description: success delete image
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    message:
-                                        type: string
-                            example:
-                                message: success delete iamge
+                204:
+                    description: delete image success but no response body
                 401:
                     $ref: "#/components/responses/401"
                 404:
@@ -1197,14 +1173,8 @@ paths:
                       type: string
                       example: 1
             responses:
-                200:
-                    description: deleted item success
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                example:
-                                    message: "success delete item"
+                204:
+                    description: delete item success but no response body
                 400:
                     $ref: "#/components/responses/400"
                 404:
@@ -1644,7 +1614,7 @@ paths:
                       example: 1
             responses:
                 204:
-                    description: ""
+                    description: succes but no content
                 404:
                     $ref: "#/components/responses/404"
 

@@ -169,7 +169,7 @@ func (cd *campData) listCampUser(limit int, offset int) ([]CampModel, error) {
 		ci := ImageModel{}
 		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
-			return nil, tx.Error
+			log.Println(tx.Error)
 		}
 		cm[i].Images = append(cm[i].Images, ci)
 	}
@@ -191,7 +191,7 @@ func (cd *campData) listCampHost(userID uint, limit int, offset int) ([]CampMode
 		ci := ImageModel{}
 		tx = tx.Raw("SELECT id, image FROM images WHERE camp_id = ? AND deleted_at IS NULL ORDER BY id ASC", cm[i].ID).First(&ci)
 		if tx.Error != nil {
-			return nil, tx.Error
+			log.Println(tx.Error)
 		}
 		cm[i].Images = append(cm[i].Images, ci)
 	}
