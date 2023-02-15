@@ -27,6 +27,12 @@ func (is *imageService) Add(token interface{}, campID uint, header *multipart.Fi
 		return errors.New("access is denied due to invalid credential")
 	}
 
+	fileimg := strings.Split(header.Filename, ".")
+	format := fileimg[len(fileimg)-1]
+	if format != "png" && format != "jpg" && format != "jpeg" {
+		return errors.New("bad request because of format not png, jpg, or jpeg")
+	}
+
 	imageURL, err := is.up.Upload(header)
 	if err != nil {
 		log.Println(err)
@@ -45,6 +51,8 @@ func (is *imageService) Add(token interface{}, campID uint, header *multipart.Fi
 		var msg string
 		if strings.Contains(err.Error(), "access is denied") {
 			msg = err.Error()
+		} else if strings.Contains(err.Error(), "foreign key") {
+			msg = "not found"
 		} else {
 			msg = "failed to upload image because internal server error"
 		}
