@@ -34,11 +34,11 @@ func (ch *campHandler) Add() echo.HandlerFunc {
 		}
 		documentHeader, found := form.File["document"]
 		if !found {
-			return c.JSON(helper.ErrorResponse("document input not found"))
+			return c.JSON(helper.ErrorResponse("please upload the document"))
 		}
 		imagesHeader, found := form.File["images"]
 		if !found {
-			return c.JSON(helper.ErrorResponse("images input not found"))
+			return c.JSON(helper.ErrorResponse("please upload the images"))
 		}
 
 		newCamp := camp.Core{}
