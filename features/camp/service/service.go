@@ -33,6 +33,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 	}
 
 	if err := cs.vld.Struct(newCamp); err != nil {
+		log.Println(err)
 		msg := helper.ValidationErrorHandle(err)
 		return errors.New(msg)
 	}

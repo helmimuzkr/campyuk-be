@@ -23,7 +23,7 @@ func (ih *imageHandler) Add() echo.HandlerFunc {
 
 		header, err := c.FormFile("image")
 		if err != nil {
-			return c.JSON(helper.ErrorResponse("image input not found"))
+			return c.JSON(helper.ErrorResponse("please upload the image"))
 		}
 
 		str := c.FormValue("camp_id")
