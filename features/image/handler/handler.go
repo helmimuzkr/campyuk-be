@@ -37,7 +37,7 @@ func (ih *imageHandler) Add() echo.HandlerFunc {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		return c.JSON(helper.SuccessResponse(200, "success add new image"))
+		return c.JSON(helper.SuccessResponse(201, "success add new image"))
 	}
 }
 
