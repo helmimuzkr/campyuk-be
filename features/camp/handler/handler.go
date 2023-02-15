@@ -25,7 +25,7 @@ func (ch *campHandler) Add() echo.HandlerFunc {
 
 		cr := campRequest{}
 		if err := c.Bind(&cr); err != nil {
-			return c.JSON(helper.ErrorResponse(err.Error()))
+			return c.JSON(helper.ErrorResponse("bad request"))
 		}
 
 		form, err := c.MultipartForm()
@@ -44,7 +44,7 @@ func (ch *campHandler) Add() echo.HandlerFunc {
 		newCamp := camp.Core{}
 		if err := copier.Copy(&newCamp, &cr); err != nil {
 			log.Println("handler add camp:", err)
-			return c.JSON(helper.ErrorResponse("failed to unmarshall request"))
+			return c.JSON(helper.ErrorResponse("bad request"))
 		}
 
 		if err := ch.srv.Add(token, newCamp, documentHeader[0], imagesHeader); err != nil {
@@ -149,7 +149,7 @@ func (ch *campHandler) Update() echo.HandlerFunc {
 		updateCamp := camp.Core{}
 		if err := copier.Copy(&updateCamp, &cr); err != nil {
 			log.Println("handler update camp:", err)
-			return c.JSON(helper.ErrorResponse("failed to unmarshall request"))
+			return c.JSON(helper.ErrorResponse("bad request"))
 		}
 
 		if err := ch.srv.Update(token, uint(campID), updateCamp, document); err != nil {
