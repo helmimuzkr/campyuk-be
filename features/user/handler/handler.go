@@ -26,9 +26,9 @@ func (uc *userControll) Login() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, "input format incorrect")
 		}
 		if input.Username == "" {
-			return c.JSON(http.StatusBadRequest, "username is empty")
+			return c.JSON(helper.ErrorResponse("username is empty"))
 		} else if input.Password == "" {
-			return c.JSON(http.StatusBadRequest, "password is empty")
+			return c.JSON(helper.ErrorResponse("password is empty"))
 		}
 
 		token, res, err := uc.srv.Login(input.Username, input.Password)
