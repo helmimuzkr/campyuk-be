@@ -96,6 +96,9 @@ func (cs *campService) List(token interface{}, page int) (map[string]interface{}
 	}
 
 	totalPage := int(math.Ceil(float64(totalRecord) / float64(limit)))
+	if page > totalPage {
+		return nil, nil, errors.New("page not found")
+	}
 
 	pagination := make(map[string]interface{})
 	pagination["page"] = page
