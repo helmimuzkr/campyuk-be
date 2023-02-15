@@ -10,14 +10,14 @@ type Core struct {
 	ID                 uint
 	VerificationStatus string
 	HostName           string
-	Title              string `validate:"required,min=3"`
-	Price              int    `validate:"required"`
-	Description        string `validate:"required,min=5"`
-	Latitude           float64
-	Longitude          float64
-	Distance           int
-	Address            string `validate:"required,min=5"`
-	City               string `validate:"required,min=3"`
+	Title              string  `validate:"required,min=3"`
+	Price              int     `validate:"required,number"`
+	Description        string  `validate:"required,min=5"`
+	Latitude           float64 `validate:"required,latitude"`
+	Longitude          float64 `validate:"required,longitude"`
+	Distance           int     `validate:"required,number"`
+	Address            string  `validate:"required,min=5"`
+	City               string  `validate:"required,min=3"`
 	Document           string
 	Images             []Image
 	Items              []CampItem

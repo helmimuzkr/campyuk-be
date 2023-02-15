@@ -51,6 +51,8 @@ func ErrorResponse(msg string) (int, interface{}) {
 		code = http.StatusBadRequest
 	case strings.Contains(msg, "not found"):
 		code = http.StatusNotFound
+	case strings.Contains(msg, "bad request"):
+		code = http.StatusBadRequest
 	case strings.Contains(msg, "conflict"):
 		code = http.StatusConflict
 	case strings.Contains(msg, "duplicated"):
@@ -76,6 +78,8 @@ func ErrorResponse(msg string) (int, interface{}) {
 		code = http.StatusUnauthorized
 	case strings.Contains(msg, "Unauthorized"):
 		code = http.StatusUnauthorized
+	case strings.Contains(msg, "empty"):
+		code = http.StatusBadRequest
 	}
 
 	return code, resp
