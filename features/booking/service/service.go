@@ -157,11 +157,18 @@ func (bs *bookingSrv) Cancel(token interface{}, bookingID uint, status string) e
 }
 
 func (bs *bookingSrv) Callback(ticket string, status string) error {
-	if status == "settlement" {
+	switch status {
+	case "settlement":
 		status = "SUCCESS"
+	case "cancel":
+		status = "CANCEL"
+	case "pending":
+		status = "PENDING"
+	case "expire":
+		status = "EXPIRE"
+	default:
+		return errors.New("bad request due to status invalid")
 	}
-
-	status = strings.ToUpper(status)
 
 	if err := bs.qry.Callback(ticket, status); err != nil {
 		log.Println(err)
