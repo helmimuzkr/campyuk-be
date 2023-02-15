@@ -141,7 +141,7 @@ func (ch *campHandler) Update() echo.HandlerFunc {
 		cr := campRequest{}
 		if err := c.Bind(&cr); err != nil {
 			log.Println(err)
-			return c.JSON(helper.ErrorResponse(err.Error()))
+			return c.JSON(helper.ErrorResponse("bad request"))
 		}
 
 		document, _ := c.FormFile("document")
@@ -155,7 +155,7 @@ func (ch *campHandler) Update() echo.HandlerFunc {
 		if err := ch.srv.Update(token, uint(campID), updateCamp, document); err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
-		return c.JSON(helper.SuccessResponse(201, "success update camp"))
+		return c.JSON(helper.SuccessResponse(200, "success update camp"))
 	}
 }
 
@@ -219,6 +219,6 @@ func (ch *campHandler) Decline() echo.HandlerFunc {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
 
-		return c.JSON(helper.SuccessResponse(200, "success reject camp"))
+		return c.JSON(helper.SuccessResponse(200, "success decline camp"))
 	}
 }
