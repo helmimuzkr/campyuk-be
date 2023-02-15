@@ -53,6 +53,8 @@ func ErrorResponse(msg string) (int, interface{}) {
 		code = http.StatusNotFound
 	case strings.Contains(msg, "bad request"):
 		code = http.StatusBadRequest
+	case strings.Contains(msg, "please upload the"):
+		code = http.StatusBadRequest
 	case strings.Contains(msg, "conflict"):
 		code = http.StatusConflict
 	case strings.Contains(msg, "duplicated"):
