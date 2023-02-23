@@ -2,24 +2,27 @@ package handler
 
 import (
 	"campyuk-api/features/user"
-	"campyuk-api/helper"
+	"campyuk-api/pkg/helper"
 	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/oauth2"
 )
 
-type userControll struct {
-	srv user.UserService
+type userHandler struct {
+	srv  user.UserService
+	conf *oauth2.Config
 }
 
-func New(srv user.UserService) user.UserHandler {
-	return &userControll{
-		srv: srv,
+func New(srv user.UserService, conf *oauth2.Config) user.UserHandler {
+	return &userHandler{
+		srv:  srv,
+		conf: conf,
 	}
 }
 
-func (uc *userControll) Login() echo.HandlerFunc {
+func (uc *userHandler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		input := LoginRequest{}
 		if err := c.Bind(&input); err != nil {
@@ -40,7 +43,7 @@ func (uc *userControll) Login() echo.HandlerFunc {
 	}
 }
 
-func (uc *userControll) Register() echo.HandlerFunc {
+func (uc *userHandler) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		input := RegisterRequest{}
 		err := c.Bind(&input)
@@ -48,16 +51,15 @@ func (uc *userControll) Register() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, "input format incorrect")
 		}
 
-		res, err := uc.srv.Register(*ReqToCore(input))
+		_, err = uc.srv.Register(*ReqToCore(input))
 		if err != nil {
 			return c.JSON(helper.ErrorResponse(err.Error()))
 		}
-		log.Println(res)
 		return c.JSON(helper.SuccessResponse(http.StatusCreated, "success create account"))
 	}
 }
 
-func (uc *userControll) Profile() echo.HandlerFunc {
+func (uc *userHandler) Profile() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
 
@@ -70,7 +72,7 @@ func (uc *userControll) Profile() echo.HandlerFunc {
 	}
 }
 
-func (uc *userControll) Update() echo.HandlerFunc {
+func (uc *userHandler) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		input := UpdateRequest{}
 		err := c.Bind(&input)
@@ -92,7 +94,7 @@ func (uc *userControll) Update() echo.HandlerFunc {
 	}
 }
 
-func (uc *userControll) Delete() echo.HandlerFunc {
+func (uc *userHandler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		err := uc.srv.Delete(c.Get("user"))
 		if err != nil {
@@ -101,5 +103,30 @@ func (uc *userControll) Delete() echo.HandlerFunc {
 			})
 		}
 		return c.NoContent(204)
+	}
+}
+
+func (uc *userHandler) GoogleAuth() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return c.Redirect(http.StatusTemporaryRedirect, uc.conf.AuthCodeURL("random", oauth2.AccessTypeOffline))
+	}
+}
+
+func (uc *userHandler) GoogleCallback() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		code := c.QueryParam("code")
+
+		token, err := uc.conf.Exchange(c.Request().Context(), code)
+		if err != nil {
+			log.Println(err)
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		_, err = uc.srv.LoginGoogle(token.AccessToken, token.RefreshToken)
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "login success"))
 	}
 }
