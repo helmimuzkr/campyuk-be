@@ -1,4 +1,4 @@
-package data
+package repository
 
 import (
 	"campyuk-api/features/image"
@@ -11,7 +11,7 @@ type imageData struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) image.ImageData {
+func New(db *gorm.DB) image.ImageRepository {
 	return &imageData{db: db}
 }
 
