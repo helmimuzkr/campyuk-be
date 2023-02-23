@@ -44,8 +44,7 @@ type BookingHandler interface {
 	Accept() echo.HandlerFunc
 	Cancel() echo.HandlerFunc
 	Callback() echo.HandlerFunc
-	Oauth() echo.HandlerFunc
-	OauthCallback() echo.HandlerFunc
+	CreateReminder() echo.HandlerFunc
 }
 
 type BookingService interface {
@@ -54,15 +53,22 @@ type BookingService interface {
 	GetByID(token interface{}, bookingID uint) (Core, error)
 	Accept(token interface{}, bookingID uint, status string) error
 	Cancel(token interface{}, bookingID uint, status string) error
+	CreateReminder(token interface{}, bookingID uint) (string, error)
 	Callback(ticket string, status string) error
-	CreateEvent(code string, bookingID uint) error
 }
 
-type BookingData interface {
+type BookingRepository interface {
 	Create(userID uint, newBooking Core) (Core, error)
 	Update(userID uint, role string, bookingID uint, status string) error
 	List(userID uint, role string, limit int, offset int) (int, []Core, error)
 	GetByID(userID uint, bookingID uint, role string) (Core, error)
 	Callback(ticket string, status string) error
-	CreateEvent(bookingID uint) (Core, error)
+}
+
+type GoogleGateway interface {
+	CreateEvent(detailEvent map[string]string) (string, error)
+}
+
+type PaymentGateway interface {
+	ChargeTransaction(orderID string, grossAmt int, bank string) (string, error)
 }
