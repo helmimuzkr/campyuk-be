@@ -1,8 +1,8 @@
-package data
+package repository
 
 import (
-	_booking "campyuk-api/features/booking/data"
-	_camp "campyuk-api/features/camp/data"
+	booking "campyuk-api/features/booking/repository"
+	camp "campyuk-api/features/camp/repository"
 	"campyuk-api/features/user"
 
 	"gorm.io/gorm"
@@ -16,8 +16,8 @@ type User struct {
 	UserImage string
 	Password  string
 	Role      string
-	Camps     []_camp.Camp       `gorm:"foreignKey:HostID"`
-	Bookings  []_booking.Booking `gorm:"foreignKey:UserID"`
+	Camps     []camp.Camp       `gorm:"foreignKey:HostID"`
+	Bookings  []booking.Booking `gorm:"foreignKey:UserID"`
 }
 
 func ToCore(data User) user.Core {
