@@ -2,7 +2,7 @@ package service
 
 import (
 	"campyuk-api/features/camp"
-	"campyuk-api/helper"
+	"campyuk-api/pkg/helper"
 	"errors"
 	"log"
 	"math"
@@ -13,16 +13,16 @@ import (
 )
 
 type campService struct {
-	qry camp.CampData
-	vld *validator.Validate
-	up  helper.Uploader
+	qry     camp.CampRepository
+	vld     *validator.Validate
+	storage camp.StorageGateway
 }
 
-func New(q camp.CampData, v *validator.Validate, u helper.Uploader) camp.CampService {
+func New(q camp.CampRepository, v *validator.Validate, storage camp.StorageGateway) camp.CampService {
 	return &campService{
-		qry: q,
-		vld: v,
-		up:  u,
+		qry:     q,
+		vld:     v,
+		storage: storage,
 	}
 }
 
@@ -52,7 +52,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 		}
 	}
 
-	docURL, err := cs.up.Upload(document)
+	docURL, err := cs.storage.Upload(document)
 	if err != nil {
 		log.Println(err)
 		return errors.New("failed to upload document because internal server error")
@@ -60,7 +60,7 @@ func (cs *campService) Add(token interface{}, newCamp camp.Core, document *multi
 
 	imageCore := []camp.Image{}
 	for _, h := range imagesHeader {
-		imageURL, err := cs.up.Upload(h)
+		imageURL, err := cs.storage.Upload(h)
 		if err != nil {
 			log.Println(err)
 			return errors.New("failed to upload image because internal server error")
@@ -158,7 +158,7 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 			return errors.New("bad request because of format not pdf")
 		}
 
-		docURL, err := cs.up.Upload(document)
+		docURL, err := cs.storage.Upload(document)
 		if err != nil {
 			log.Println(err)
 			return errors.New("failed to upload document because internal server error")
@@ -178,8 +178,7 @@ func (cs *campService) Update(token interface{}, campID uint, updateCamp camp.Co
 	}
 
 	if document != nil && res.Document != "" {
-		publicID := helper.GetPublicID(res.Document)
-		if err := cs.up.Destroy(publicID); err != nil {
+		if err := cs.storage.Destroy(res.Document); err != nil {
 			log.Println("destroy file", err)
 			return errors.New("failed to destroy document")
 		}

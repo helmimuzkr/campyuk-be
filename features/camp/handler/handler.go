@@ -2,7 +2,7 @@ package handler
 
 import (
 	"campyuk-api/features/camp"
-	"campyuk-api/helper"
+	"campyuk-api/pkg/helper"
 	"log"
 	"strconv"
 

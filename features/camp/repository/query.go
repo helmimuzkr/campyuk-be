@@ -1,4 +1,4 @@
-package data
+package repository
 
 import (
 	"campyuk-api/features/camp"
@@ -12,7 +12,7 @@ type campData struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) camp.CampData {
+func New(db *gorm.DB) camp.CampRepository {
 	return &campData{db: db}
 }
 

@@ -54,11 +54,16 @@ type CampService interface {
 	RequestAdmin(token interface{}, campID uint, status string) error
 }
 
-type CampData interface {
+type CampRepository interface {
 	Add(userID uint, newCamp Core) error
 	List(userID uint, role string, limit int, offset int) (int, []Core, error)
 	GetByID(userID uint, campID uint) (Core, error)
 	Update(userID uint, campID uint, updateCamp Core) error
 	Delete(userID uint, campID uint) error
 	RequestAdmin(campID uint, status string) error
+}
+
+type StorageGateway interface {
+	Upload(file *multipart.FileHeader) (string, error)
+	Destroy(secureURL string) error
 }
