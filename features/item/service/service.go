@@ -2,7 +2,7 @@ package service
 
 import (
 	"campyuk-api/features/item"
-	"campyuk-api/helper"
+	"campyuk-api/pkg/helper"
 	"errors"
 	"log"
 	"strings"
