@@ -1,4 +1,4 @@
-package data
+package repository
 
 import (
 	"campyuk-api/features/booking"
@@ -12,7 +12,7 @@ type bookingData struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) booking.BookingData {
+func New(db *gorm.DB) booking.BookingRepository {
 	return &bookingData{
 		db: db,
 	}
@@ -35,13 +35,10 @@ func (bd *bookingData) List(userID uint, role string, limit int, offset int) (in
 		// Query for host
 		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title,camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.total_price, bookings.status, 	bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE camps.host_id = ? ORDER BY bookings.id DESC LIMIT ? OFFSET ?"
 		qryPagination = "SELECT COUNT(bookings.id) FROM bookings JOIN camps ON camps.id = bookings.camp_id WHERE camps.host_id = ?"
-		// qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN camps ON camps.id = items.camp_id WHERE camps.host_id = ?"
-
 	} else {
 		// Query for guest
 		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title,camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.user_id = ? ORDER BY bookings.id DESC LIMIT ? OFFSET ?"
 		qryPagination = "SELECT COUNT(id) FROM bookings WHERE user_id = ?"
-		// qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN bookings ON bookings.id = rent_items.booking_id WHERE bookings.user_id = ?"
 	}
 
 	var models []BookingCamp
@@ -56,13 +53,6 @@ func (bd *bookingData) List(userID uint, role string, limit int, offset int) (in
 			log.Println(tx.Error)
 		}
 	}
-
-	// for i := range models {
-	// 	tx = tx.Raw(qryItem, userID).Find(&models[i].Items)
-	// 	if tx.Error != nil {
-	// 		log.Println(tx.Error)
-	// 	}
-	// }
 
 	var totalRecord int64
 	tx = tx.Raw(qryPagination, userID).Find(&totalRecord)
@@ -83,7 +73,7 @@ func (bd *bookingData) GetByID(userID uint, bookingID uint, role string) (bookin
 
 	} else {
 		// Query for guest
-		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, camps.price, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.guest, bookings.camp_cost, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.user_id = ? AND bookings.id = ?"
+		qryBooking = "SELECT bookings.id, bookings.ticket, bookings.user_id, users.email, bookings.camp_id, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, camps.price, bookings.check_in, bookings.check_out, bookings.booking_date, bookings.guest, bookings.camp_cost, bookings.total_price, bookings.status, bookings.bank, bookings.virtual_number FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.user_id = ? AND bookings.id = ?"
 		qryItem = "SELECT items.name, items.price, rent_items.quantity, rent_items.cost FROM rent_items JOIN items ON items.id = rent_items.item_id JOIN bookings ON bookings.id = rent_items.booking_id WHERE bookings.user_id = ? AND rent_items.booking_id = ? "
 	}
 
@@ -165,17 +155,6 @@ func (bd *bookingData) Callback(ticket string, status string) error {
 	}
 
 	return nil
-}
-
-func (bd *bookingData) CreateEvent(bookingID uint) (booking.Core, error) {
-	model := BookingCamp{}
-	query := "SELECT bookings.id, users.email, bookings.ticket, camps.title, camps.latitude, camps.longitude, camps.address, camps.city, bookings.check_in, bookings.check_out, bookings.guest FROM bookings JOIN users ON users.id = bookings.user_id JOIN camps ON camps.id = bookings.camp_id WHERE bookings.id = ?"
-	tx := bd.db.Raw(query, bookingID).First(&model)
-	if tx.Error != nil {
-		return booking.Core{}, tx.Error
-	}
-
-	return ToCore(model), nil
 }
 
 func (bd *bookingData) decrementStock(bookingID uint) error {
