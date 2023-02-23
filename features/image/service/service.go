@@ -2,7 +2,7 @@ package service
 
 import (
 	"campyuk-api/features/image"
-	"campyuk-api/helper"
+	"campyuk-api/pkg/helper"
 	"errors"
 	"log"
 	"mime/multipart"
@@ -10,14 +10,14 @@ import (
 )
 
 type imageService struct {
-	qry image.ImageData
-	up  helper.Uploader
+	qry     image.ImageRepository
+	storage image.StorageGateway
 }
 
-func New(repo image.ImageData, u helper.Uploader) image.ImageService {
+func New(repo image.ImageRepository, storage image.StorageGateway) image.ImageService {
 	return &imageService{
-		qry: repo,
-		up:  u,
+		qry:     repo,
+		storage: storage,
 	}
 }
 
@@ -33,7 +33,7 @@ func (is *imageService) Add(token interface{}, campID uint, header *multipart.Fi
 		return errors.New("bad request because of format not png, jpg, or jpeg")
 	}
 
-	imageURL, err := is.up.Upload(header)
+	imageURL, err := is.storage.Upload(header)
 	if err != nil {
 		log.Println(err)
 		var msg string

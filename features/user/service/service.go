@@ -1,46 +1,55 @@
-package services
+package user
 
 import (
+	"campyuk-api/config"
 	"campyuk-api/features/user"
-	"campyuk-api/helper"
+	"campyuk-api/pkg/helper"
+	"encoding/json"
 	"errors"
 	"log"
 	"mime/multipart"
+	"os"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
 
-type userUseCase struct {
-	qry user.UserData
-	vld *validator.Validate
-	up  helper.Uploader
+type userService struct {
+	qry     user.UserRepository
+	vld     *validator.Validate
+	storage user.StorageGateway
+	g       user.GoogleGateway
 }
 
-func New(ud user.UserData, vld *validator.Validate, u helper.Uploader) user.UserService {
-	return &userUseCase{
-		qry: ud,
-		vld: vld,
-		up:  u,
+func New(ud user.UserRepository, vld *validator.Validate, storage user.StorageGateway, g user.GoogleGateway) user.UserService {
+	return &userService{
+		qry:     ud,
+		vld:     vld,
+		storage: storage,
+		g:       g,
 	}
 }
 
-func (uuc *userUseCase) Register(newUser user.Core) (user.Core, error) {
+func (us *userService) Register(newUser user.Core) (user.Core, error) {
 	hashed, err := helper.GeneratePassword(newUser.Password)
 	if err != nil {
 		log.Println("bcrypt error ", err.Error())
 		return user.Core{}, errors.New("password process error")
 	}
 
-	err = uuc.vld.Struct(&newUser)
+	err = us.vld.Struct(&newUser)
 	if err != nil {
 		log.Println("err", err)
 		msg := helper.ValidationErrorHandle(err)
 		return user.Core{}, errors.New(msg)
 	}
 
+	if newUser.Role == "admin" {
+		return user.Core{}, errors.New("cannot register as admin")
+	}
+
 	newUser.Password = string(hashed)
-	res, err := uuc.qry.Register(newUser)
+	res, err := us.qry.Register(newUser)
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "duplicated") {
@@ -56,8 +65,8 @@ func (uuc *userUseCase) Register(newUser user.Core) (user.Core, error) {
 	return res, nil
 }
 
-func (uuc *userUseCase) Login(username, password string) (string, user.Core, error) {
-	res, err := uuc.qry.Login(username)
+func (us *userService) Login(username, password string) (string, user.Core, error) {
+	res, err := us.qry.Login(username)
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "empty") {
@@ -77,13 +86,55 @@ func (uuc *userUseCase) Login(username, password string) (string, user.Core, err
 	return useToken, res, nil
 }
 
-func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
+func (us *userService) LoginGoogle(accessToken string, refreshToken string) (user.Core, error) {
+	email, err := us.g.GetEmail(accessToken)
+	if err != nil {
+		log.Println(err)
+		return user.Core{}, errors.New("internal server error")
+	}
+
+	core, err := us.qry.GetByEmail(email)
+	if err != nil {
+		log.Println(err)
+		msg := "internal server error"
+		if strings.Contains(err.Error(), "not found") {
+			msg = "user not found"
+		}
+		return user.Core{}, errors.New(msg)
+	}
+
+	if core.Role == "admin" {
+		// Store token in local storage
+		f, err := os.Create(config.TokenPath)
+		if err != nil {
+			log.Println(err)
+			return user.Core{}, errors.New("internal server errro")
+		}
+		defer f.Close()
+		token := make(map[string]interface{})
+		token["refresh_token"] = refreshToken
+		data, err := json.Marshal(token)
+		if err != nil {
+			log.Println(err)
+			return user.Core{}, errors.New("internal server errro")
+		}
+		_, err = f.Write(data)
+		if err != nil {
+			log.Println(err)
+			return user.Core{}, errors.New("internal server errro")
+		}
+	}
+
+	return core, nil
+}
+
+func (us *userService) Profile(token interface{}) (user.Core, error) {
 	id, _ := helper.ExtractToken(token)
 	if id <= 0 {
 		return user.Core{}, errors.New("data not found")
 	}
 
-	res, err := uuc.qry.Profile(id)
+	res, err := us.qry.Profile(id)
 	if err != nil {
 		log.Println("data not found")
 		return user.Core{}, errors.New("query error, problem with server")
@@ -92,7 +143,7 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 	return res, nil
 }
 
-func (uuc *userUseCase) Update(token interface{}, fileData *multipart.FileHeader, updateData user.Core) (user.Core, error) {
+func (us *userService) Update(token interface{}, fileData *multipart.FileHeader, updateData user.Core) (user.Core, error) {
 	id, _ := helper.ExtractToken(token)
 	if updateData.Password != "" {
 		hashed, _ := helper.GeneratePassword(updateData.Password)
@@ -100,7 +151,7 @@ func (uuc *userUseCase) Update(token interface{}, fileData *multipart.FileHeader
 	}
 
 	if fileData != nil {
-		secureURL, err := uuc.up.Upload(fileData)
+		secureURL, err := us.storage.Upload(fileData)
 		if err != nil {
 			log.Println(err)
 			var msg string
@@ -114,7 +165,7 @@ func (uuc *userUseCase) Update(token interface{}, fileData *multipart.FileHeader
 		updateData.UserImage = secureURL
 	}
 
-	res, err := uuc.qry.Update(uint(id), updateData)
+	res, err := us.qry.Update(uint(id), updateData)
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
@@ -128,9 +179,9 @@ func (uuc *userUseCase) Update(token interface{}, fileData *multipart.FileHeader
 	return res, nil
 }
 
-func (uuc *userUseCase) Delete(token interface{}) error {
+func (us *userService) Delete(token interface{}) error {
 	id, _ := helper.ExtractToken(token)
-	err := uuc.qry.Delete(uint(id))
+	err := us.qry.Delete(uint(id))
 
 	if err != nil {
 		log.Println("query error", err.Error())

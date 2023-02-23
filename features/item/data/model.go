@@ -1,7 +1,7 @@
 package data
 
 import (
-	"campyuk-api/features/booking/data"
+	booking "campyuk-api/features/booking/repository"
 	"campyuk-api/features/item"
 
 	"gorm.io/gorm"
@@ -13,7 +13,7 @@ type Item struct {
 	Stock     int
 	Price     int
 	CampID    uint
-	RentItems []data.RentItem `gorm:"foreignKey:ItemID"`
+	RentItems []booking.RentItem `gorm:"foreignKey:ItemID"`
 }
 
 func ToCore(data Item) item.Core {

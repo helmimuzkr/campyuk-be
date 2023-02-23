@@ -22,7 +22,12 @@ type ImageService interface {
 	Delete(token interface{}, imageID uint) error
 }
 
-type ImageData interface {
+type ImageRepository interface {
 	Add(userID uint, core Core) error
 	Delete(usesrID uint, imageID uint) error
+}
+
+type StorageGateway interface {
+	Upload(file *multipart.FileHeader) (string, error)
+	Destroy(secureURL string) error
 }

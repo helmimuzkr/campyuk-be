@@ -9,14 +9,8 @@ import (
 )
 
 var (
-	JWT_KEY                  string
-	CLOUDINARY_CLOUD_NAME    string
-	CLOUDINARY_API_KEY       string
-	CLOUDINARY_API_SECRET    string
-	CLOUDINARY_UPLOAD_FOLDER string
-	MERCHANT_ID              string
-	CLIENT_ID                string
-	SERVER_KEY               string
+	JWT_KEY   string
+	TokenPath string = "./token.json"
 )
 
 type AppConfig struct {
@@ -29,7 +23,6 @@ type AppConfig struct {
 	CLOUDINARY_CLOUD_NAME    string
 	CLOUDINARY_API_KEY       string
 	CLOUDINARY_API_SECRET    string
-	CLOUDINARY_UPLOAD_FOLDER string
 	MERCHANT_ID              string
 	CLIENT_ID                string
 	SERVER_KEY               string
@@ -83,10 +76,6 @@ func ReadEnv() *AppConfig {
 		app.CLOUDINARY_API_SECRET = val
 		isRead = false
 	}
-	if val, found := os.LookupEnv("CLOUDINARY_UPLOAD_FOLDER"); found {
-		app.CLOUDINARY_UPLOAD_FOLDER = val
-		isRead = false
-	}
 	if val, found := os.LookupEnv("MERCHANT_ID"); found {
 		app.MERCHANT_ID = val
 		isRead = false
@@ -129,13 +118,6 @@ func ReadEnv() *AppConfig {
 		}
 	}
 	JWT_KEY = app.JWT_KEY
-	CLOUDINARY_CLOUD_NAME = app.CLOUDINARY_CLOUD_NAME
-	CLOUDINARY_API_KEY = app.CLOUDINARY_API_KEY
-	CLOUDINARY_API_SECRET = app.CLOUDINARY_API_SECRET
-	CLOUDINARY_UPLOAD_FOLDER = app.CLOUDINARY_UPLOAD_FOLDER
-	MERCHANT_ID = app.MERCHANT_ID
-	CLIENT_ID = app.CLIENT_ID
-	SERVER_KEY = app.SERVER_KEY
 
 	return &app
 }

@@ -2,27 +2,20 @@ package handler
 
 import (
 	"campyuk-api/features/booking"
-	"campyuk-api/helper"
-	"fmt"
+	"campyuk-api/pkg/helper"
 	"log"
-	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 )
 
 type bookingController struct {
-	srv       booking.BookingService
-	googleApi helper.GoogleAPI
+	srv booking.BookingService
 }
 
-func New(bs booking.BookingService, g helper.GoogleAPI) booking.BookingHandler {
-	return &bookingController{
-		srv:       bs,
-		googleApi: g,
-	}
+func New(bs booking.BookingService) booking.BookingHandler {
+	return &bookingController{srv: bs}
 }
 
 func (bc *bookingController) Create() echo.HandlerFunc {
@@ -156,6 +149,26 @@ func (bc *bookingController) Cancel() echo.HandlerFunc {
 	}
 }
 
+func (bc *bookingController) CreateReminder() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Get("user")
+
+		paramID := c.Param("id")
+		bookingID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		url, err := bc.srv.CreateReminder(token, uint(bookingID))
+		if err != nil {
+			return c.JSON(helper.ErrorResponse(err.Error()))
+		}
+
+		return c.JSON(helper.SuccessResponse(200, "success create reminder", url))
+	}
+}
+
 func (bc *bookingController) Callback() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cb := Callback{}
@@ -169,62 +182,5 @@ func (bc *bookingController) Callback() echo.HandlerFunc {
 		}
 
 		return c.JSON(helper.SuccessResponse(200, "success update transaction"))
-	}
-}
-
-func (bc *bookingController) Oauth() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		state := "random"
-
-		cookieState := new(http.Cookie)
-		cookieState.Path = "/"
-		cookieState.Expires = time.Now().Add(5 * time.Minute)
-		cookieState.Name = "state"
-		cookieState.Value = state
-		c.SetCookie(cookieState)
-
-		cookieBookingID := new(http.Cookie)
-		cookieBookingID.Path = "/"
-		cookieBookingID.Expires = time.Now().Add(5 * time.Minute)
-		cookieBookingID.Name = "bookingID"
-		cookieBookingID.Value = c.Param("id")
-		c.SetCookie(cookieBookingID)
-
-		return c.Redirect(http.StatusTemporaryRedirect, bc.googleApi.GetUrlAuth(state))
-	}
-}
-
-func (bc *bookingController) OauthCallback() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		cookies := c.Cookies()
-
-		state := ""
-		bookingID := ""
-		for _, cookie := range cookies {
-			if cookie.Name == "state" {
-				state = cookie.Value
-			}
-			if cookie.Name == "bookingID" {
-				bookingID = cookie.Value
-			}
-		}
-
-		if state != c.QueryParam("state") {
-			log.Println("state is not valid")
-			return c.HTML(helper.ErrorPage("Unauthorized"))
-		}
-
-		code := c.QueryParam("code")
-
-		id, _ := strconv.Atoi(bookingID)
-
-		if err := bc.srv.CreateEvent(code, uint(id)); err != nil {
-			return c.HTML(helper.ErrorPage(err.Error()))
-		}
-
-		baseURL := "https://campyuk.vercel.app"
-		html := fmt.Sprintf("<script>window.location.replace('%s/camplist');alert('Success create event in google calendar');</script>", baseURL)
-
-		return c.HTML(http.StatusTemporaryRedirect, html)
 	}
 }

@@ -2,23 +2,24 @@ package main
 
 import (
 	"campyuk-api/config"
-	_bookingData "campyuk-api/features/booking/data"
+	_middlewareCustom "campyuk-api/middleware"
+	"campyuk-api/pkg"
+
 	_bookingHandler "campyuk-api/features/booking/handler"
+	_bookingRepo "campyuk-api/features/booking/repository"
 	_bookingService "campyuk-api/features/booking/service"
-	_campData "campyuk-api/features/camp/data"
 	_campHandler "campyuk-api/features/camp/handler"
+	_campRepo "campyuk-api/features/camp/repository"
 	_campService "campyuk-api/features/camp/service"
-	_imageData "campyuk-api/features/image/data"
 	_imageHandler "campyuk-api/features/image/handler"
+	_imageRepo "campyuk-api/features/image/repository"
 	_imageService "campyuk-api/features/image/service"
 	itmData "campyuk-api/features/item/data"
 	itmHdl "campyuk-api/features/item/handler"
 	itmSrv "campyuk-api/features/item/service"
-	usrData "campyuk-api/features/user/data"
-	usrHdl "campyuk-api/features/user/handler"
-	usrSrv "campyuk-api/features/user/services"
-	"campyuk-api/helper"
-	_middlewareCustom "campyuk-api/middleware"
+	_userHandler "campyuk-api/features/user/handler"
+	_userRepo "campyuk-api/features/user/repository"
+	_userSrv "campyuk-api/features/user/service"
 
 	"log"
 
@@ -28,40 +29,49 @@ import (
 )
 
 func main() {
+	// ==================
+	// Init
+	// ==================
 	e := echo.New()
 	cfg := config.InitConfig()
 	db := config.InitDB(*cfg)
 	config.Migrate(db)
 
+	// ==================
+	// Init 3rd party packages
+	// ==================
 	v := validator.New()
-	cld := helper.NewCloudinary(cfg)
-	coreapiMidtrans := helper.NewCoreMidtrans(cfg)
-	googleAPI := helper.NewGoogleApi(cfg)
+	cld := pkg.NewCloudinary(cfg)
+	midtransAPI := pkg.NewMidtrans(cfg)
+	googleConf := pkg.NewGoogleConf(cfg)
+	googleAPI := pkg.NewGoogleAPI(googleConf)
 
-	config.Migrate(db)
-
-	// SETUP DOMAIN
-	uData := usrData.New(db)
-	uSrv := usrSrv.New(uData, v, cld)
-	uHdl := usrHdl.New(uSrv)
+	// ==================
+	// Setup services
+	// ==================
+	userRepo := _userRepo.New(db)
+	userSrv := _userSrv.New(userRepo, v, cld, googleAPI)
+	userHandler := _userHandler.New(userSrv, googleConf)
 
 	iData := itmData.New(db)
 	iSrv := itmSrv.New(iData, v)
 	iHdl := itmHdl.New(iSrv)
 
-	campData := _campData.New(db)
-	campSrv := _campService.New(campData, v, cld)
+	campRepo := _campRepo.New(db)
+	campSrv := _campService.New(campRepo, v, cld)
 	campHandler := _campHandler.New(campSrv)
 
-	imageData := _imageData.New(db)
-	imageSrv := _imageService.New(imageData, cld)
+	imageRepo := _imageRepo.New(db)
+	imageSrv := _imageService.New(imageRepo, cld)
 	imageHandler := _imageHandler.New(imageSrv)
 
-	bookingData := _bookingData.New(db)
-	bookingSrv := _bookingService.New(bookingData, coreapiMidtrans, googleAPI, v)
-	bookingHandler := _bookingHandler.New(bookingSrv, googleAPI)
+	bookingRepo := _bookingRepo.New(db)
+	bookingSrv := _bookingService.New(bookingRepo, midtransAPI, v, googleAPI)
+	bookingHandler := _bookingHandler.New(bookingSrv)
 
-	// MIDDLEWARE
+	// ==================
+	// Setup middlewares
+	// ==================
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.CORS())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -69,12 +79,16 @@ func main() {
 		CustomTimeFormat: "2006-01-02 15:04:05",
 	}))
 
-	// ROUTE
-	e.POST("/register", uHdl.Register())
-	e.POST("/login", uHdl.Login())
-	e.GET("/users", uHdl.Profile(), middleware.JWT([]byte(config.JWT_KEY)))
-	e.PUT("/users", uHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
-	e.DELETE("/users", uHdl.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
+	// ==================
+	// Init routers
+	// ==================
+	e.POST("/register", userHandler.Register())
+	e.POST("/login", userHandler.Login())
+	e.GET("/auth/google", userHandler.GoogleAuth())
+	e.GET("auth/google/callback", userHandler.GoogleCallback())
+	e.GET("/users", userHandler.Profile(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.PUT("/users", userHandler.Update(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.DELETE("/users", userHandler.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	e.POST("/camps", campHandler.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.GET("/camps", campHandler.List(), _middlewareCustom.JWTWithConfig())
@@ -96,9 +110,8 @@ func main() {
 	e.GET("/bookings/:id", bookingHandler.GetByID(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("bookings/:id/accept", bookingHandler.Accept(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("bookings/:id/cancel", bookingHandler.Cancel(), middleware.JWT([]byte(config.JWT_KEY)))
-	e.POST("/bookings/callback", bookingHandler.Callback())
-	e.GET("/bookings/:id/oauth", bookingHandler.Oauth())
-	e.GET("/bookings/oauth/callback", bookingHandler.OauthCallback())
+	e.GET("/bookings/:id/reminder", bookingHandler.CreateReminder(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.POST("/bookings/midtrans/callback", bookingHandler.Callback())
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())

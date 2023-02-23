@@ -1,13 +1,11 @@
 package config
 
 import (
-	booking "campyuk-api/features/booking/data"
-	camp "campyuk-api/features/camp/data"
-	image "campyuk-api/features/image/data"
+	booking "campyuk-api/features/booking/repository"
+	camp "campyuk-api/features/camp/repository"
+	image "campyuk-api/features/image/repository"
 	item "campyuk-api/features/item/data"
-	user "campyuk-api/features/user/data"
-
-	// booking "campyuk-api/features/booking/data"
+	user "campyuk-api/features/user/repository"
 
 	"fmt"
 	"log"

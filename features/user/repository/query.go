@@ -1,9 +1,10 @@
-package data
+package repository
 
 import (
-	"campyuk-api/features/user"
 	"errors"
 	"log"
+
+	"campyuk-api/features/user"
 
 	"gorm.io/gorm"
 )
@@ -12,7 +13,7 @@ type userQuery struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) user.UserData {
+func New(db *gorm.DB) user.UserRepository {
 	return &userQuery{
 		db: db,
 	}
@@ -65,6 +66,15 @@ func (uq *userQuery) Profile(userID uint) (user.Core, error) {
 	}
 
 	return ToCore(res), nil
+}
+
+func (uq *userQuery) GetByEmail(email string) (user.Core, error) {
+	model := User{}
+	if err := uq.db.Where("email = ?", email).Take(&model).Error; err != nil {
+		return user.Core{}, err
+	}
+
+	return ToCore(model), nil
 }
 
 func (uq *userQuery) Update(userID uint, updateData user.Core) (user.Core, error) {

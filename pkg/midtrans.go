@@ -1,4 +1,4 @@
-package helper
+package pkg
 
 import (
 	"campyuk-api/config"
@@ -9,22 +9,18 @@ import (
 	"github.com/midtrans/midtrans-go/coreapi"
 )
 
-type PaymentGateway interface {
-	ChargeTransaction(orderID string, grossAmt int, bank string) (string, error)
+type midtransAPI struct {
+	core *coreapi.Client
 }
 
-type midtransCore struct {
-	core coreapi.Client
-}
-
-func NewCoreMidtrans(cfg *config.AppConfig) PaymentGateway {
-	c := coreapi.Client{}
+func NewMidtrans(cfg *config.AppConfig) *midtransAPI {
+	c := &coreapi.Client{}
 	c.New(cfg.SERVER_KEY, midtrans.Sandbox)
 
-	return midtransCore{core: c}
+	return &midtransAPI{core: c}
 }
 
-func (c midtransCore) ChargeTransaction(orderID string, grossAmt int, bank string) (string, error) {
+func (m *midtransAPI) ChargeTransaction(orderID string, grossAmt int, bank string) (string, error) {
 	chargeReq := &coreapi.ChargeReq{
 		PaymentType: coreapi.PaymentTypeBankTransfer,
 		TransactionDetails: midtrans.TransactionDetails{
@@ -40,7 +36,7 @@ func (c midtransCore) ChargeTransaction(orderID string, grossAmt int, bank strin
 		},
 	}
 
-	response, errMidtrans := c.core.ChargeTransaction(chargeReq)
+	response, errMidtrans := m.core.ChargeTransaction(chargeReq)
 	if errMidtrans != nil {
 		log.Println(errMidtrans)
 		return "", errors.New("charge transaction failed due to internal server error")
